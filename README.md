@@ -1,0 +1,13 @@
+- [ ] TODO 添加一个微服务需要添加的东西
+- [ ] config配置
+- [ ] gate
+- [ ] grphql
+- [ ] proto
+- [ ] k8s配置 xx.yaml kustomization.yaml
+- [ ] wire
+- 
+- [ ] entity
+- [ ] usecase
+- [ ] service
+- [ ] repository index
+- [ ] main

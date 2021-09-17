@@ -1,0 +1,22 @@
+//<框出特殊的结构 待处理>
+//other.A
+//<前面的是特殊的结构>
+
+
+
+
+message BannerInput {
+  google.protobuf.Int64Value id = 2;
+  repeated google.protobuf.Int64Value idarr = 3;
+  map<string,google.protobuf.Int64Value> idmap = 4;
+  map<string,repeated google.protobuf.Int64Value> idmap_arr = 5;
+  google.protobuf.StringValue policy = 6;
+  repeated google.protobuf.StringValue policy_arr = 7;
+  map<int,google.protobuf.StringValue> policy_map = 8;
+  other.A person = 9;
+  repeated other.A persons = 10;
+  repeated other.A persons_ptr = 11;
+  map<int,other.A> person_map = 12;
+  map<int,interface{}> person_map_int = 13;
+}
+
