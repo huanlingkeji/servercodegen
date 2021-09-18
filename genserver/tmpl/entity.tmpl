@@ -1,0 +1,46 @@
+package entity
+
+import (
+	"context"
+	"time"
+)
+
+// {{ .ModelName }} 邮件记录
+type {{ .ModelName }} struct {
+	ID        string    `` // ID
+	Priority  bool      `` // 优先级
+	Content   string    `` // 内容
+	SendTime  time.Time `` // 发送时间
+	ValidTime time.Time `` // 有效截止时间
+	ExtraData string    `` // 额外信息
+	//Deleted   bool   // 标记删除
+}
+
+// BatchGet{{ .ModelName }}Filter 批量筛选
+type BatchGet{{ .ModelName }}Filter struct {
+	IDList               []string
+	Priority             bool
+	Content              string
+	SendTimeSearchBegin  time.Time `` // 发送时间
+	SendTimeSearchEnd    time.Time `` // 发送时间
+	ValidTimeSearchBegin time.Time `` // 有效截止时间
+	ValidTimeSearchEnd   time.Time `` // 有效截止时间
+}
+
+// Update{{ .ModelName }}Input 更新结构
+type Update{{ .ModelName }}Input struct {
+	Priority  bool      `` // 优先级
+	Content   string    `` // 内容
+	SendTime  time.Time `` // 发送时间
+	ValidTime time.Time `` // 有效截止时间
+	ExtraData string    `` // 额外信息
+}
+
+// {{ .ModelName }}Repository 接口
+type {{ .ModelName }}Repository interface {
+	Get(ctx context.Context, id string) (*{{ .ModelName }}, error)
+	BatchGet(ctx context.Context, filter *BatchGet{{ .ModelName }}Filter) ([]*{{ .ModelName }}, error)
+	Update(ctx context.Context, id string, input *Update{{ .ModelName }}Input) error
+	Create(ctx context.Context, input *Update{{ .ModelName }}Input) error
+	Delete(ctx context.Context, id string) error
+}

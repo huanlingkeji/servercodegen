@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email
+
+spec:
+  selector:
+    matchLabels:
+      app: email
+  replicas: 2
+  revisionHistoryLimit: 0
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "6060"
+      labels:
+        app: email
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: email
+          image: lilith-registry.cn-shanghai.cr.aliyuncs.com/avatar/code:latest
+          imagePullPolicy: Always
+          command: ["bin/cmd"]
+          args: ["-c","email"]
+          env:
+            - name: ELASTIC_APM_SERVICE_NAME
+              value: email
+          envFrom:
+            - configMapRef:
+                name: avatar-config
+          ports:
+            - name: http
+              containerPort: 6060
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: "1"
+            limits:
+              memory: 1Gi
+              cpu: "1"
+          readinessProbe:
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:9191", "-connect-timeout", "250ms", "-rpc-timeout", "100ms"]
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/bash", "-c", "sleep 15"]
+          volumeMounts:
+            - name: grpc-cert
+              mountPath: /etc/grpc/cert
+              readOnly: true
+      volumes:
+        - name: grpc-cert
+          secret:
+            secretName: grpc-cert
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: email
+
+  labels:
+    app: email
+spec:
+  selector:
+    app: email
+  type: ClusterIP
+  ports:
+    - name: grpc
+      port: 9233
+      targetPort: 9233
+
+---
+

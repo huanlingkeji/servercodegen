@@ -1,0 +1,38 @@
+// go:generate wire
+//go:build wireinject
+// +build wireinject
+
+package email
+
+import (
+	"context"
+	"github.com/google/wire"
+	"github.com/spf13/viper"
+	"solarland/backendv2/cluster/email/internal/domain/entity"
+	"solarland/backendv2/cluster/email/internal/repository"
+	"solarland/backendv2/cluster/email/internal/service"
+	"solarland/backendv2/infra/log"
+	"solarland/backendv2/infra/wireinject"
+)
+
+var set = wire.NewSet(
+	wireinject.Set,
+	wire.Struct(new(container), "*"),
+	wire.Struct(new(service.BasicService), "*"),
+	service.NewBasicService,
+
+    {{- range $ind,$Entity:=.EntityList }}
+    wire.Struct(new(repository.{{ $Entity.ModelName }}RecordRepository), "*"),
+    wire.Bind(new(entity.{{ $Entity.ModelName }}RecordRepository), new(*repository.{{ $Entity.ModelName }}RecordRepository)),
+    {{- end }}
+)
+
+func initialize(ctx context.Context, cfg *viper.Viper) (*container, func()) {
+	panic(wire.Build(set))
+}
+
+func check(err error, message string) {
+	if err != nil {
+		log.L().Panic(message, log.Error(err))
+	}
+}

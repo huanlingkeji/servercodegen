@@ -1,0 +1,52 @@
+package service
+
+import (
+	"context"
+	"solarland/backendv2/cluster/email/internal/domain/entity"
+	"solarland/backendv2/infra/wireinject/bundle"
+	"solarland/backendv2/proto/gen/go/avatar/email"
+)
+
+// BasicService struct
+type BasicService struct {
+	bundle.{{ .ModelName }}ServerBasisBundle
+	{{ .ModelName }}Repository     entity.{{ .ModelName }}Repository
+	{{ .ModelName }}CordRepository entity.{{ .ModelName }}RecordRepository
+}
+
+func (b BasicService) BatchFetchUser{{ .ModelName }}(ctx context.Context, request *email.BatchFetchUser{{ .ModelName }}Request) (*email.BatchFetchUser{{ .ModelName }}Response, error) {
+	panic("implement me")
+}
+
+func (b BasicService) FetchUser{{ .ModelName }}(ctx context.Context, request *email.FetchUser{{ .ModelName }}Request) (*email.FetchUser{{ .ModelName }}Response, error) {
+	panic("implement me")
+}
+
+func (b BasicService) Send{{ .ModelName }}2User(ctx context.Context, request *email.Send{{ .ModelName }}2UserRequest) (*email.Send{{ .ModelName }}2UserResponse, error) {
+	panic("implement me")
+}
+
+func (b BasicService) Delete{{ .ModelName }}(ctx context.Context, request *email.Delete{{ .ModelName }}Request) (*email.Delete{{ .ModelName }}Response, error) {
+	panic("implement me")
+}
+
+func (b BasicService) Modify{{ .ModelName }}(ctx context.Context, request *email.Modify{{ .ModelName }}Request) (*email.Modify{{ .ModelName }}Response, error) {
+	panic("implement me")
+}
+
+func (b BasicService) {{ .ModelName }}Like(ctx context.Context, request *email.{{ .ModelName }}LikeRequest) (*email.{{ .ModelName }}LikeResponse, error) {
+	panic("implement me")
+}
+
+func (b BasicService) Get{{ .ModelName }}LikeInfo(ctx context.Context, request *email.Get{{ .ModelName }}LikeInfoRequest) (*email.Get{{ .ModelName }}LikeInfoResponse, error) {
+	panic("implement me")
+}
+
+var _ email.{{ .ModelName }}ServiceServer = (*BasicService)(nil)
+
+// NewBasicService create new basicService
+func NewBasicService(baseService bundle.{{ .ModelName }}ServerBasisBundle) email.{{ .ModelName }}ServiceServer {
+	return &BasicService{
+		{{ .ModelName }}ServerBasisBundle: baseService,
+	}
+}

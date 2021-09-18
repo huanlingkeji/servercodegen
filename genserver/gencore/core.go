@@ -3,28 +3,53 @@ package gencore
 import (
 	"errors"
 	"fmt"
-	"genserver/genserver/model"
 	"io/ioutil"
 	"os"
 	"strings"
 )
 
-type FilePosition int
+const UseCacheBackupFile = false
+const AlwaysCopy = true
+
+type ContentInsertPosition int
 
 const (
-	PBegin    FilePosition = 1
-	PEnd      FilePosition = 2
-	PNextLine FilePosition = 3
+	StrPointBegin    ContentInsertPosition = 1 //查找字符串的开始位置
+	StrPointEnd      ContentInsertPosition = 2 //查找字符串的结束位置
+	StrPointNextLine ContentInsertPosition = 3 //查找字符串的下一行开头位置
+	FileEnd          ContentInsertPosition = 4 //文件结尾
 )
+
+// 将内容新到新的文件里面去
+func InsertContent2NewFile(filePath, content string) error {
+	err := ioutil.WriteFile(filePath, []byte(content), 666)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type InsertContentInput struct {
+	FilePath     string
+	SearchSubStr string
+	Content      string
+	PInsertType  ContentInsertPosition
+}
 
 //在文件中查找指定内容的位置 然后插入自己的内容
 //首次操作会生成备份 然后会基于备份进行插入内容 即可重复操作
-func InsertContent2File(filePath, searchSubStr, content string, pType FilePosition) error {
+func InsertContent2File(in *InsertContentInput) error {
+	filePath := in.FilePath
+	searchSubStr := in.SearchSubStr
+	content := in.Content
+	pType := in.PInsertType
 	openFile := filePath
-	if exists(fmt.Sprintf("%v.back.txt", filePath)) {
+	fileExist := Exists(fmt.Sprintf("%v.back.txt", filePath))
+	if fileExist && UseCacheBackupFile {
 		openFile = fmt.Sprintf("%v.back.txt", filePath)
-	} else {
-		copyBackup(filePath)
+	}
+	if !fileExist || AlwaysCopy {
+		CopyBackup(filePath)
 	}
 	bs, err := ioutil.ReadFile(openFile)
 	if err != nil {
@@ -33,12 +58,14 @@ func InsertContent2File(filePath, searchSubStr, content string, pType FilePositi
 	indx := -1
 	fileData := string(bs)
 	switch pType {
-	case PBegin:
-		indx = getFilePointBeginIndex(fileData, searchSubStr)
-	case PEnd:
-		indx = getFilePointEndIndex(fileData, searchSubStr)
-	case PNextLine:
-		indx = getFilePointNextLineIndex(fileData, searchSubStr)
+	case StrPointBegin:
+		indx = GetFilePointBeginIndex(fileData, searchSubStr)
+	case StrPointEnd:
+		indx = GetFilePointEndIndex(fileData, searchSubStr)
+	case StrPointNextLine:
+		indx = GetFilePointNextLineIndex(fileData, searchSubStr)
+	case FileEnd:
+		indx = len(fileData)
 	}
 	if indx < 0 {
 		return errors.New("can not find position")
@@ -52,13 +79,13 @@ func InsertContent2File(filePath, searchSubStr, content string, pType FilePositi
 }
 
 //获取文件查找内容的开始位置
-func getFilePointBeginIndex(fileData string, searchSubStr string) int {
+func GetFilePointBeginIndex(fileData string, searchSubStr string) int {
 	idx := strings.Index(fileData, searchSubStr)
 	return idx
 }
 
 //获取文件查找内容的结尾位置
-func getFilePointEndIndex(fileData string, searchSubStr string) int {
+func GetFilePointEndIndex(fileData string, searchSubStr string) int {
 	idx := strings.Index(fileData, searchSubStr)
 	if idx > 0 {
 		return idx + len(searchSubStr)
@@ -67,7 +94,7 @@ func getFilePointEndIndex(fileData string, searchSubStr string) int {
 }
 
 //获取文件查找内容的下一行的位置
-func getFilePointNextLineIndex(fileData string, searchSubStr string) int {
+func GetFilePointNextLineIndex(fileData string, searchSubStr string) int {
 	idx := strings.Index(fileData, searchSubStr)
 	if idx < 0 {
 		return -1
@@ -80,9 +107,9 @@ func getFilePointNextLineIndex(fileData string, searchSubStr string) int {
 }
 
 // 如果文件还没有备份则备份
-func copyBackup(prefixPath string) {
+func CopyBackup(prefixPath string) {
 	backupFileName := fmt.Sprintf("%v.back.txt", prefixPath)
-	if !exists(backupFileName) {
+	if !Exists(backupFileName) {
 		bs, err := ioutil.ReadFile(prefixPath)
 		if err != nil {
 			panic(err.Error())
@@ -95,7 +122,7 @@ func copyBackup(prefixPath string) {
 }
 
 //判断文件路径是存在
-func exists(path string) bool {
+func Exists(path string) bool {
 	_, err := os.Stat(path)
 	if err != nil {
 		if os.IsExist(err) {
@@ -106,31 +133,8 @@ func exists(path string) bool {
 	return true
 }
 
-//检测文件路径是否都存在
-func CheckPath(m *model.MyEnv) bool {
-	if !exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.ClusterPath)) {
-		fmt.Println("m.ClusterPath not found")
-		return false
+func CheckErr(err error) {
+	if err != nil {
+		panic(err)
 	}
-	if !exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.DeployPath)) {
-		fmt.Println("m.DeployPath not found")
-		return false
-	}
-	if !exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.ProtoPath)) {
-		fmt.Println("m.ProtoPath not found")
-		return false
-	}
-	if !exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.GraphqlPath)) {
-		fmt.Println("m.GraphqlPath not found")
-		return false
-	}
-	if !exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.GatePath)) {
-		fmt.Println("m.GatePath not found")
-		return false
-	}
-	if !exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.ConfigPath)) {
-		fmt.Println("m.ConfigPath not found")
-		return false
-	}
-	return true
 }

@@ -1,0 +1,32 @@
+package repository
+
+import (
+	"context"
+	"solarland/backendv2/cluster/email/internal/domain/entity"
+)
+
+// {{ .ModelName }}Repository {{ .ModelName }}Repository
+type {{ .ModelName }}Repository struct {
+}
+
+var _ entity.{{ .ModelName }}Repository = (*{{ .ModelName }}Repository)(nil)
+
+func (e {{ .ModelName }}Repository) Get(ctx context.Context, id string) (*entity.{{ .ModelName }}, error) {
+	panic("implement me")
+}
+
+func (e {{ .ModelName }}Repository) BatchGet(ctx context.Context, filter *entity.BatchGet{{ .ModelName }}Filter) ([]*entity.{{ .ModelName }}, error) {
+	panic("implement me")
+}
+
+func (e {{ .ModelName }}Repository) Update(ctx context.Context, id string, input *entity.Update{{ .ModelName }}Input) error {
+	panic("implement me")
+}
+
+func (e {{ .ModelName }}Repository) Create(ctx context.Context, input *entity.Update{{ .ModelName }}Input) error {
+	panic("implement me")
+}
+
+func (e {{ .ModelName }}Repository) Delete(ctx context.Context, id string) error {
+	panic("implement me")
+}

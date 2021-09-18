@@ -1,43 +1,33 @@
 //<框出特殊的结构 待处理>
-//rpcmsg.GamePublicStatus
-//rpcmsg.GameVisibility
-//rpcmsg.DisplayGameAuditSummary
 //rpcmsg.AccountStatus
 //rpcmsg.DisplayHubUser
 //rpcmsg.CommonGamePlace
 //rpcmsg.GamePlace
+//rpcmsg.GamePublicStatus
+//rpcmsg.GameVisibility
+//rpcmsg.DisplayGameAuditSummary
 //<前面的是特殊的结构>
 
 
 
 
-message FixUserGender0ToAvatarGenderInput {
-  repeated string filter_user_ids = 2;
+message DeleteAuthRolePayload {
+  bool ok = 2;
 }
 
-message ModifyHubAccountInfoInput {
-  string hub_user_id = 2;
-  string email = 3;
-  google.protobuf.StringValue password = 4;
-  string nickname = 5;
-  string phone = 6;
+message EditBannerState {
+  int64 online_unix_timestamp = 2;
+  int64 offline_unix_timestamp = 3;
+  bool online = 4;
 }
 
-message UpdateAssetProductTagInput {
-  string id = 2;
-  repeated AssetProductTagTextInput texts = 3;
+message PublishGameInput {
+  string game_id = 2;
+  string version = 3;
 }
 
-message AssetWorldPayload {
-  AssetWorld asset_world = 2;
-}
-
-message GetMasterpieceGameInfoResponse {
-  google.protobuf.StringValue name = 2;
-  repeated string developers = 3;
-  repeated string game_type = 4;
-  google.protobuf.StringValue language = 5;
-  google.protobuf.Int64Value experienced_num = 6;
+message DeleteGameCollectionRequest {
+  repeated string ids = 2;
 }
 
 message Masterpiece {
@@ -60,66 +50,56 @@ message Masterpiece {
   google.protobuf.Int64Value experienced_num = 18;
 }
 
-message AssetProductAuditingConnection {
-  repeated AssetProductAuditingItem nodes = 2;
+message FixUserGender0ToAvatarGenderInput {
+  repeated string filter_user_ids = 2;
+}
+
+message GiveUserRandomEditorAvatarSuit13585Result {
+  repeated GiveUserRandomEditorAvatarSuit13585Item users = 2;
+}
+
+message HubBannerListConnection {
+  repeated HubBanner nodes = 2;
   int64 total_count = 3;
 }
 
-message BuildUserNumberIDWhenUserNoNumberIDItem {
-  string email = 2;
-  string user_id = 3;
-  int64 number_id = 4;
+message AssetProductConvertibleConnection {
+  repeated AssetProductAssetItem nodes = 2;
+  int64 total_count = 3;
 }
 
-message GenGameTinyCodeReply {
-  string code = 2;
+message DeleteHubBannerInput {
+  string id = 2;
 }
 
-message GetMasterpieceRequest {
-  repeated string ids = 2;
-  google.protobuf.StringValue title = 3;
-  google.protobuf.StringValue key_word = 4;
-  google.protobuf.StringValue game_id = 5;
-  google.protobuf.StringValue activity_id = 6;
-  google.protobuf.StringValue sort_type = 7;
-  google.protobuf.Int64Value search_end_time = 8;
-  google.protobuf.Int64Value search_begin_time = 9;
-  int64 skip_len = 10;
-  int64 limit_len = 11;
+message DevicePayload {
+  repeated Device list = 2;
+  int64 total_count = 3;
 }
 
-message GetOfficialWebsiteBannerRequest {
-  repeated string ids = 2;
-  google.protobuf.StringValue title = 3;
-  google.protobuf.StringValue state_filter = 4;
-  google.protobuf.StringValue key_word = 5;
-  google.protobuf.StringValue banner_type = 6;
-  google.protobuf.Int64Value begin_time = 7;
-  google.protobuf.Int64Value end_time = 8;
-  int64 skip_len = 9;
-  int64 limit_len = 10;
+message AuthRoleListPayload {
+  repeated AuthRolePayload role_list = 2;
 }
 
-message OSSPolicy {
-  int64 oss_service = 2;
-  string access_id = 3;
-  string host = 4;
-  int64 expire = 5;
-  string signature = 6;
-  string policy = 7;
-  string dir = 8;
-  google.protobuf.StringValue tofile_name = 9;
-  google.protobuf.StringValue callback = 10;
+message UpdateGameInput {
+  string id = 2;
+  GameUpdate update = 3;
 }
 
-message UpdateBmsPushNotifyRequest {
-  google.protobuf.BoolValue push_immediately = 2;
-  string id = 3;
-  google.protobuf.Int64Value push_time = 4;
-  google.protobuf.StringValue push_content = 5;
-  google.protobuf.StringValue game_id = 6;
-  google.protobuf.StringValue post_id = 7;
-  google.protobuf.StringValue content_type = 8;
+message SetRoomEntrancePayload {
+  string room_id = 2;
+}
+
+message CreateOfficialWebsiteBannerRequest {
+  string link_id = 2;
+  int64 index = 3;
+  string banner_type = 4;
+  int64 begin_time = 5;
+  int64 end_time = 6;
+}
+
+message HomesteadSetTestToProdPayload {
+  bool ok = 2;
 }
 
 message ModifyDevGroupMemberInput {
@@ -127,83 +107,61 @@ message ModifyDevGroupMemberInput {
   repeated ModifyDevGroupMemberItem opts = 3;
 }
 
-message PlayerHubGameListDataViewPayload {
-  repeated DisplayPlayerHubGameSummary list = 2;
-  google.protobuf.Int64Value total_count = 3;
+message DeleteMultiHomesteadRoomWhiteUserInput {
+  string user_id = 2;
 }
 
-message RecommendGameListPayload {
-  repeated RecommendGame list = 2;
-  google.protobuf.Int64Value total_count = 3;
+message DisplayGroupSummary {
+  google.protobuf.StringValue id = 2;
+  google.protobuf.StringValue owner_account = 3;
+  google.protobuf.Int64Value member_sum = 4;
+  google.protobuf.Int64Value published_game_sum = 5;
+  google.protobuf.Int64Value create_time = 6;
+  google.protobuf.StringValue group_name = 7;
+  google.protobuf.StringValue dev_activity_name = 8;
 }
 
-message SetRoomEntranceInput {
-  string room_id = 2;
-  bool open = 3;
+message HubBannerDetail {
+  google.protobuf.StringValue language = 2;
+  google.protobuf.StringValue title = 3;
+  google.protobuf.StringValue description = 4;
+  HubBannerLink link = 5;
+  repeated AssetStoreObject image_ids = 6;
+  repeated AssetStoreObject video_ids = 7;
+  string hub_banner_id = 8;
 }
 
-message UpdateAssetProductTagsInput {
-  repeated UpdateAssetProductTagInput list = 2;
+message EditBannerStateInput {
+  int64 banner_id = 2;
+  bool online = 3;
 }
 
-message AssetProductConvertibleListOptPayload {
-  bool changed = 2;
+message AuthRoleListInput {
+  repeated string names = 2;
 }
 
-message AssetProductTagText {
-  google.protobuf.StringValue lang = 2;
-  google.protobuf.StringValue text = 3;
-  google.protobuf.StringValue create_at = 4;
+message DeleteAssetWorldPayload {
+  bool ok = 2;
 }
 
-message BmsOperationRecordPayload {
-  repeated BmsOperationRecord list = 2;
-  int64 total_count = 3;
-}
-
-message PlayingGameListPayload {
-  repeated PlayingGame list = 2;
-  google.protobuf.Int64Value total_count = 3;
-}
-
-message PublishUndoGameInput {
-  string game_id = 2;
-  string version = 3;
-  repeated string reason = 4;
-  string description = 5;
-}
-
-message CreateHubBannerPayload {
-  string error = 2;
-}
-
-message DeleteGameCollectionRequest {
+message DeleteBmsPushNotifyRequest {
   repeated string ids = 2;
 }
 
-message DisplayDevActivityDetail {
-  DisplayDevActivitySummary summary = 2;
-  repeated string banner_urls = 3;
-  google.protobuf.StringValue description_markdown = 4;
-  google.protobuf.StringValue description_html = 5;
-  google.protobuf.StringValue sign_up_description_markdown = 6;
-  google.protobuf.StringValue sign_up_description_html = 7;
-  repeated string description_urls = 8;
-  google.protobuf.StringValue belt_url = 9;
+message BmsOperationRecord {
+  string timestamp = 2;
+  string account = 3;
+  string name = 4;
+  string role = 5;
+  string optype = 6;
+  string module = 7;
+  string request = 8;
+  string response = 9;
 }
 
-message EditOfficialWebsiteBannerRequest {
-  google.protobuf.StringValue id = 2;
-  google.protobuf.StringValue link_id = 3;
-  string banner_type = 4;
-  google.protobuf.Int64Value index = 5;
-  google.protobuf.Int64Value begin_time = 6;
-  google.protobuf.Int64Value end_time = 7;
-}
-
-message GenGameTinyCodeInput {
-  string game_id = 2;
-  google.protobuf.StringValue bind_version = 3;
+message HomesteadSetHideInput {
+  string type = 2;
+  bool hide = 3;
 }
 
 message Asset {
@@ -240,66 +198,144 @@ message Asset {
   google.protobuf.StringValue change_log = 32;
 }
 
-message AssetUpdater {
-  google.protobuf.StringValue name = 2;
-  repeated int64 category_id_list = 3;
-  repeated int64 contain_types = 4;
+message BmsPushNotify {
+  google.protobuf.StringValue id = 2;
+  google.protobuf.StringValue push_time = 3;
+  google.protobuf.StringValue push_content = 4;
+  google.protobuf.StringValue game_id = 5;
+  google.protobuf.StringValue post_id = 6;
+  google.protobuf.StringValue content_type = 7;
+  google.protobuf.StringValue state = 8;
 }
 
-message UpdateAssetProductTagsPayload {
-  google.protobuf.Int64Value update_count = 2;
+message CommunityRecommendUser {
+  string id = 2;
+  google.protobuf.StringValue title = 3;
+  string name = 4;
+  string avatar = 5;
 }
 
-message CreateAuthRoleInput {
-  repeated string authority_list = 2;
-  string name = 3;
-  google.protobuf.StringValue description = 4;
+message HomesteadSetGameInput {
+  string type = 2;
+  string game_id = 3;
 }
 
-message FixAssetAddProductInfoInput {
-  int64 limit = 2;
-}
-
-message OfficialAccountConnection {
-  repeated OfficialAccount nodes = 2;
-  int64 total_count = 3;
+message PlayingGameListPayload {
+  repeated PlayingGame list = 2;
+  google.protobuf.Int64Value total_count = 3;
 }
 
 message WashAssetsTransactionStartPayload {
   string session_id = 2;
 }
 
-message AssetStoreDataViewPayload {
-  repeated AssetStoreDataViewItem list = 2;
-  int64 count = 3;
+message AssetProductConvertibleListOptPayload {
+  bool changed = 2;
 }
 
-message HubBannerListConnection {
-  repeated HubBanner nodes = 2;
-  int64 total_count = 3;
+message CreateHubBannerPayload {
+  string error = 2;
 }
 
-message MarketAssetListInput {
-  google.protobuf.StringValue author_id = 2;
-  google.protobuf.StringValue keyword = 3;
-  google.protobuf.StringValue asset_sort_type = 4;
-  google.protobuf.StringValue archive_type = 5;
-  google.protobuf.StringValue recommend_type = 6;
-  google.protobuf.StringValue public_type = 7;
-  google.protobuf.StringValue audit_type = 8;
-  google.protobuf.StringValue asset_type = 9;
-  repeated int64 contain_types = 10;
-  repeated string tags = 11;
-  repeated string asset_ids = 12;
+message FixUserGender0ToAvatarGenderPayload {
+  int64 updated_count = 2;
+}
+
+message MultiHomesteadRoomUserVo {
+  string user_id = 2;
+  string name = 3;
+  int64 create_at = 4;
+}
+
+message PlayerHubGameListDataViewFilter {
+  google.protobuf.StringValue name = 2;
+  google.protobuf.Int64Value begin_unix_timestamp = 3;
+  google.protobuf.Int64Value end_unix_timestamp = 4;
+}
+
+message UpdateAssetsVersionInfoItem {
+  string asset_id = 2;
+  google.protobuf.StringValue platform = 3;
+  google.protobuf.StringValue min_client_version = 4;
+  string store_id = 5;
+  string hash = 6;
+}
+
+message AssetFilter {
+  repeated string asset_ids = 2;
+  google.protobuf.StringValue author_id = 3;
+  google.protobuf.StringValue keyword = 4;
+  google.protobuf.StringValue asset_sort_type = 5;
+  google.protobuf.StringValue archive_type = 6;
+  google.protobuf.StringValue recommend_type = 7;
+  google.protobuf.StringValue public_type = 8;
+  google.protobuf.StringValue audit_type = 9;
+  google.protobuf.StringValue asset_type = 10;
+  repeated int64 contain_types = 11;
+  repeated string tags = 12;
   repeated int64 asset_levels = 13;
   repeated int64 category_id_list = 14;
-  int64 skip_len = 15;
-  int64 limit_len = 16;
 }
 
-message UpdateAssetWorldPayload {
+message CreateAuthRolePayload {
   bool ok = 2;
-  repeated FailAssetItem fail_asset_item = 3;
+}
+
+message HubBannerLink {
+  string type = 2;
+  string url = 3;
+  string game_id = 4;
+  string room_owner_id = 5;
+}
+
+message RecommendGameListInput {
+  int64 skip_len = 2;
+  int64 limit_len = 3;
+  google.protobuf.StringValue search_game_name = 4;
+  google.protobuf.Int64Value time_after = 5;
+  google.protobuf.Int64Value time_before = 6;
+  string order_by = 7;
+}
+
+message AccountAuthRoleInput {
+  google.protobuf.StringValue user_id = 2;
+  google.protobuf.StringValue user_name = 3;
+}
+
+message GetMasterpieceRequest {
+  repeated string ids = 2;
+  google.protobuf.StringValue title = 3;
+  google.protobuf.StringValue key_word = 4;
+  google.protobuf.StringValue game_id = 5;
+  google.protobuf.StringValue activity_id = 6;
+  google.protobuf.StringValue sort_type = 7;
+  google.protobuf.Int64Value search_end_time = 8;
+  google.protobuf.Int64Value search_begin_time = 9;
+  int64 skip_len = 10;
+  int64 limit_len = 11;
+}
+
+message HubBannerStateInput {
+  int64 online_unix_timestamp = 2;
+  int64 offline_unix_timestamp = 3;
+  google.protobuf.BoolValue offline = 4;
+}
+
+message EditOfficialWebsiteBannerRequest {
+  google.protobuf.StringValue id = 2;
+  google.protobuf.StringValue link_id = 3;
+  string banner_type = 4;
+  google.protobuf.Int64Value index = 5;
+  google.protobuf.Int64Value begin_time = 6;
+  google.protobuf.Int64Value end_time = 7;
+}
+
+message GetMasterpieceGameInfoResponse {
+  google.protobuf.StringValue name = 2;
+  repeated string developers = 3;
+  repeated string game_type = 4;
+  google.protobuf.StringValue language = 5;
+  google.protobuf.Int64Value experienced_num = 6;
 }
 
 message WashAssetsTransactionActItem {
@@ -313,58 +349,27 @@ message WashAssetsTransactionActItem {
   string error_reason = 9;
 }
 
-message WashAssetsTransactionAddResItem {
-  OSSPolicy policy = 2;
-  string store_id = 3;
-  string sha256 = 4;
-  string unique_id = 5;
+message ReplaceRecommendUsersInput {
+  repeated RecommendUserInput users = 2;
 }
 
-message AddOfficialAccountPayload {
-  google.protobuf.StringValue err = 2;
+message WashAssetsTransactionAddItem {
+  string asset_id = 2;
+  google.protobuf.StringValue platform = 3;
+  google.protobuf.StringValue min_client_version = 4;
+  string sha256 = 5;
 }
 
-message DeletePlayerHubGameCommentInput {
-  string comment_id = 2;
+message AddAuthRoleToAccountInput {
+  google.protobuf.StringValue user_id = 2;
+  google.protobuf.StringValue user_name = 3;
+  string role_name = 4;
 }
 
-message DisplayPlayerHubGameSummary {
+message DeleteAssetProductTagInput {
   string id = 2;
-  string name = 3;
-  int64 upvotes = 4;
-  int64 downvotes = 5;
-  int64 favorites = 6;
-  int64 comments = 7;
-  string last_publish_time = 8;
-  string location = 9;
-}
-
-message GetGameCollectionRequest {
-  repeated string ids = 2;
-  google.protobuf.StringValue title = 3;
-  google.protobuf.StringValue key_word = 4;
-  google.protobuf.StringValue sort_type = 5;
-  int64 skip_len = 6;
-  int64 limit_len = 7;
-}
-
-message VersionNotice {
-  string id = 2;
-  string version = 3;
-  repeated VersionNoticeBase notice_list = 4;
-  bool isrelease = 5;
-  int64 edit_time = 6;
-  int64 timing = 7;
-  string release_mode = 8;
-}
-
-message DeleteAssetProductTagsPayload {
-  google.protobuf.Int64Value update_count = 2;
-}
-
-message LoginBmsInput {
-  string account = 2;
-  string password = 3;
+  google.protobuf.StringValue replace_id = 3;
+  repeated string text_lang = 4;
 }
 
 message Post {
@@ -385,174 +390,9 @@ message Post {
   string status = 16;
 }
 
-message BannerLink {
-  string type = 2;
-  string url = 3;
-  string game_id = 4;
-  string game_name = 5;
-  string game_collection_id = 6;
-  string room_owner_id = 7;
-}
-
-message DevActivityListDataViewResult {
-  repeated DisplayDevActivitySummary list = 2;
-  google.protobuf.Int64Value total_count = 3;
-}
-
-message GetGameCollectionResponse {
-  repeated GameCollection list = 2;
-  int64 total_count = 3;
-}
-
-message RefreshUserIsDevelopersResult {
-  repeated string user_ids = 2;
-}
-
-message SetAssetRecommendRuleInput {
-  string sort_type = 2;
-  string update_period = 3;
-  repeated string top_recommend_assets = 4;
-  int64 recommend_num = 5;
-  bool flush_now = 6;
-}
-
-message AccountAuthRoleInput {
-  google.protobuf.StringValue user_id = 2;
-  google.protobuf.StringValue user_name = 3;
-}
-
-message Device {
-  string id = 2;
-  string identification_type = 3;
-}
-
-message MultiHomesteadRoomUserListInput {
-  int64 skip_len = 2;
-  int64 limit_len = 3;
-  google.protobuf.StringValue user_id = 4;
-}
-
-message RestorePlayerHubGameCommentInput {
-  string comment_id = 2;
-}
-
-message GameCollectionGame {
-  google.protobuf.StringValue game_id = 2;
-  google.protobuf.StringValue name = 3;
-  google.protobuf.StringValue author = 4;
-  google.protobuf.StringValue recommend_words = 5;
-}
-
-message PlayerHubGameCommentListPayload {
-  repeated GameComment list = 2;
-  google.protobuf.Int64Value total_count = 3;
-}
-
-message RestorePlayerHubGameCommentPayload {
-  Status status = 2;
-}
-
-message SetAllRoomsEntranceOffInput {
-  int64 before_timestamp = 2;
-}
-
-message AuthRolePayload {
-  string id = 2;
-  repeated string authority_list = 3;
-  string name = 4;
-  string creator = 5;
-  string description = 6;
-}
-
-message DisplayDevActivitySummary {
-  google.protobuf.StringValue id = 2;
-  google.protobuf.StringValue title = 3;
-  google.protobuf.Int64Value grouped_sum = 4;
-  google.protobuf.Int64Value published_game_sum = 5;
-  google.protobuf.Int64Value participant_sum = 6;
-  google.protobuf.Int64Value begin_time = 7;
-  google.protobuf.Int64Value end_time = 8;
-  google.protobuf.Int64Value registration_deadline = 9;
-  google.protobuf.Int64Value priority = 10;
-  google.protobuf.BoolValue hide_in_editor_project_panel = 11;
-  google.protobuf.StringValue activity_type = 12;
-  google.protobuf.StringValue jump_type = 13;
-  google.protobuf.StringValue link = 14;
-  google.protobuf.StringValue state = 15;
-}
-
-message GameCollection {
-  google.protobuf.StringValue id = 2;
-  google.protobuf.StringValue title = 3;
-  google.protobuf.StringValue create_time = 4;
-  google.protobuf.Int64Value index = 5;
-  repeated string covers_url = 6;
-  google.protobuf.StringValue brief_introduction = 7;
-  repeated GameCollectionGame game_collection_games = 8;
-}
-
-message LoginBmsPayload {
-  string token = 2;
-  string user_id = 3;
-  repeated string role_list = 4;
-  repeated string authority_list = 5;
-}
-
-message UpdateDevicesInput {
-  repeated string devices_id = 2;
-  string identification_type = 3;
-}
-
-message AddPlayerHubGameUserCommentPayload {
-  Status status = 2;
-}
-
-message AssetWorldListInput {
-  int64 skip_len = 2;
-  int64 limit_len = 3;
-  google.protobuf.Int64Value max_archive_version_limit = 4;
-}
-
-message FixActivityIndexPayload {
-  google.protobuf.StringValue error = 2;
-}
-
-message GetMasterpieceResponse {
-  repeated Masterpiece list = 2;
-  int64 total_count = 3;
-}
-
-message HubUserListV2Input {
-  google.protobuf.StringValue user_id = 2;
-  google.protobuf.StringValue email_regex = 3;
-  rpcmsg.AccountStatus account_status = 4;
-  google.protobuf.StringValue user_identity = 5;
-  int64 skip_len = 6;
-  int64 limit_len = 7;
-}
-
-message HubUserListV2Payload {
-  repeated rpcmsg.DisplayHubUser list = 2;
-  int64 total_count = 3;
-}
-
-message RemoveOfficialAccountInput {
-  repeated string user_ids = 2;
-  string type = 3;
-}
-
-message AssetIndexWeight {
-  string id = 2;
-  int64 weight = 3;
-}
-
-message GameBaseHeatValuePayload {
-  string game_id = 2;
-  int64 base_heat_value = 3;
-}
-
-message FixAssetAddProductInfoPayload {
-  int64 update_count = 2;
+message AssetProductConvertibleListOptInput {
+  repeated string asset_ids = 2;
+  string action = 3;
 }
 
 message SetCelebrityInput {
@@ -560,51 +400,40 @@ message SetCelebrityInput {
   bool iscelebrity = 3;
 }
 
-message UpdateGameHotfixDataPayload {
-  google.protobuf.StringValue err = 2;
+message VersionNotice {
+  string id = 2;
+  string version = 3;
+  repeated VersionNoticeBase notice_list = 4;
+  bool isrelease = 5;
+  int64 edit_time = 6;
+  int64 timing = 7;
+  string release_mode = 8;
 }
 
-message EditBannerStateInput {
-  int64 banner_id = 2;
-  bool online = 3;
+message OfficialAccountConnection {
+  repeated OfficialAccount nodes = 2;
+  int64 total_count = 3;
 }
 
-message BmsLoginReply {
-  string token = 2;
-  string name = 3;
-  string role = 4;
-  repeated string authority_list = 5;
+message AssetStoreDataViewInput {
+  repeated string platforms = 2;
+  google.protobuf.StringValue used_in_client_version = 3;
+  repeated string asset_types = 4;
+  repeated string asset_levels = 5;
 }
 
-message CreateAssetProductTagInput {
-  repeated AssetProductTagTextInput texts = 2;
-}
-
-message VersionNoticeBaseInput {
-  string title = 2;
-  string os = 3;
-  string detail = 4;
-  string language = 5;
-}
-
-message AddMultiHomesteadRoomUserInput {
-  string user_id = 2;
-}
-
-message AddPlayerHubGameUserCommentInput {
+message EditGameBaseHeatValueInput {
   string game_id = 2;
-  string user_id = 3;
-  string comment = 4;
+  int64 base_heat_value = 3;
 }
 
-message GameListDataViewResult {
-  repeated rpcmsg.DisplayGameAuditSummary list = 2;
-  google.protobuf.Int64Value total_count = 3;
-}
-
-message ModifyDevGroupMemberItem {
-  string member_account = 2;
-  bool isdelete_not_add = 3;
+message GetGameCollectionRequest {
+  repeated string ids = 2;
+  google.protobuf.StringValue title = 3;
+  google.protobuf.StringValue key_word = 4;
+  google.protobuf.StringValue sort_type = 5;
+  int64 skip_len = 6;
+  int64 limit_len = 7;
 }
 
 message OfficialAccount {
@@ -612,17 +441,50 @@ message OfficialAccount {
   User user_info = 3;
 }
 
-message RecommendRule {
-  string sort_type = 2;
-  string update_period = 3;
-  repeated string top_recommend_assets = 4;
-  int64 recommend_num = 5;
+message RecheckAsset {
+  string id = 2;
+  string name = 3;
+  repeated int64 category_list = 4;
 }
 
-message ReleaseVersionNoticeInput {
+message WashAssetsTransactionActStatePayload {
+  WashAssetsTransactionActItem info = 2;
+}
+
+message RoomDevData {
+  int64 room_state = 2;
+  string description = 3;
+}
+
+message AddDevicesInput {
+  repeated string devices_id = 2;
+  string identification_type = 3;
+}
+
+message DeviceInput {
+  string identification_type = 2;
+  int64 skip_len = 3;
+  int64 limit_len = 4;
+}
+
+message Homestead {
+  HomesteadItem prod = 2;
+  HomesteadItem test = 3;
+}
+
+message EditVersionNoticeInput {
   string id = 2;
-  string release_mode = 3;
-  google.protobuf.Int64Value timing = 4;
+  string version = 3;
+  repeated VersionNoticeBaseInput notice_list = 4;
+}
+
+message RefreshUserIsDevelopersResult {
+  repeated string user_ids = 2;
+}
+
+message BuildUserNumberIDWhenUserNoNumberIDResult {
+  repeated BuildUserNumberIDWhenUserNoNumberIDItem users = 2;
+  int64 exec_num = 3;
 }
 
 message CreateBmsPushNotifyRequest {
@@ -634,349 +496,54 @@ message CreateBmsPushNotifyRequest {
   string content_type = 7;
 }
 
-message DevActivityListDataViewInput {
-  google.protobuf.StringValue filter = 2;
-  google.protobuf.StringValue sorter = 3;
-  google.protobuf.Int64Value search_begin_time = 4;
-  google.protobuf.Int64Value search_end_time = 5;
-  google.protobuf.Int64Value skip_len = 6;
-  google.protobuf.Int64Value limit_len = 7;
-  google.protobuf.StringValue name_filter = 8;
-  google.protobuf.StringValue type_filter = 9;
-  google.protobuf.StringValue jump_type_filter = 10;
-  google.protobuf.StringValue scenes = 11;
+message DisplayGroupMemberItem {
+  google.protobuf.StringValue user_id = 2;
+  google.protobuf.StringValue account = 3;
+  google.protobuf.BoolValue isowner = 4;
+  User user_info = 5;
 }
 
-message DisplayGroupSummary {
-  google.protobuf.StringValue id = 2;
-  google.protobuf.StringValue owner_account = 3;
-  google.protobuf.Int64Value member_sum = 4;
-  google.protobuf.Int64Value published_game_sum = 5;
-  google.protobuf.Int64Value create_time = 6;
-  google.protobuf.StringValue group_name = 7;
-  google.protobuf.StringValue dev_activity_name = 8;
+message HubBannerCollection {
+  int64 hub_banner_count = 2;
+  string page_type = 3;
+  string module_type = 4;
+  int64 activity = 5;
+  int64 ready = 6;
 }
 
-message UpdateAuthRoleInput {
-  google.protobuf.StringValue id = 2;
-  google.protobuf.StringValue name = 3;
-  repeated string authority_list = 4;
-  google.protobuf.StringValue description = 5;
-}
-
-message BuildUserNumberIDWhenUserNoNumberIDResult {
-  repeated BuildUserNumberIDWhenUserNoNumberIDItem users = 2;
-  int64 exec_num = 3;
-}
-
-message DevActivityDetailListInput {
-  google.protobuf.StringValue filter = 2;
-  google.protobuf.StringValue sorter = 3;
-  google.protobuf.Int64Value search_begin_time = 4;
-  google.protobuf.Int64Value search_end_time = 5;
-  google.protobuf.Int64Value skip_len = 6;
-  google.protobuf.Int64Value limit_len = 7;
-  google.protobuf.StringValue name_filter = 8;
-  google.protobuf.StringValue type_filter = 9;
-  google.protobuf.StringValue jump_type_filter = 10;
-  google.protobuf.StringValue scenes = 11;
-}
-
-message ReplaceRecommendUsersInput {
-  repeated RecommendUserInput users = 2;
-}
-
-message WashAssetsTransactionAddItem {
-  string asset_id = 2;
-  google.protobuf.StringValue platform = 3;
-  google.protobuf.StringValue min_client_version = 4;
-  string sha256 = 5;
-}
-
-message AssetStoreDataViewInput {
-  repeated string platforms = 2;
-  google.protobuf.StringValue used_in_client_version = 3;
-  repeated string asset_types = 4;
-  repeated string asset_levels = 5;
-}
-
-message DeleteRoomInput {
-  string room_id = 2;
-}
-
-message HomesteadSetGameInput {
-  string type = 2;
-  string game_id = 3;
-}
-
-message HomesteadSetTestToProdPayload {
+message UpdateAuthRolePayload {
   bool ok = 2;
 }
 
-message OfficialWebsiteBanner {
-  google.protobuf.StringValue id = 2;
-  google.protobuf.StringValue link_id = 3;
-  google.protobuf.StringValue title = 4;
-  google.protobuf.Int64Value index = 5;
-  google.protobuf.StringValue banner_type = 6;
-  google.protobuf.StringValue begin_time = 7;
-  google.protobuf.StringValue end_time = 8;
-  DisplayDevActivityDetail activity = 9;
-  Masterpiece masterpiece = 10;
+message AssetWorldPayload {
+  AssetWorld asset_world = 2;
 }
 
-message PublishGameInput {
-  string game_id = 2;
-  string version = 3;
+message CreateAssetProductTagInput {
+  repeated AssetProductTagTextInput texts = 2;
 }
 
-message RemoveOfficialAccountPayload {
-  google.protobuf.StringValue err = 2;
-}
-
-message AssetProductAuditInput {
-  repeated string asset_ids = 2;
-  string action = 3;
-}
-
-message DeleteAssetProductTagsInput {
-  repeated DeleteAssetProductTagInput list = 2;
-}
-
-message GameAuditResultInput {
-  bool pass = 2;
-  repeated string reason = 3;
-  google.protobuf.StringValue description = 4;
-  google.protobuf.StringValue check_code = 5;
-}
-
-message RoomListPayload {
-  repeated Room list = 2;
-  int64 total_count = 3;
-}
-
-message RoomPolicy {
-  bool switcher_open_or_not = 2;
-  bool bms_room_open = 3;
-}
-
-message BmsPushNotify {
-  google.protobuf.StringValue id = 2;
-  google.protobuf.StringValue push_time = 3;
-  google.protobuf.StringValue push_content = 4;
-  google.protobuf.StringValue game_id = 5;
-  google.protobuf.StringValue post_id = 6;
-  google.protobuf.StringValue content_type = 7;
-  google.protobuf.StringValue state = 8;
-}
-
-message GameHotfixData {
-  string game_id = 2;
-  string version = 3;
-  repeated GameHotfixDataItem items = 4;
-}
-
-message PageInfo {
-  bool has_next_page = 2;
-  bool has_previous_page = 3;
-  int64 total_count = 4;
-}
-
-message RecommendUsersPayload {
-  repeated CommunityRecommendUser users = 2;
-}
-
-message RestorePostInput {
-  string id = 2;
-}
-
-message SortHubBannerInput {
-  string hub_banner_id = 2;
-  int64 index = 3;
-}
-
-message AssetProductConvertibleConnection {
-  repeated AssetProductAssetItem nodes = 2;
-  int64 total_count = 3;
-}
-
-message Banner {
-  int64 id = 2;
-  string title = 3;
-  string type = 4;
-  repeated string thumbnail_urls = 5;
-  BannerLink link = 6;
-  EditBannerState edit_state = 7;
-  string state = 8;
-  google.protobuf.StringValue show_policy = 9;
-  google.protobuf.StringValue hide_policy = 10;
-}
-
-message CreateAssetWorldInput {
-  string title = 2;
-  repeated string store_id_list = 3;
-  repeated string asset_names = 4;
-  repeated string asset_ids = 5;
-}
-
-message GameComment {
-  string id = 2;
-  string game_id = 3;
-  string game_name = 4;
-  string commentator_id = 5;
-  string commentator_name = 6;
-  string commentator_icon_url = 7;
-  string visibility = 8;
-  string comment = 9;
-  string timestamp = 10;
-}
-
-message GroupListDataViewResult {
-  repeated DisplayGroupSummary list = 2;
-  google.protobuf.Int64Value total_count = 3;
-}
-
-message WashAssetsTransactionAddInput {
-  repeated WashAssetsTransactionAddItem list = 2;
-  string session_id = 3;
-}
-
-message CreateHubBannerInput {
-  string language = 2;
-  google.protobuf.StringValue title = 3;
-  google.protobuf.StringValue description = 4;
-  HubBannerLinkInput link = 5;
-  repeated string image_ids = 6;
-  repeated string video_ids = 7;
-  google.protobuf.Int64Value index = 8;
-  google.protobuf.StringValue page = 9;
-  google.protobuf.StringValue module = 10;
-  HubBannerStateInput edit_state = 11;
-}
-
-message AssetProductTag {
-  string id = 2;
-  repeated AssetProductTagText texts = 3;
-}
-
-message AuthRoleListInput {
-  repeated string names = 2;
-}
-
-message CreateAuthRolePayload {
-  bool ok = 2;
-}
-
-message PlayerHubGameCommentListInput {
-  google.protobuf.Int64Value begin_unix_timestamp = 2;
-  google.protobuf.Int64Value end_unix_timestamp = 3;
-  string visibility = 4;
-  google.protobuf.StringValue user_id = 5;
-  google.protobuf.StringValue game_id = 6;
-  google.protobuf.StringValue game_name = 7;
-  int64 skip_len = 8;
-  int64 limit_len = 9;
-}
-
-message PlayerHubGameListDataViewInput {
-  PlayerHubGameListDataViewFilter filter = 2;
-  google.protobuf.StringValue sorter = 3;
-  int64 skip_len = 4;
-  int64 limit_len = 5;
-}
-
-message SetGameRecommendWordsInput {
-  string game_id = 2;
-  string recommend_words = 3;
-}
-
-message UpdateHubBannerPayload {
-  string error = 2;
-}
-
-message CreateOfficialWebsiteBannerRequest {
-  string link_id = 2;
-  int64 index = 3;
-  string banner_type = 4;
-  int64 begin_time = 5;
-  int64 end_time = 6;
-}
-
-message DeleteAssetWorldPayload {
-  bool ok = 2;
-}
-
-message HomesteadSetHideInput {
-  string type = 2;
-  bool hide = 3;
-}
-
-message MarketAssetListPayload {
-  repeated Asset list = 2;
-  google.protobuf.Int64Value total_count = 3;
-}
-
-message UpdateHubBannerInput {
-  string id = 2;
-  string language = 3;
-  google.protobuf.StringValue title = 4;
-  google.protobuf.StringValue description = 5;
-  HubBannerLinkInput link = 6;
-  repeated string image_ids = 7;
-  repeated string video_ids = 8;
-  google.protobuf.Int64Value index = 9;
-  google.protobuf.BoolValue offline = 10;
-  HubBannerStateInput edit_state = 11;
-}
-
-message DeleteVersionNoticeInput {
-  string id = 2;
-}
-
-message DevActivityParticipantsResult {
-  repeated DevActivityParticipantsItem users = 2;
-}
-
-message DevicePayload {
-  repeated Device list = 2;
-  int64 total_count = 3;
-}
-
-message GameVersionSummary {
-  string game_id = 2;
-  string name = 3;
-  int64 commit_time = 4;
-  string version = 5;
-  string description = 6;
-  int64 audit_time = 7;
-  string asset_id = 8;
-  string default_place_name = 9;
-  repeated rpcmsg.CommonGamePlace common_game_places = 10;
-  repeated rpcmsg.GamePlace game_places = 11;
-  rpcmsg.GamePublicStatus public_status = 12;
-}
-
-message HubBannerStateInput {
+message EditHubBannerState {
   int64 online_unix_timestamp = 2;
   int64 offline_unix_timestamp = 3;
-  google.protobuf.BoolValue offline = 4;
+  bool offline = 4;
 }
 
-message Status {
-  int64 code = 2;
-  string msg = 3;
+message AssetProductAuditedConnection {
+  repeated AssetProductAuditedItem nodes = 2;
+  int64 total_count = 3;
 }
 
-message WashAssetsTransactionAddPayload {
-  repeated WashAssetsTransactionAddResItem list = 2;
+message FixActivityIndexPayload {
+  google.protobuf.StringValue error = 2;
 }
 
-message AssetWorld {
-  string id = 2;
-  string title = 3;
-  repeated string covers_url = 4;
-  repeated Asset assets = 5;
-  google.protobuf.Int64Value assets_total_count = 6;
+message HomesteadSetTestToProdInput {
+  string test_game_id = 2;
+}
+
+message UpdateGameHotfixDataPayload {
+  google.protobuf.StringValue err = 2;
 }
 
 message GameHotfixDataItem {
@@ -986,158 +553,157 @@ message GameHotfixDataItem {
   string type = 5;
 }
 
-message RoomListInput {
-  string game_id = 2;
-  google.protobuf.StringValue room_id = 3;
-  google.protobuf.Int64Value room_num_id = 4;
-  int64 skip_len = 5;
-  int64 limit_len = 6;
-}
-
-message SetRoomEntrancePayload {
-  string room_id = 2;
-}
-
-message CreateAssetProductTagsInput {
-  repeated CreateAssetProductTagInput list = 2;
-}
-
-message UpdateGameHotfixDataInput {
-  string game_id = 2;
-  string version = 3;
-  repeated UpdateGameHotfixDataItem items = 4;
-}
-
-message AddAuthRoleToAccountInput {
-  google.protobuf.StringValue user_id = 2;
-  google.protobuf.StringValue user_name = 3;
-  string role_name = 4;
-}
-
-message DisplayGroupDetail {
-  google.protobuf.StringValue id = 2;
-  DisplayGroupSummary summary = 3;
-  repeated DisplayGroupMemberItem members = 4;
-}
-
-message EditRecommendGameInput {
-  string game_id = 2;
-  google.protobuf.Int64Value index_weight = 3;
-  google.protobuf.Int64Value heat_value = 4;
-  google.protobuf.Int64Value base_heat_value = 5;
-}
-
-message HubBannerDetail {
-  google.protobuf.StringValue language = 2;
-  google.protobuf.StringValue title = 3;
-  google.protobuf.StringValue description = 4;
-  HubBannerLink link = 5;
-  repeated AssetStoreObject image_ids = 6;
-  repeated AssetStoreObject video_ids = 7;
-  string hub_banner_id = 8;
-}
-
-message PlayerHubGameListDataViewFilter {
-  google.protobuf.StringValue name = 2;
-  google.protobuf.Int64Value begin_unix_timestamp = 3;
-  google.protobuf.Int64Value end_unix_timestamp = 4;
-}
-
-message PlayingGame {
-  string id = 2;
-  string name = 3;
-  string icon_url = 4;
-  int64 total_playing = 5;
-  int64 total_room_count = 6;
-}
-
-message UpdateAssetWorldInput {
-  string id = 2;
-  google.protobuf.StringValue title = 3;
-  repeated string store_id_list = 4;
-  repeated string asset_names = 5;
-  repeated string asset_ids = 6;
-}
-
-message AssetStoreObject {
-  string url = 2;
-  string id = 3;
-}
-
-message DisplayGroupMemberItem {
-  google.protobuf.StringValue user_id = 2;
-  google.protobuf.StringValue account = 3;
-  google.protobuf.BoolValue isowner = 4;
-  User user_info = 5;
-}
-
-message MultiHomesteadRoomUserListPayload {
-  repeated MultiHomesteadRoomUserVo user_list = 2;
+message GetMasterpieceResponse {
+  repeated Masterpiece list = 2;
   int64 total_count = 3;
 }
 
-message Room {
-  string game_id = 2;
-  string asset_id = 3;
-  string place_name = 4;
-  string room_id = 5;
-  int64 room_number_id = 6;
-  RoomPolicy room_policy = 7;
-  string country_code = 8;
-  bool isopen = 9;
-  int64 min_players = 10;
-  int64 max_players = 11;
-  int64 cur_players = 12;
-  int64 ping = 13;
-  RoomDevData dev_data = 14;
+message RecommendUserInput {
+  string id = 2;
+  google.protobuf.StringValue title = 3;
 }
 
-message DeleteHubBannerInput {
+message Device {
   string id = 2;
+  string identification_type = 3;
+}
+
+message SortHubBannerInput {
+  string hub_banner_id = 2;
+  int64 index = 3;
+}
+
+message SpeInput {
+  string expr = 2;
+  repeated google.protobuf.StringValue args = 3;
+}
+
+message WashAssetsTransactionAddInput {
+  repeated WashAssetsTransactionAddItem list = 2;
+  string session_id = 3;
+}
+
+message AddOfficialAccountInput {
+  repeated string user_ids = 2;
+  string type = 3;
+}
+
+message AssetProductAuditPayload {
+  bool changed = 2;
+}
+
+message SetAssetIndexWeightInput {
+  repeated AssetIndexWeight assets = 2;
+}
+
+message AssetProductAssetItem {
+  Asset asset_info = 2;
+  Asset old_asset_info = 3;
+  AssetProductConvertibleConnection other_candidates = 4;
+}
+
+message DeleteVersionNoticeInput {
+  string id = 2;
+}
+
+message MarketAssetListInput {
+  google.protobuf.StringValue author_id = 2;
+  google.protobuf.StringValue keyword = 3;
+  google.protobuf.StringValue asset_sort_type = 4;
+  google.protobuf.StringValue archive_type = 5;
+  google.protobuf.StringValue recommend_type = 6;
+  google.protobuf.StringValue public_type = 7;
+  google.protobuf.StringValue audit_type = 8;
+  google.protobuf.StringValue asset_type = 9;
+  repeated int64 contain_types = 10;
+  repeated string tags = 11;
+  repeated string asset_ids = 12;
+  repeated int64 asset_levels = 13;
+  repeated int64 category_id_list = 14;
+  int64 skip_len = 15;
+  int64 limit_len = 16;
+}
+
+message AssetStoreDataViewPayload {
+  repeated AssetStoreDataViewItem list = 2;
+  int64 count = 3;
 }
 
 message DeleteRoomPayload {
   string room_id = 2;
 }
 
-message GiveUserRandomEditorAvatarSuit13585Item {
-  string email = 2;
-  google.protobuf.StringValue suit_id = 3;
+message DeleteMultiHomesteadRoomUserPayload {
+  bool ok = 2;
 }
 
-message GiveUserRandomEditorAvatarSuit13585Result {
-  repeated GiveUserRandomEditorAvatarSuit13585Item users = 2;
-}
-
-message DeleteBmsPushNotifyRequest {
-  repeated string ids = 2;
-}
-
-message DeleteMultiHomesteadRoomWhiteUserInput {
+message DevActivityParticipantsItem {
   string user_id = 2;
+  google.protobuf.StringValue account = 3;
 }
 
-message UpdateAssetInput {
-  AssetFilter filter = 2;
-  AssetUpdater updater = 3;
+message SetCelebrityPayload {
+  string error = 2;
 }
 
-message VersionNoticeInput {
-  int64 limit_len = 2;
-  int64 skip_len = 3;
-  google.protobuf.StringValue title = 4;
-  google.protobuf.StringValue version = 5;
-  google.protobuf.BoolValue isrelease = 6;
-  google.protobuf.StringValue content = 7;
+message AssetWorldListInput {
+  int64 skip_len = 2;
+  int64 limit_len = 3;
+  google.protobuf.Int64Value max_archive_version_limit = 4;
 }
 
-message DevActivityDetailListResult {
-  repeated DisplayDevActivityDetail list = 2;
-  google.protobuf.Int64Value total_count = 3;
+message BmsLoginReply {
+  string token = 2;
+  string name = 3;
+  string role = 4;
+  repeated string authority_list = 5;
 }
 
-message FixAssetEffectResult {
-  repeated RecheckAsset list = 2;
+message DisplayPlayerHubGameSummary {
+  string id = 2;
+  string name = 3;
+  int64 upvotes = 4;
+  int64 downvotes = 5;
+  int64 favorites = 6;
+  int64 comments = 7;
+  string last_publish_time = 8;
+  string location = 9;
+}
+
+message GameUpdate {
+  google.protobuf.StringValue video_store_id = 2;
+  google.protobuf.StringValue video_cover_store_id = 3;
+  repeated string tags = 4;
+  google.protobuf.StringValue developer_id = 5;
+  google.protobuf.StringValue developer_speaking = 6;
+  google.protobuf.StringValue location = 7;
+}
+
+message MultiHomesteadRoomUserListInput {
+  int64 skip_len = 2;
+  int64 limit_len = 3;
+  google.protobuf.StringValue user_id = 4;
+}
+
+message AddAuthRoleToAccountPayload {
+  bool ok = 2;
+}
+
+message AddCoinResponse {
+  int64 gold_cash = 2;
+}
+
+message AddOfficialAccountPayload {
+  google.protobuf.StringValue err = 2;
+}
+
+message VersionNoticePayload {
+  repeated VersionNotice notice_list = 2;
+  int64 total_count = 3;
+}
+
+message WashAssetsTransactionActListPayload {
+  repeated WashAssetsTransactionActItem list = 2;
 }
 
 message RecommendGame {
@@ -1158,46 +724,173 @@ message RecommendGame {
   google.protobuf.Int64Value previously_max_online_player_count = 16;
 }
 
-message UpdateAssetsVersionInfoItem {
-  string asset_id = 2;
-  google.protobuf.StringValue platform = 3;
-  google.protobuf.StringValue min_client_version = 4;
-  string store_id = 5;
-  string hash = 6;
+message RemoveOfficialAccountPayload {
+  google.protobuf.StringValue err = 2;
 }
 
-message AssetProductAssetItem {
-  Asset asset_info = 2;
-  Asset old_asset_info = 3;
-  AssetProductConvertibleConnection other_candidates = 4;
+message UpdateHubBannerPayload {
+  string error = 2;
 }
 
-message AuthRoleInput {
-  google.protobuf.StringValue id = 2;
-  google.protobuf.StringValue name = 3;
+message AddMultiHomesteadRoomUserPayload {
+  bool ok = 2;
 }
 
-message EditGameBaseHeatValueInput {
+message DeleteAssetProductTagsPayload {
+  google.protobuf.Int64Value update_count = 2;
+}
+
+message MultiHomesteadRoomUserListPayload {
+  repeated MultiHomesteadRoomUserVo user_list = 2;
+  int64 total_count = 3;
+}
+
+message DeletePlayerHubGameCommentPayload {
+  Status status = 2;
+}
+
+message PublishUndoGameInput {
   string game_id = 2;
-  int64 base_heat_value = 3;
+  string version = 3;
+  repeated string reason = 4;
+  string description = 5;
+}
+
+message PostAttachment {
+  string name = 2;
+  string type = 3;
+  string url = 4;
 }
 
 message RemoveAccountAuthRolePayload {
   bool ok = 2;
 }
 
-message DeleteOfficialWebsiteBannerRequest {
+message AllOfficialAssetAccountPayload {
+  repeated OfficialAssetAccount list = 2;
+  google.protobuf.Int64Value total_count = 3;
+}
+
+message AssetWorld {
+  string id = 2;
+  string title = 3;
+  repeated string covers_url = 4;
+  repeated Asset assets = 5;
+  google.protobuf.Int64Value assets_total_count = 6;
+}
+
+message DeleteAuthRoleInput {
+  google.protobuf.StringValue id = 2;
+  google.protobuf.StringValue name = 3;
+}
+
+message GetOfficialWebsiteBannerResponse {
+  repeated OfficialWebsiteBanner list = 2;
+  int64 total_count = 3;
+}
+
+message AssetProductAuditInput {
+  repeated string asset_ids = 2;
+  string action = 3;
+}
+
+message AssetProductTagText {
+  google.protobuf.StringValue lang = 2;
+  google.protobuf.StringValue text = 3;
+  google.protobuf.StringValue create_at = 4;
+}
+
+message BmsOperationRecordInput {
+  google.protobuf.StringValue keyword = 2;
+  google.protobuf.StringValue operationer = 3;
+  google.protobuf.StringValue operation = 4;
+  google.protobuf.StringValue module_name = 5;
+  int64 skip_len = 6;
+  int64 limit_len = 7;
+  int64 begin_unix_timestamp = 8;
+  int64 end_unix_timestamp = 9;
+}
+
+message Room {
+  string game_id = 2;
+  string asset_id = 3;
+  string place_name = 4;
+  string room_id = 5;
+  int64 room_number_id = 6;
+  RoomPolicy room_policy = 7;
+  string country_code = 8;
+  bool isopen = 9;
+  int64 min_players = 10;
+  int64 max_players = 11;
+  int64 cur_players = 12;
+  int64 ping = 13;
+  RoomDevData dev_data = 14;
+}
+
+message DeleteHubBannerPayload {
+  string error = 2;
+}
+
+message FixAssetAddProductInfoPayload {
+  int64 update_count = 2;
+}
+
+message GetBmsPushNotifyResponse {
+  repeated BmsPushNotify list = 2;
+  int64 total_count = 3;
+}
+
+message GenGameTinyCodeReply {
+  string code = 2;
+}
+
+message UpdateGameHotfixDataInput {
+  string game_id = 2;
+  string version = 3;
+  repeated UpdateGameHotfixDataItem items = 4;
+}
+
+message WashAssetsTransactionAddPayload {
+  repeated WashAssetsTransactionAddResItem list = 2;
+}
+
+message GetBmsPushNotifyRequest {
   repeated string ids = 2;
-  string banner_type = 3;
+  google.protobuf.Int64Value search_push_time_begin = 3;
+  google.protobuf.Int64Value search_push_time_end = 4;
+  google.protobuf.StringValue push_content = 5;
+  google.protobuf.StringValue push_content_key_word = 6;
+  google.protobuf.StringValue content_type = 7;
+  google.protobuf.StringValue state = 8;
+  google.protobuf.StringValue sort_type = 9;
+  int64 skip_len = 10;
+  int64 limit_len = 11;
 }
 
-message DevActivityParticipantsItem {
-  string user_id = 2;
-  google.protobuf.StringValue account = 3;
+message ModifyDevGroupMemberItem {
+  string member_account = 2;
+  bool isdelete_not_add = 3;
 }
 
-message HomesteadSetTestToProdInput {
-  string test_game_id = 2;
+message SetGameRecommendWordsInput {
+  string game_id = 2;
+  string recommend_words = 3;
+}
+
+message VersionNoticeBaseInput {
+  string title = 2;
+  string os = 3;
+  string detail = 4;
+  string language = 5;
+}
+
+message BannerLink {
+  string type = 2;
+  string url = 3;
+  string game_id = 4;
+  string game_name = 5;
+  string game_collection_id = 6;
+  string room_owner_id = 7;
 }
 
 message PostConnection {
@@ -1207,13 +900,603 @@ message PostConnection {
   int64 total_count = 5;
 }
 
-message UpdateAuthRolePayload {
-  bool ok = 2;
+message Status {
+  int64 code = 2;
+  string msg = 3;
+}
+
+message RecommendUsersPayload {
+  repeated CommunityRecommendUser users = 2;
+}
+
+message RoomListPayload {
+  repeated Room list = 2;
+  int64 total_count = 3;
+}
+
+message UpdateAssetWorldInput {
+  string id = 2;
+  google.protobuf.StringValue title = 3;
+  repeated string store_id_list = 4;
+  repeated string asset_names = 5;
+  repeated string asset_ids = 6;
+}
+
+message AssetProductAuditingItem {
+  Asset asset_info = 2;
+  Asset old_asset_info = 3;
+}
+
+message DeleteRoomInput {
+  string room_id = 2;
+}
+
+message DisplayDevActivitySummary {
+  google.protobuf.StringValue id = 2;
+  google.protobuf.StringValue title = 3;
+  google.protobuf.Int64Value grouped_sum = 4;
+  google.protobuf.Int64Value published_game_sum = 5;
+  google.protobuf.Int64Value participant_sum = 6;
+  google.protobuf.Int64Value begin_time = 7;
+  google.protobuf.Int64Value end_time = 8;
+  google.protobuf.Int64Value registration_deadline = 9;
+  google.protobuf.Int64Value priority = 10;
+  google.protobuf.BoolValue hide_in_editor_project_panel = 11;
+  google.protobuf.StringValue activity_type = 12;
+  google.protobuf.StringValue jump_type = 13;
+  google.protobuf.StringValue link = 14;
+  google.protobuf.StringValue state = 15;
+}
+
+message FixAssetEffectResult {
+  repeated RecheckAsset list = 2;
+}
+
+message HubBanner {
+  string id = 2;
+  string module_type = 3;
+  string page_type = 4;
+  int64 index = 5;
+  repeated HubBannerDetail hub_banner_detail = 6;
+  EditHubBannerState edit_state = 7;
+  string state = 8;
+}
+
+message RestorePlayerHubGameCommentPayload {
+  Status status = 2;
+}
+
+message AccountAuthRolePayload {
+  repeated string auth_roles = 2;
+}
+
+message DeleteOfficialWebsiteBannerRequest {
+  repeated string ids = 2;
+  string banner_type = 3;
+}
+
+message DeletePostInput {
+  string post_id = 2;
+}
+
+message RemoveAccountAuthRoleInput {
+  google.protobuf.StringValue user_id = 2;
+  google.protobuf.StringValue user_name = 3;
+  repeated string role_names = 4;
+}
+
+message SortBannerPayload {
+  string error = 2;
+}
+
+message UpdateAssetProductTagsInput {
+  repeated UpdateAssetProductTagInput list = 2;
+}
+
+message User {
+  string id = 2;
+  string name = 3;
+  google.protobuf.StringValue icon_id = 4;
+  string avatar = 5;
+  int64 number_id = 6;
+  string email = 7;
 }
 
 message AssetProductTagTextInput {
   string lang = 2;
   google.protobuf.StringValue text = 3;
+}
+
+message PlayingGame {
+  string id = 2;
+  string name = 3;
+  string icon_url = 4;
+  int64 total_playing = 5;
+  int64 total_room_count = 6;
+}
+
+message UpdateGameHotfixDataItem {
+  string key = 2;
+  string remarks = 3;
+  string jsondata = 4;
+  string type = 5;
+}
+
+message GameVersionSummary {
+  string game_id = 2;
+  string name = 3;
+  int64 commit_time = 4;
+  string version = 5;
+  string description = 6;
+  int64 audit_time = 7;
+  string asset_id = 8;
+  string default_place_name = 9;
+  repeated rpcmsg.CommonGamePlace common_game_places = 10;
+  repeated rpcmsg.GamePlace game_places = 11;
+  rpcmsg.GamePublicStatus public_status = 12;
+}
+
+message LoginBmsInput {
+  string account = 2;
+  string password = 3;
+}
+
+message PlayerHubGameListDataViewPayload {
+  repeated DisplayPlayerHubGameSummary list = 2;
+  google.protobuf.Int64Value total_count = 3;
+}
+
+message FixAssetAddProductInfoInput {
+  int64 limit = 2;
+}
+
+message ReleaseVersionNoticeInput {
+  string id = 2;
+  string release_mode = 3;
+  google.protobuf.Int64Value timing = 4;
+}
+
+message UpdateBmsPushNotifyRequest {
+  google.protobuf.BoolValue push_immediately = 2;
+  string id = 3;
+  google.protobuf.Int64Value push_time = 4;
+  google.protobuf.StringValue push_content = 5;
+  google.protobuf.StringValue game_id = 6;
+  google.protobuf.StringValue post_id = 7;
+  google.protobuf.StringValue content_type = 8;
+}
+
+message OfficialAssetAccount {
+  string id = 2;
+  string email = 3;
+  string nick_name = 4;
+}
+
+message RestorePlayerHubGameCommentInput {
+  string comment_id = 2;
+}
+
+message AssetProductAuditedItem {
+  Asset asset_info = 2;
+}
+
+message HubBannerCollectionConnection {
+  repeated HubBannerCollection nodes = 2;
+  int64 total_count = 3;
+}
+
+message MarketAssetListPayload {
+  repeated Asset list = 2;
+  google.protobuf.Int64Value total_count = 3;
+}
+
+message HubBannerLinkInput {
+  string type = 2;
+  string url = 3;
+  string game_id = 4;
+  string room_owner_id = 5;
+}
+
+message AddPlayerHubGameUserCommentInput {
+  string game_id = 2;
+  string user_id = 3;
+  string comment = 4;
+}
+
+message Banner {
+  int64 id = 2;
+  string title = 3;
+  string type = 4;
+  repeated string thumbnail_urls = 5;
+  BannerLink link = 6;
+  EditBannerState edit_state = 7;
+  string state = 8;
+  google.protobuf.StringValue show_policy = 9;
+  google.protobuf.StringValue hide_policy = 10;
+}
+
+message BuildUserNumberIDWhenUserNoNumberIDItem {
+  string email = 2;
+  string user_id = 3;
+  int64 number_id = 4;
+}
+
+message AssetStoreDataViewItem {
+  string asset_id = 2;
+  string asset_name = 3;
+  string platform = 4;
+  string min_client_version = 5;
+  string sha256 = 6;
+  string store_id = 7;
+  string store_url = 8;
+}
+
+message CreateVersionNoticeInput {
+  string version = 2;
+  repeated VersionNoticeBaseInput notice_list = 3;
+}
+
+message OSSPolicy {
+  int64 oss_service = 2;
+  string access_id = 3;
+  string host = 4;
+  int64 expire = 5;
+  string signature = 6;
+  string policy = 7;
+  string dir = 8;
+  google.protobuf.StringValue tofile_name = 9;
+  google.protobuf.StringValue callback = 10;
+}
+
+message HomesteadSetGamePayload {
+  bool ok = 2;
+}
+
+message HomesteadSetHidePayload {
+  bool ok = 2;
+}
+
+message UpdateAssetPayload {
+  bool ok = 2;
+}
+
+message DeleteDevicesInput {
+  repeated string devices_id = 2;
+  string identification_type = 3;
+}
+
+message EditRecommendGameInput {
+  string game_id = 2;
+  google.protobuf.Int64Value index_weight = 3;
+  google.protobuf.Int64Value heat_value = 4;
+  google.protobuf.Int64Value base_heat_value = 5;
+}
+
+message GameListDataViewInput {
+  google.protobuf.StringValue author_filter = 2;
+  google.protobuf.StringValue filter = 3;
+  google.protobuf.StringValue visibility_filter = 4;
+  google.protobuf.StringValue sorter = 5;
+  google.protobuf.StringValue grouper = 6;
+  google.protobuf.Int64Value skip_len = 7;
+  google.protobuf.Int64Value limit_len = 8;
+  google.protobuf.StringValue name_filter = 9;
+  google.protobuf.StringValue mode = 10;
+  google.protobuf.StringValue auditor_filter = 11;
+}
+
+message GameComment {
+  string id = 2;
+  string game_id = 3;
+  string game_name = 4;
+  string commentator_id = 5;
+  string commentator_name = 6;
+  string commentator_icon_url = 7;
+  string visibility = 8;
+  string comment = 9;
+  string timestamp = 10;
+}
+
+message DeletePlayerHubGameCommentInput {
+  string comment_id = 2;
+}
+
+message GiveUserRandomEditorAvatarSuit13585Item {
+  string email = 2;
+  google.protobuf.StringValue suit_id = 3;
+}
+
+message GroupListDataViewResult {
+  repeated DisplayGroupSummary list = 2;
+  google.protobuf.Int64Value total_count = 3;
+}
+
+message SetAllRoomsEntranceOffPayload {
+  int64 code = 2;
+  string msg = 3;
+}
+
+message UpdateAssetWorldPayload {
+  bool ok = 2;
+  repeated FailAssetItem fail_asset_item = 3;
+}
+
+message AddMultiHomesteadRoomUserInput {
+  string user_id = 2;
+}
+
+message AssetWorldInput {
+  string id = 2;
+  google.protobuf.StringValue sort_type = 3;
+  google.protobuf.Int64Value max_archive_version_limit = 4;
+  google.protobuf.Int64Value min_archive_version_limit = 5;
+  google.protobuf.Int64Value skip_len = 6;
+  google.protobuf.Int64Value limit_len = 7;
+}
+
+message AuthRoleInput {
+  google.protobuf.StringValue id = 2;
+  google.protobuf.StringValue name = 3;
+}
+
+message UpdateDevicesInput {
+  repeated string devices_id = 2;
+  string identification_type = 3;
+}
+
+message AllOfficialAssetAccountInput {
+  int64 skip_len = 2;
+  int64 limit_len = 3;
+}
+
+message GetGameCollectionResponse {
+  repeated GameCollection list = 2;
+  int64 total_count = 3;
+}
+
+message UpdateAssetProductTagsPayload {
+  google.protobuf.Int64Value update_count = 2;
+}
+
+message HubUserListV2Payload {
+  repeated rpcmsg.DisplayHubUser list = 2;
+  int64 total_count = 3;
+}
+
+message RoomPolicy {
+  bool switcher_open_or_not = 2;
+  bool bms_room_open = 3;
+}
+
+message DeleteAssetWorldInput {
+  string id = 2;
+}
+
+message DisplayDevActivityDetail {
+  DisplayDevActivitySummary summary = 2;
+  repeated string banner_urls = 3;
+  google.protobuf.StringValue description_markdown = 4;
+  google.protobuf.StringValue description_html = 5;
+  google.protobuf.StringValue sign_up_description_markdown = 6;
+  google.protobuf.StringValue sign_up_description_html = 7;
+  repeated string description_urls = 8;
+  google.protobuf.StringValue belt_url = 9;
+}
+
+message FailAssetItem {
+  string label = 2;
+  string reason = 3;
+}
+
+message PlayerHubGameCommentListInput {
+  google.protobuf.Int64Value begin_unix_timestamp = 2;
+  google.protobuf.Int64Value end_unix_timestamp = 3;
+  string visibility = 4;
+  google.protobuf.StringValue user_id = 5;
+  google.protobuf.StringValue game_id = 6;
+  google.protobuf.StringValue game_name = 7;
+  int64 skip_len = 8;
+  int64 limit_len = 9;
+}
+
+message UpdateHubBannerInput {
+  string id = 2;
+  string language = 3;
+  google.protobuf.StringValue title = 4;
+  google.protobuf.StringValue description = 5;
+  HubBannerLinkInput link = 6;
+  repeated string image_ids = 7;
+  repeated string video_ids = 8;
+  google.protobuf.Int64Value index = 9;
+  google.protobuf.BoolValue offline = 10;
+  HubBannerStateInput edit_state = 11;
+}
+
+message CreateHubBannerInput {
+  string language = 2;
+  google.protobuf.StringValue title = 3;
+  google.protobuf.StringValue description = 4;
+  HubBannerLinkInput link = 5;
+  repeated string image_ids = 6;
+  repeated string video_ids = 7;
+  google.protobuf.Int64Value index = 8;
+  google.protobuf.StringValue page = 9;
+  google.protobuf.StringValue module = 10;
+  HubBannerStateInput edit_state = 11;
+}
+
+message GameBaseHeatValueInput {
+  string game_id = 2;
+}
+
+message GroupListDataViewInput {
+  google.protobuf.StringValue filter = 2;
+  google.protobuf.StringValue sorter = 3;
+  google.protobuf.Int64Value skip_len = 4;
+  google.protobuf.Int64Value limit_len = 5;
+  google.protobuf.StringValue owner_account_filter = 6;
+  google.protobuf.StringValue act_name_filter = 7;
+}
+
+message GameCollection {
+  google.protobuf.StringValue id = 2;
+  google.protobuf.StringValue title = 3;
+  google.protobuf.StringValue create_time = 4;
+  google.protobuf.Int64Value index = 5;
+  repeated string covers_url = 6;
+  google.protobuf.StringValue brief_introduction = 7;
+  repeated GameCollectionGame game_collection_games = 8;
+}
+
+message GameHotfixData {
+  string game_id = 2;
+  string version = 3;
+  repeated GameHotfixDataItem items = 4;
+}
+
+message SetRoomEntranceInput {
+  string room_id = 2;
+  bool open = 3;
+}
+
+message SwapBannerInput {
+  string banner_type = 2;
+  int64 banner_id1 = 3;
+  int64 banner_id2 = 4;
+}
+
+message UpdateAuthRoleInput {
+  google.protobuf.StringValue id = 2;
+  google.protobuf.StringValue name = 3;
+  repeated string authority_list = 4;
+  google.protobuf.StringValue description = 5;
+}
+
+message AuthorityInput {
+  repeated string not = 2;
+  repeated string every = 3;
+  repeated google.protobuf.StringValue any = 4;
+  SpeInput spe = 5;
+}
+
+message GetOfficialWebsiteBannerRequest {
+  repeated string ids = 2;
+  google.protobuf.StringValue title = 3;
+  google.protobuf.StringValue state_filter = 4;
+  google.protobuf.StringValue key_word = 5;
+  google.protobuf.StringValue banner_type = 6;
+  google.protobuf.Int64Value begin_time = 7;
+  google.protobuf.Int64Value end_time = 8;
+  int64 skip_len = 9;
+  int64 limit_len = 10;
+}
+
+message HomesteadItem {
+  string game_id = 2;
+  bool hidden = 3;
+  Game game = 4;
+}
+
+message GameAuditResultInput {
+  bool pass = 2;
+  repeated string reason = 3;
+  google.protobuf.StringValue description = 4;
+  google.protobuf.StringValue check_code = 5;
+}
+
+message RestorePostInput {
+  string id = 2;
+}
+
+message SetAllRoomsEntranceOffInput {
+  int64 before_timestamp = 2;
+}
+
+message AssetIndexWeight {
+  string id = 2;
+  int64 weight = 3;
+}
+
+message AssetProductTag {
+  string id = 2;
+  repeated AssetProductTagText texts = 3;
+}
+
+message AuthRolePayload {
+  string id = 2;
+  repeated string authority_list = 3;
+  string name = 4;
+  string creator = 5;
+  string description = 6;
+}
+
+message DevActivityListDataViewInput {
+  google.protobuf.StringValue filter = 2;
+  google.protobuf.StringValue sorter = 3;
+  google.protobuf.Int64Value search_begin_time = 4;
+  google.protobuf.Int64Value search_end_time = 5;
+  google.protobuf.Int64Value skip_len = 6;
+  google.protobuf.Int64Value limit_len = 7;
+  google.protobuf.StringValue name_filter = 8;
+  google.protobuf.StringValue type_filter = 9;
+  google.protobuf.StringValue jump_type_filter = 10;
+  google.protobuf.StringValue scenes = 11;
+}
+
+message DisplayGroupDetail {
+  google.protobuf.StringValue id = 2;
+  DisplayGroupSummary summary = 3;
+  repeated DisplayGroupMemberItem members = 4;
+}
+
+message PlayerHubGameCommentListPayload {
+  repeated GameComment list = 2;
+  google.protobuf.Int64Value total_count = 3;
+}
+
+message RoomListInput {
+  string game_id = 2;
+  google.protobuf.StringValue room_id = 3;
+  google.protobuf.Int64Value room_num_id = 4;
+  int64 skip_len = 5;
+  int64 limit_len = 6;
+}
+
+message VersionNoticeBase {
+  string title = 2;
+  string os = 3;
+  string detail = 4;
+  string language = 5;
+}
+
+message CreateAssetProductTagsPayload {
+  google.protobuf.Int64Value update_count = 2;
+}
+
+message DeleteMasterpieceRequest {
+  repeated string ids = 2;
+}
+
+message DevActivityDetailListResult {
+  repeated DisplayDevActivityDetail list = 2;
+  google.protobuf.Int64Value total_count = 3;
+}
+
+message ModifyHubAccountInfoInput {
+  string hub_user_id = 2;
+  string email = 3;
+  google.protobuf.StringValue password = 4;
+  string nickname = 5;
+  string phone = 6;
+}
+
+message DeleteAssetProductTagsInput {
+  repeated DeleteAssetProductTagInput list = 2;
+}
+
+message DevActivityListDataViewResult {
+  repeated DisplayDevActivitySummary list = 2;
+  google.protobuf.Int64Value total_count = 3;
 }
 
 message Game {
@@ -1264,175 +1547,113 @@ message Game {
   GameHotfixData hotfix_data = 46;
 }
 
-message GetBmsPushNotifyRequest {
-  repeated string ids = 2;
-  google.protobuf.Int64Value search_push_time_begin = 3;
-  google.protobuf.Int64Value search_push_time_end = 4;
-  google.protobuf.StringValue push_content = 5;
-  google.protobuf.StringValue push_content_key_word = 6;
-  google.protobuf.StringValue content_type = 7;
-  google.protobuf.StringValue state = 8;
-  google.protobuf.StringValue sort_type = 9;
-  int64 skip_len = 10;
-  int64 limit_len = 11;
+message DevActivityParticipantsResult {
+  repeated DevActivityParticipantsItem users = 2;
 }
 
-message AssetProductAuditedItem {
-  Asset asset_info = 2;
+message RecommendRule {
+  string sort_type = 2;
+  string update_period = 3;
+  repeated string top_recommend_assets = 4;
+  int64 recommend_num = 5;
 }
 
-message DeleteAssetWorldInput {
-  string id = 2;
-}
-
-message OfficialAssetAccount {
-  string id = 2;
-  string email = 3;
-  string nick_name = 4;
-}
-
-message RecheckAsset {
-  string id = 2;
-  string name = 3;
-  repeated int64 category_list = 4;
-}
-
-message UpdateGameInput {
-  string id = 2;
-  GameUpdate update = 3;
-}
-
-message HubBanner {
-  string id = 2;
-  string module_type = 3;
-  string page_type = 4;
-  int64 index = 5;
-  repeated HubBannerDetail hub_banner_detail = 6;
-  EditHubBannerState edit_state = 7;
-  string state = 8;
-}
-
-message AssetProductAuditingItem {
-  Asset asset_info = 2;
-  Asset old_asset_info = 3;
-}
-
-message WashAssetsTransactionActListPayload {
-  repeated WashAssetsTransactionActItem list = 2;
-}
-
-message AddMultiHomesteadRoomUserPayload {
-  bool ok = 2;
-}
-
-message BmsOperationRecordInput {
-  google.protobuf.StringValue keyword = 2;
-  google.protobuf.StringValue operationer = 3;
-  google.protobuf.StringValue operation = 4;
-  google.protobuf.StringValue module_name = 5;
-  int64 skip_len = 6;
-  int64 limit_len = 7;
-  int64 begin_unix_timestamp = 8;
-  int64 end_unix_timestamp = 9;
-}
-
-message HomesteadSetHidePayload {
-  bool ok = 2;
-}
-
-message RemoveAccountAuthRoleInput {
-  google.protobuf.StringValue user_id = 2;
-  google.protobuf.StringValue user_name = 3;
-  repeated string role_names = 4;
-}
-
-message AddOfficialAccountInput {
+message RemoveOfficialAccountInput {
   repeated string user_ids = 2;
   string type = 3;
 }
 
-message DeleteAuthRoleInput {
-  google.protobuf.StringValue id = 2;
-  google.protobuf.StringValue name = 3;
+message VersionNoticeInput {
+  int64 limit_len = 2;
+  int64 skip_len = 3;
+  google.protobuf.StringValue title = 4;
+  google.protobuf.StringValue version = 5;
+  google.protobuf.BoolValue isrelease = 6;
+  google.protobuf.StringValue content = 7;
 }
 
-message HomesteadSetGamePayload {
-  bool ok = 2;
+message CreateAuthRoleInput {
+  repeated string authority_list = 2;
+  string name = 3;
+  google.protobuf.StringValue description = 4;
 }
 
-message DeletePlayerHubGameCommentPayload {
-  Status status = 2;
+message PageInfo {
+  bool has_next_page = 2;
+  bool has_previous_page = 3;
+  int64 total_count = 4;
 }
 
-message FixUserGender0ToAvatarGenderPayload {
-  int64 updated_count = 2;
+message PlayerHubGameListDataViewInput {
+  PlayerHubGameListDataViewFilter filter = 2;
+  google.protobuf.StringValue sorter = 3;
+  int64 skip_len = 4;
+  int64 limit_len = 5;
 }
 
-message HubBannerLink {
-  string type = 2;
-  string url = 3;
-  string game_id = 4;
-  string room_owner_id = 5;
-}
-
-message PostAttachment {
-  string name = 2;
-  string type = 3;
-  string url = 4;
-}
-
-message RecommendGameListInput {
-  int64 skip_len = 2;
-  int64 limit_len = 3;
-  google.protobuf.StringValue search_game_name = 4;
-  google.protobuf.Int64Value time_after = 5;
-  google.protobuf.Int64Value time_before = 6;
-  string order_by = 7;
-}
-
-message VersionNoticeBase {
+message CreateAssetWorldInput {
   string title = 2;
-  string os = 3;
-  string detail = 4;
-  string language = 5;
+  repeated string store_id_list = 3;
+  repeated string asset_names = 4;
+  repeated string asset_ids = 5;
 }
 
-message WashAssetsTransactionActStatePayload {
-  WashAssetsTransactionActItem info = 2;
+message GenGameTinyCodeInput {
+  string game_id = 2;
+  google.protobuf.StringValue bind_version = 3;
 }
 
-message GetBmsPushNotifyResponse {
-  repeated BmsPushNotify list = 2;
+message UpdateAssetInput {
+  AssetFilter filter = 2;
+  AssetUpdater updater = 3;
+}
+
+message WashAssetsTransactionAddResItem {
+  OSSPolicy policy = 2;
+  string store_id = 3;
+  string sha256 = 4;
+  string unique_id = 5;
+}
+
+message AssetProductAuditingConnection {
+  repeated AssetProductAuditingItem nodes = 2;
   int64 total_count = 3;
 }
 
-message AssetWorldInput {
-  string id = 2;
-  google.protobuf.StringValue sort_type = 3;
-  google.protobuf.Int64Value max_archive_version_limit = 4;
-  google.protobuf.Int64Value min_archive_version_limit = 5;
-  google.protobuf.Int64Value skip_len = 6;
-  google.protobuf.Int64Value limit_len = 7;
+message BmsOperationRecordPayload {
+  repeated BmsOperationRecord list = 2;
+  int64 total_count = 3;
 }
 
-message AssetFilter {
-  repeated string asset_ids = 2;
-  google.protobuf.StringValue author_id = 3;
-  google.protobuf.StringValue keyword = 4;
-  google.protobuf.StringValue asset_sort_type = 5;
-  google.protobuf.StringValue archive_type = 6;
-  google.protobuf.StringValue recommend_type = 7;
-  google.protobuf.StringValue public_type = 8;
-  google.protobuf.StringValue audit_type = 9;
-  google.protobuf.StringValue asset_type = 10;
-  repeated int64 contain_types = 11;
-  repeated string tags = 12;
-  repeated int64 asset_levels = 13;
-  repeated int64 category_id_list = 14;
+message CreateAssetProductTagsInput {
+  repeated CreateAssetProductTagInput list = 2;
 }
 
-message AssetProductAuditPayload {
-  bool changed = 2;
+message GameBaseHeatValuePayload {
+  string game_id = 2;
+  int64 base_heat_value = 3;
+}
+
+message SetAssetRecommendRuleInput {
+  string sort_type = 2;
+  string update_period = 3;
+  repeated string top_recommend_assets = 4;
+  int64 recommend_num = 5;
+  bool flush_now = 6;
+}
+
+message AddPlayerHubGameUserCommentPayload {
+  Status status = 2;
+}
+
+message AssetProductTagsPayload {
+  repeated AssetProductTag tags = 2;
+}
+
+message AssetUpdater {
+  google.protobuf.StringValue name = 2;
+  repeated int64 category_id_list = 3;
+  repeated int64 contain_types = 4;
 }
 
 message AssetSorter {
@@ -1440,134 +1661,9 @@ message AssetSorter {
   google.protobuf.BoolValue desc = 3;
 }
 
-message RoomDevData {
-  int64 room_state = 2;
-  string description = 3;
-}
-
-message SetCelebrityPayload {
-  string error = 2;
-}
-
-message UpdateAssetPayload {
-  bool ok = 2;
-}
-
-message DeleteAuthRolePayload {
-  bool ok = 2;
-}
-
-message DeleteDevicesInput {
-  repeated string devices_id = 2;
-  string identification_type = 3;
-}
-
-message HubBannerCollectionConnection {
-  repeated HubBannerCollection nodes = 2;
-  int64 total_count = 3;
-}
-
-message SetAllRoomsEntranceOffPayload {
-  int64 code = 2;
-  string msg = 3;
-}
-
-message User {
-  string id = 2;
-  string name = 3;
-  google.protobuf.StringValue icon_id = 4;
-  string avatar = 5;
-  int64 number_id = 6;
-  string email = 7;
-}
-
-message AddDevicesInput {
-  repeated string devices_id = 2;
-  string identification_type = 3;
-}
-
-message AuthRoleListPayload {
-  repeated AuthRolePayload role_list = 2;
-}
-
-message BmsOperationRecord {
-  string timestamp = 2;
-  string account = 3;
-  string name = 4;
-  string role = 5;
-  string optype = 6;
-  string module = 7;
-  string request = 8;
-  string response = 9;
-}
-
-message DeleteMasterpieceRequest {
-  repeated string ids = 2;
-}
-
-message EditBannerState {
-  int64 online_unix_timestamp = 2;
-  int64 offline_unix_timestamp = 3;
-  bool online = 4;
-}
-
-message Homestead {
-  HomesteadItem prod = 2;
-  HomesteadItem test = 3;
-}
-
-message AssetWorldListPayload {
-  repeated AssetWorld list = 2;
-  int64 total_count = 3;
-}
-
-message EditHubBannerState {
-  int64 online_unix_timestamp = 2;
-  int64 offline_unix_timestamp = 3;
-  bool offline = 4;
-}
-
-message GroupListDataViewInput {
-  google.protobuf.StringValue filter = 2;
-  google.protobuf.StringValue sorter = 3;
-  google.protobuf.Int64Value skip_len = 4;
-  google.protobuf.Int64Value limit_len = 5;
-  google.protobuf.StringValue owner_account_filter = 6;
-  google.protobuf.StringValue act_name_filter = 7;
-}
-
-message HubBannerLinkInput {
-  string type = 2;
-  string url = 3;
-  string game_id = 4;
-  string room_owner_id = 5;
-}
-
-message AssetProductConvertibleListOptInput {
-  repeated string asset_ids = 2;
-  string action = 3;
-}
-
-message CreateAssetProductTagsPayload {
-  google.protobuf.Int64Value update_count = 2;
-}
-
-message DeleteAssetProductTagInput {
-  string id = 2;
-  google.protobuf.StringValue replace_id = 3;
-  repeated string text_lang = 4;
-}
-
-message DeviceInput {
-  string identification_type = 2;
-  int64 skip_len = 3;
-  int64 limit_len = 4;
-}
-
-message MultiHomesteadRoomUserVo {
-  string user_id = 2;
-  string name = 3;
-  int64 create_at = 4;
+message RecommendGameListPayload {
+  repeated RecommendGame list = 2;
+  google.protobuf.Int64Value total_count = 3;
 }
 
 message UpdateAssetsVersionInfoInput {
@@ -1575,167 +1671,71 @@ message UpdateAssetsVersionInfoInput {
   string wash_batch = 3;
 }
 
-message AssetProductTagsPayload {
-  repeated AssetProductTag tags = 2;
+message AssetWorldListPayload {
+  repeated AssetWorld list = 2;
+  int64 total_count = 3;
 }
 
-message DeleteHubBannerPayload {
-  string error = 2;
+message DevActivityDetailListInput {
+  google.protobuf.StringValue filter = 2;
+  google.protobuf.StringValue sorter = 3;
+  google.protobuf.Int64Value search_begin_time = 4;
+  google.protobuf.Int64Value search_end_time = 5;
+  google.protobuf.Int64Value skip_len = 6;
+  google.protobuf.Int64Value limit_len = 7;
+  google.protobuf.StringValue name_filter = 8;
+  google.protobuf.StringValue type_filter = 9;
+  google.protobuf.StringValue jump_type_filter = 10;
+  google.protobuf.StringValue scenes = 11;
 }
 
-message GameUpdate {
-  google.protobuf.StringValue video_store_id = 2;
-  google.protobuf.StringValue video_cover_store_id = 3;
-  repeated string tags = 4;
-  google.protobuf.StringValue developer_id = 5;
-  google.protobuf.StringValue developer_speaking = 6;
-  google.protobuf.StringValue location = 7;
+message HubUserListV2Input {
+  google.protobuf.StringValue user_id = 2;
+  google.protobuf.StringValue email_regex = 3;
+  rpcmsg.AccountStatus account_status = 4;
+  google.protobuf.StringValue user_identity = 5;
+  int64 skip_len = 6;
+  int64 limit_len = 7;
 }
 
-message SortBannerPayload {
-  string error = 2;
+message AssetStoreObject {
+  string url = 2;
+  string id = 3;
 }
 
-message HomesteadItem {
-  string game_id = 2;
-  bool hidden = 3;
-  Game game = 4;
+message GameCollectionGame {
+  google.protobuf.StringValue game_id = 2;
+  google.protobuf.StringValue name = 3;
+  google.protobuf.StringValue author = 4;
+  google.protobuf.StringValue recommend_words = 5;
 }
 
-message HubBannerCollection {
-  int64 hub_banner_count = 2;
-  string page_type = 3;
-  string module_type = 4;
-  int64 activity = 5;
-  int64 ready = 6;
+message OfficialWebsiteBanner {
+  google.protobuf.StringValue id = 2;
+  google.protobuf.StringValue link_id = 3;
+  google.protobuf.StringValue title = 4;
+  google.protobuf.Int64Value index = 5;
+  google.protobuf.StringValue banner_type = 6;
+  google.protobuf.StringValue begin_time = 7;
+  google.protobuf.StringValue end_time = 8;
+  DisplayDevActivityDetail activity = 9;
+  Masterpiece masterpiece = 10;
 }
 
-message AddCoinResponse {
-  int64 gold_cash = 2;
-}
-
-message SetAssetIndexWeightInput {
-  repeated AssetIndexWeight assets = 2;
-}
-
-message AllOfficialAssetAccountPayload {
-  repeated OfficialAssetAccount list = 2;
+message GameListDataViewResult {
+  repeated rpcmsg.DisplayGameAuditSummary list = 2;
   google.protobuf.Int64Value total_count = 3;
 }
 
-message AssetStoreDataViewItem {
-  string asset_id = 2;
-  string asset_name = 3;
-  string platform = 4;
-  string min_client_version = 5;
-  string sha256 = 6;
-  string store_id = 7;
-  string store_url = 8;
+message LoginBmsPayload {
+  string token = 2;
+  string user_id = 3;
+  repeated string role_list = 4;
+  repeated string authority_list = 5;
 }
 
-message AuthorityInput {
-  repeated string not = 2;
-  repeated string every = 3;
-  repeated google.protobuf.StringValue any = 4;
-  SpeInput spe = 5;
-}
-
-message FailAssetItem {
-  string label = 2;
-  string reason = 3;
-}
-
-message SpeInput {
-  string expr = 2;
-  repeated google.protobuf.StringValue args = 3;
-}
-
-message AssetProductAuditedConnection {
-  repeated AssetProductAuditedItem nodes = 2;
-  int64 total_count = 3;
-}
-
-message GameListDataViewInput {
-  google.protobuf.StringValue author_filter = 2;
-  google.protobuf.StringValue filter = 3;
-  google.protobuf.StringValue visibility_filter = 4;
-  google.protobuf.StringValue sorter = 5;
-  google.protobuf.StringValue grouper = 6;
-  google.protobuf.Int64Value skip_len = 7;
-  google.protobuf.Int64Value limit_len = 8;
-  google.protobuf.StringValue name_filter = 9;
-  google.protobuf.StringValue mode = 10;
-  google.protobuf.StringValue auditor_filter = 11;
-}
-
-message EditVersionNoticeInput {
+message UpdateAssetProductTagInput {
   string id = 2;
-  string version = 3;
-  repeated VersionNoticeBaseInput notice_list = 4;
-}
-
-message GameBaseHeatValueInput {
-  string game_id = 2;
-}
-
-message GetOfficialWebsiteBannerResponse {
-  repeated OfficialWebsiteBanner list = 2;
-  int64 total_count = 3;
-}
-
-message AccountAuthRolePayload {
-  repeated string auth_roles = 2;
-}
-
-message DeleteMultiHomesteadRoomUserPayload {
-  bool ok = 2;
-}
-
-message RecommendUserInput {
-  string id = 2;
-  google.protobuf.StringValue title = 3;
-}
-
-message UpdateGameHotfixDataItem {
-  string key = 2;
-  string remarks = 3;
-  string jsondata = 4;
-  string type = 5;
-}
-
-message VersionNoticePayload {
-  repeated VersionNotice notice_list = 2;
-  int64 total_count = 3;
-}
-
-message AddAuthRoleToAccountPayload {
-  bool ok = 2;
-}
-
-message AllOfficialAssetAccountInput {
-  int64 skip_len = 2;
-  int64 limit_len = 3;
-}
-
-message CommunityRecommendUser {
-  string id = 2;
-  google.protobuf.StringValue title = 3;
-  string name = 4;
-  string avatar = 5;
-}
-
-message CreateVersionNoticeInput {
-  string version = 2;
-  repeated VersionNoticeBaseInput notice_list = 3;
-}
-
-message DeletePostInput {
-  string post_id = 2;
-}
-
-message SwapBannerInput {
-  string banner_type = 2;
-  int64 banner_id1 = 3;
-  int64 banner_id2 = 4;
+  repeated AssetProductTagTextInput texts = 3;
 }
 

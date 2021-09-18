@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package email;
+
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/wrappers.proto";
+import "avatar/email/types.proto";
+
+option go_package = "solarland/backendv2/proto/gen/go/avatar/email";
+
+message BatchFetchUser{{ .ModelName }}Request {
+  string receiver_id = 1;
+  string game_id = 2;
+  int32 page = 3;
+  int32 per_page_num = 4;
+}
+
+message BatchFetchUser{{ .ModelName }}Response {
+  repeated {{ .ModelName }} email_list = 1;
+}
+
+message FetchUser{{ .ModelName }}Request {
+  string email_id = 1;
+  string game_id = 2;
+}
+
+message FetchUser{{ .ModelName }}Response {
+  {{ .ModelName }} email = 1;
+}
+
+message Send{{ .ModelName }}2UserRequest {
+  string sender_id = 1;
+  repeated string receiver_id_list = 2;
+  string content = 3;
+  bool is_priority = 4;
+  int64 send_time = 5;
+  string game_id = 6;
+}
+
+message Send{{ .ModelName }}2UserResponse {
+
+}
+
+message Delete{{ .ModelName }}Request {
+  string email_id = 1;
+  string game_id = 2;
+}
+
+message Delete{{ .ModelName }}Response {
+
+}
+
+message Modify{{ .ModelName }}Request {
+  string email_id = 1;
+  string game_id = 2;
+  google.protobuf.BoolValue is_read = 3;
+  google.protobuf.BoolValue is_operated = 4;
+}
+
+message Modify{{ .ModelName }}Response {
+
+}
+
+message {{ .ModelName }}LikeRequest {
+  string email_id = 1;
+  string game_id = 2;
+  string like_player = 3;
+  string liked_player = 4;
+}
+
+message {{ .ModelName }}LikeResponse {
+
+}
+
+message Get{{ .ModelName }}LikeInfoRequest {
+  string email_id = 1;
+  string game_id = 2;
+}
+
+message Get{{ .ModelName }}LikeInfoResponse {
+  repeated {{ .ModelName }}Like email_like_list = 1;
+}
+
+service {{ .ModelName }}Service {
+  rpc BatchFetchUser{{ .ModelName }}(BatchFetchUser{{ .ModelName }}Request)returns(BatchFetchUser{{ .ModelName }}Response);  // 批量获取用户邮件
+  rpc FetchUser{{ .ModelName }}(FetchUser{{ .ModelName }}Request)returns(FetchUser{{ .ModelName }}Response);  // 获取用户单封邮件
+  rpc Send{{ .ModelName }}2User(Send{{ .ModelName }}2UserRequest)returns(Send{{ .ModelName }}2UserResponse); // 发邮件给用户
+  rpc Delete{{ .ModelName }}(Delete{{ .ModelName }}Request)returns(Delete{{ .ModelName }}Response); // 删除邮件
+  rpc Modify{{ .ModelName }}(Modify{{ .ModelName }}Request)returns(Modify{{ .ModelName }}Response); // 改动邮件状态
+  rpc {{ .ModelName }}Like({{ .ModelName }}LikeRequest)returns({{ .ModelName }}LikeResponse); // 邮件点赞（奇怪的需求）
+  rpc Get{{ .ModelName }}LikeInfo(Get{{ .ModelName }}LikeInfoRequest)returns(Get{{ .ModelName }}LikeInfoResponse); // 获取邮件的点赞信息
+}

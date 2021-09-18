@@ -3,16 +3,17 @@ package main
 import (
 	"fmt"
 	"genserver/genserver/gencore"
+	"genserver/genserver/helper"
 	"genserver/genserver/model"
 )
 
 func main() {
 	mv := model.MyEnv{
-		ServerName:      "",
-		PortName:        "",
+		ServerName:      "Email",
+		UsePort:         "9233",
 		ProjectBasePath: "C:/Users/Administrator/GoProjects/src/solarland/backendv2",
-		Entity: []*model.MyEntity{{
-			Name: "",
+		EntityList: []*model.MyEntity{{
+			ModelName: "Email",
 			Fields: []*model.MyField{{
 				Name: "",
 				Type: "",
@@ -27,20 +28,52 @@ func main() {
 		ProtoPath:   "/deploy/app/base/proto/avatar", // /email/grpc.proto
 		GraphqlPath: "/deploy/app/base/proto/avatar", // /email/grpc.proto
 		GatePath:    "/cluster/gate/gate",            // /email.go
-		ConfigPath:  "/cluster/config/config.yaml",
-		// ConfigPath:     "/cluster/config/config.go",
+		ConfigPath:  "/cluster/config",
+		BundlePath:  "/infra/wireinject/bundle",
 	}
-	checkErr(mv.Encode("yaml/env.yaml"))
-	if !gencore.CheckPath(&mv) {
+	gencore.CheckErr(mv.Encode("yaml/env.yaml"))
+	if !CheckEnv(&mv) {
 		panic("path not all right!!!")
 	}
-	port := 9233
-	insertContent := fmt.Sprintf("\temail:\n\t\tport:%v\n", port)
-	checkErr(gencore.InsertContent2File(fmt.Sprintf("%v%v", mv.ProjectBasePath, mv.ConfigPath), "service:", insertContent, gencore.PNextLine))
+
+	generator := helper.MakeGenerator()
+	generator.PreCheck(&mv)
+	generator.GenAll(&mv)
 }
 
-func checkErr(err error) {
-	if err != nil {
-		panic(err)
+// 检测环境是否正常
+func CheckEnv(m *model.MyEnv) bool {
+	if !CheckPath(m) {
+		return false
 	}
+	return true
+}
+
+//检测文件路径是否都存在
+func CheckPath(m *model.MyEnv) bool {
+	if !gencore.Exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.ClusterPath)) {
+		fmt.Println("m.ClusterPath not found")
+		return false
+	}
+	if !gencore.Exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.DeployPath)) {
+		fmt.Println("m.DeployPath not found")
+		return false
+	}
+	if !gencore.Exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.ProtoPath)) {
+		fmt.Println("m.ProtoPath not found")
+		return false
+	}
+	if !gencore.Exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.GraphqlPath)) {
+		fmt.Println("m.GraphqlPath not found")
+		return false
+	}
+	if !gencore.Exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.GatePath)) {
+		fmt.Println("m.GatePath not found")
+		return false
+	}
+	if !gencore.Exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.ConfigPath)) {
+		fmt.Println("m.ConfigPath not found")
+		return false
+	}
+	return true
 }

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package email;
+
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/wrappers.proto";
+
+option go_package = "solarland/backendv2/proto/gen/go/avatar/email";
+
+
+message {{ .ModelName }} {
+  string id = 2;
+  bool priority = 3;
+  string content = 4;
+  int64 send_time = 5;
+  int64 valid_time = 6;
+  string extra_data = 7;
+  string status = 8;
+  repeated string receive_id_list = 9;
+}
+
+message {{ .ModelName }}Like {
+  string email_id = 2;
+  string liker_player = 3;
+  string liked_player = 4;
+}
