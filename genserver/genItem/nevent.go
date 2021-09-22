@@ -11,25 +11,22 @@ import (
 )
 
 //
-type ServiceGenerate struct {
+type NeventGenerate struct {
 }
 
-func (g *ServiceGenerate) PreCheck(env *model.MyEnv) {
+func (g *NeventGenerate) PreCheck(env *model.MyEnv) {
 }
 
-var _ IGenerate = (*ServiceGenerate)(nil)
+var _ IGenerate = (*NeventGenerate)(nil)
 
-func (g ServiceGenerate) GenCode(env *model.MyEnv) {
+func (g NeventGenerate) GenCode(env *model.MyEnv) {
 	funcMap := map[string]interface{}{}
-	inputFiles := []string{"tmpl/service.tmpl"}
-	for _, v := range env.EntityList {
-		filePath := fmt.Sprintf("%v%v/internal/service/%v.go", env.ClusterPath,
-			charater.LowerFirstChar(env.ServerName), charater.LowerFirstChar(v.ModelName))
-		GenService(filePath, v.ModelName, funcMap, inputFiles, v)
-	}
+	inputFiles := []string{"tmpl/nevent.tmpl"}
+	filePath := fmt.Sprintf("%v%v/nevent.proto", env.ProtoPath, charater.LowerFirstChar(env.ServerName))
+	GenNevent(filePath, env.ServerName, funcMap, inputFiles, env)
 }
 
-func GenService(outputFile, tmplName string, funcMap template.FuncMap, inputFiles []string, entity *model.MyEntity) {
+func GenNevent(outputFile, tmplName string, funcMap template.FuncMap, inputFiles []string, entity *model.MyEnv) {
 	tmplName = ""
 	if 0 < len(inputFiles) {
 		_, fileName := filepath.Split(inputFiles[0])

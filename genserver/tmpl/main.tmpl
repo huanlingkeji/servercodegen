@@ -3,40 +3,41 @@ package email
 import (
 	"context"
 	"github.com/spf13/viper"
-	"net"
-	"solarland/backendv2/cluster/config"
+	"gorm.io/gorm"
+	"solarland/backendv2/cluster/email/internal/domain/entity"
 	"solarland/backendv2/cluster/email/internal/service"
-	"solarland/backendv2/infra/grpc"
 	"solarland/backendv2/infra/log"
 	"solarland/backendv2/pkg/run"
-	emailpb "solarland/backendv2/proto/gen/go/avatar/email"
 )
 
 type container struct {
 	*service.BasicService
+	db       *gorm.DB
+	runGroup *run.Group
 }
 
 // Run main
 func Run(ctx context.Context, cfg *viper.Viper) {
-	container, cleanup := initialize(ctx, cfg)
+	defer func() {
+		if err := recover(); err != nil {
+			log.L(ctx).Error("panic", log.Any("err", err))
+		}
+	}()
+	container, cleanup, err := initialize(ctx, cfg)
+	check(err, "email run failed")
 	defer cleanup()
-
-	gs := grpc.NewServer(ctx)
-	emailpb.Register{{ .ServerName }}ServiceServer(gs, container.BasicService)
-	gl, err := net.Listen("tcp", ":"+config.{{ .ServerName }}GRPCPort())
-	if err != nil {
-		log.L(ctx).Panic("grpc tcp listen", log.Error(err))
-	}
-	var g run.Group
-	{
-		g.Add(func() error {
-			log.L(ctx).Info("start email grpc server")
-			return gs.Serve(gl)
-		}, func(error) {
-			gs.GracefulStop()
-		})
-	}
-	if err := run.Run(&g); err != nil {
+	check(InitTables(container.db), "db init migrate failed")
+	if err := run.Run(container.runGroup); err != nil {
 		log.L(ctx).Error("runtime error", log.Error(err))
 	}
+}
+
+// InitTables 初始化表结构
+func InitTables(db *gorm.DB) error {
+	tables := []interface{}{
+		entity.Email{},
+		entity.EmailLike{},
+		entity.EmailRecord{},
+	}
+	return db.AutoMigrate(tables...)
 }

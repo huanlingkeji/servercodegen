@@ -2,51 +2,117 @@ package service
 
 import (
 	"context"
-	"solarland/backendv2/cluster/email/internal/domain/entity"
+	"solarland/backendv2/cluster/email/internal/convert"
+	"solarland/backendv2/cluster/email/internal/usecase"
 	"solarland/backendv2/infra/wireinject/bundle"
+	"solarland/backendv2/pkg/castx"
 	"solarland/backendv2/proto/gen/go/avatar/email"
 )
 
 // BasicService struct
 type BasicService struct {
-	bundle.{{ .ModelName }}ServerBasisBundle
-	{{ .ModelName }}Repository     entity.{{ .ModelName }}Repository
-	{{ .ModelName }}CordRepository entity.{{ .ModelName }}RecordRepository
+	bundle.EmailServerBasisBundle
+	EmailUseCase     usecase.EmailUseCase
+	EmailEventClient *email.EmailEventClient
 }
 
-func (b BasicService) BatchFetchUser{{ .ModelName }}(ctx context.Context, request *email.BatchFetchUser{{ .ModelName }}Request) (*email.BatchFetchUser{{ .ModelName }}Response, error) {
-	panic("implement me")
-}
-
-func (b BasicService) FetchUser{{ .ModelName }}(ctx context.Context, request *email.FetchUser{{ .ModelName }}Request) (*email.FetchUser{{ .ModelName }}Response, error) {
-	panic("implement me")
-}
-
-func (b BasicService) Send{{ .ModelName }}2User(ctx context.Context, request *email.Send{{ .ModelName }}2UserRequest) (*email.Send{{ .ModelName }}2UserResponse, error) {
-	panic("implement me")
-}
-
-func (b BasicService) Delete{{ .ModelName }}(ctx context.Context, request *email.Delete{{ .ModelName }}Request) (*email.Delete{{ .ModelName }}Response, error) {
-	panic("implement me")
-}
-
-func (b BasicService) Modify{{ .ModelName }}(ctx context.Context, request *email.Modify{{ .ModelName }}Request) (*email.Modify{{ .ModelName }}Response, error) {
-	panic("implement me")
-}
-
-func (b BasicService) {{ .ModelName }}Like(ctx context.Context, request *email.{{ .ModelName }}LikeRequest) (*email.{{ .ModelName }}LikeResponse, error) {
-	panic("implement me")
-}
-
-func (b BasicService) Get{{ .ModelName }}LikeInfo(ctx context.Context, request *email.Get{{ .ModelName }}LikeInfoRequest) (*email.Get{{ .ModelName }}LikeInfoResponse, error) {
-	panic("implement me")
-}
-
-var _ email.{{ .ModelName }}ServiceServer = (*BasicService)(nil)
+var _ email.EmailServiceServer = (*BasicService)(nil)
 
 // NewBasicService create new basicService
-func NewBasicService(baseService bundle.{{ .ModelName }}ServerBasisBundle) email.{{ .ModelName }}ServiceServer {
+func NewBasicService(baseService bundle.EmailServerBasisBundle) email.EmailServiceServer {
 	return &BasicService{
-		{{ .ModelName }}ServerBasisBundle: baseService,
+		EmailServerBasisBundle: baseService,
 	}
+}
+
+func (b BasicService) BatchFetchUserEmail(ctx context.Context, request *email.BatchFetchUserEmailRequest) (*email.BatchFetchUserEmailResponse, error) {
+	receiverId := request.ReceiverId
+	gameId := request.GameId
+	page := request.Page
+	perPageNum := request.PerPageNum
+	res, count, err := b.EmailUseCase.BatchFetchUserEmail(ctx, gameId, receiverId, page, perPageNum)
+	if err != nil {
+		return nil, err
+	}
+	ret := &email.BatchFetchUserEmailResponse{
+		EmailList:  convert.Emails2Pb(res),
+		TotalCount: count,
+	}
+	return ret, nil
+}
+
+func (b BasicService) FetchUserEmail(ctx context.Context, request *email.FetchUserEmailRequest) (*email.FetchUserEmailResponse, error) {
+	emailId := request.EmailId
+	gameId := request.GameId
+	res, err := b.EmailUseCase.FetchUserEmail(ctx, emailId, gameId)
+	if err != nil {
+		return nil, err
+	}
+	ret := &email.FetchUserEmailResponse{
+		Email: convert.Email2Pb(res),
+	}
+	return ret, nil
+}
+
+func (b BasicService) SendEmail2User(ctx context.Context, request *email.SendEmail2UserRequest) (*email.SendEmail2UserResponse, error) {
+	err := b.EmailEventClient.SendEmail(ctx, &email.SendEmailEvent{
+		SenderId:       request.SenderId,
+		ReceiverIdList: request.ReceiverIdList,
+		Content:        request.Content,
+		IsPriority:     request.IsPriority,
+		SendTime:       request.SendTime,
+		GameId:         request.GameId,
+		ValidTime:      request.ValidTime,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &email.SendEmail2UserResponse{}, nil
+}
+
+func (b BasicService) DeleteEmail(ctx context.Context, request *email.DeleteEmailRequest) (*email.DeleteEmailResponse, error) {
+	emailId := request.EmailId
+	gameId := request.GameId
+	err := b.EmailUseCase.DeleteEmail(ctx, emailId, gameId)
+	if err != nil {
+		return nil, err
+	}
+	return &email.DeleteEmailResponse{}, nil
+}
+
+func (b BasicService) ModifyEmail(ctx context.Context, request *email.ModifyEmailRequest) (*email.ModifyEmailResponse, error) {
+	emailId := request.EmailId
+	gameId := request.GameId
+	isRead := castx.BoolValue2Boolp(request.IsRead)
+	isOperated := castx.BoolValue2Boolp(request.IsOperated)
+	receiver := request.Receiver
+	err := b.EmailUseCase.ModifyEmail(ctx, emailId, gameId, receiver, isRead, isOperated)
+	if err != nil {
+		return nil, err
+	}
+	return &email.ModifyEmailResponse{}, nil
+}
+
+func (b BasicService) EmailLike(ctx context.Context, request *email.EmailLikeRequest) (*email.EmailLikeResponse, error) {
+	emailId := request.EmailId
+	gameId := request.GameId
+	likePlayer := request.LikerPlayer
+	likedPlayer := request.LikedPlayer
+	err := b.EmailUseCase.EmailLike(ctx, emailId, gameId, likePlayer, likedPlayer)
+	if err != nil {
+		return nil, err
+	}
+	return &email.EmailLikeResponse{}, nil
+}
+
+func (b BasicService) GetEmailLikeInfo(ctx context.Context, request *email.GetEmailLikeInfoRequest) (*email.GetEmailLikeInfoResponse, error) {
+	emailId := request.EmailId
+	gameId := request.GameId
+	res, err := b.EmailUseCase.GetEmailLikeInfo(ctx, emailId, gameId)
+	if err != nil {
+		return nil, err
+	}
+	return &email.GetEmailLikeInfoResponse{
+		EmailLikeList: convert.EmailLikes2Pb(res),
+	}, nil
 }

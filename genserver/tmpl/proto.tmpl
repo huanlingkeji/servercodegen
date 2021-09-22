@@ -8,85 +8,88 @@ import "avatar/email/types.proto";
 
 option go_package = "solarland/backendv2/proto/gen/go/avatar/email";
 
-message BatchFetchUser{{ .ModelName }}Request {
+message BatchFetchUserEmailRequest {
   string receiver_id = 1;
   string game_id = 2;
   int32 page = 3;
   int32 per_page_num = 4;
 }
 
-message BatchFetchUser{{ .ModelName }}Response {
-  repeated {{ .ModelName }} email_list = 1;
+message BatchFetchUserEmailResponse {
+  repeated Email email_list = 1;
+  int64 total_count = 2;
 }
 
-message FetchUser{{ .ModelName }}Request {
+message FetchUserEmailRequest {
   string email_id = 1;
   string game_id = 2;
 }
 
-message FetchUser{{ .ModelName }}Response {
-  {{ .ModelName }} email = 1;
+message FetchUserEmailResponse {
+  Email email = 1;
 }
 
-message Send{{ .ModelName }}2UserRequest {
+message SendEmail2UserRequest {
   string sender_id = 1;
   repeated string receiver_id_list = 2;
   string content = 3;
   bool is_priority = 4;
   int64 send_time = 5;
   string game_id = 6;
+  int64 valid_time = 7;
 }
 
-message Send{{ .ModelName }}2UserResponse {
+message SendEmail2UserResponse {
 
 }
 
-message Delete{{ .ModelName }}Request {
+message DeleteEmailRequest {
   string email_id = 1;
-  string game_id = 2;
+  string game_id = 2; //未使用
 }
 
-message Delete{{ .ModelName }}Response {
+message DeleteEmailResponse {
 
 }
 
-message Modify{{ .ModelName }}Request {
+message ModifyEmailRequest {
   string email_id = 1;
   string game_id = 2;
   google.protobuf.BoolValue is_read = 3;
   google.protobuf.BoolValue is_operated = 4;
+  string receiver = 5;
 }
 
-message Modify{{ .ModelName }}Response {
+message ModifyEmailResponse {
 
 }
 
-message {{ .ModelName }}LikeRequest {
+message EmailLikeRequest {
   string email_id = 1;
-  string game_id = 2;
-  string like_player = 3;
+  string game_id = 2; //未使用
+  string liker_player = 3;
   string liked_player = 4;
 }
 
-message {{ .ModelName }}LikeResponse {
+message EmailLikeResponse {
 
 }
 
-message Get{{ .ModelName }}LikeInfoRequest {
+message GetEmailLikeInfoRequest {
   string email_id = 1;
   string game_id = 2;
 }
 
-message Get{{ .ModelName }}LikeInfoResponse {
-  repeated {{ .ModelName }}Like email_like_list = 1;
+message GetEmailLikeInfoResponse {
+  repeated EmailLike email_like_list = 1;
 }
 
-service {{ .ModelName }}Service {
-  rpc BatchFetchUser{{ .ModelName }}(BatchFetchUser{{ .ModelName }}Request)returns(BatchFetchUser{{ .ModelName }}Response);  // 批量获取用户邮件
-  rpc FetchUser{{ .ModelName }}(FetchUser{{ .ModelName }}Request)returns(FetchUser{{ .ModelName }}Response);  // 获取用户单封邮件
-  rpc Send{{ .ModelName }}2User(Send{{ .ModelName }}2UserRequest)returns(Send{{ .ModelName }}2UserResponse); // 发邮件给用户
-  rpc Delete{{ .ModelName }}(Delete{{ .ModelName }}Request)returns(Delete{{ .ModelName }}Response); // 删除邮件
-  rpc Modify{{ .ModelName }}(Modify{{ .ModelName }}Request)returns(Modify{{ .ModelName }}Response); // 改动邮件状态
-  rpc {{ .ModelName }}Like({{ .ModelName }}LikeRequest)returns({{ .ModelName }}LikeResponse); // 邮件点赞（奇怪的需求）
-  rpc Get{{ .ModelName }}LikeInfo(Get{{ .ModelName }}LikeInfoRequest)returns(Get{{ .ModelName }}LikeInfoResponse); // 获取邮件的点赞信息
+service EmailService {
+  rpc BatchFetchUserEmail(BatchFetchUserEmailRequest)returns(BatchFetchUserEmailResponse);  // 批量获取用户邮件
+  rpc FetchUserEmail(FetchUserEmailRequest)returns(FetchUserEmailResponse);  // 获取用户单封邮件
+  rpc SendEmail2User(SendEmail2UserRequest)returns(SendEmail2UserResponse); // 发邮件给用户
+  rpc DeleteEmail(DeleteEmailRequest)returns(DeleteEmailResponse); // 删除邮件
+  rpc ModifyEmail(ModifyEmailRequest)returns(ModifyEmailResponse); // 改动邮件状态
+  rpc EmailLike(EmailLikeRequest)returns(EmailLikeResponse); // 邮件点赞（奇怪的需求）
+  rpc GetEmailLikeInfo(GetEmailLikeInfoRequest)returns(GetEmailLikeInfoResponse); // 获取邮件的点赞信息
 }

@@ -11,25 +11,25 @@ import (
 )
 
 //
-type ServiceGenerate struct {
+type ConvertGenerate struct {
 }
 
-func (g *ServiceGenerate) PreCheck(env *model.MyEnv) {
+func (g *ConvertGenerate) PreCheck(env *model.MyEnv) {
 }
 
-var _ IGenerate = (*ServiceGenerate)(nil)
+var _ IGenerate = (*ConvertGenerate)(nil)
 
-func (g ServiceGenerate) GenCode(env *model.MyEnv) {
+func (g ConvertGenerate) GenCode(env *model.MyEnv) {
 	funcMap := map[string]interface{}{}
-	inputFiles := []string{"tmpl/service.tmpl"}
-	for _, v := range env.EntityList {
-		filePath := fmt.Sprintf("%v%v/internal/service/%v.go", env.ClusterPath,
-			charater.LowerFirstChar(env.ServerName), charater.LowerFirstChar(v.ModelName))
-		GenService(filePath, v.ModelName, funcMap, inputFiles, v)
-	}
+	inputFiles := []string{"tmpl/convert_entity2pb.tmpl"}
+	filePath := fmt.Sprintf("%v%v/internal/convert/protobuf.go", env.ClusterPath, charater.LowerFirstChar(env.ServerName))
+	GenConvert(filePath, env.ServerName, funcMap, inputFiles, env)
+	inputFiles = []string{"tmpl/convert_pb2gen.tmpl"}
+	filePath = fmt.Sprintf("%vconvert/pb2gql_%v.go", env.GatePath, charater.LowerFirstChar(env.ServerName))
+	GenConvert(filePath, env.ServerName, funcMap, inputFiles, env)
 }
 
-func GenService(outputFile, tmplName string, funcMap template.FuncMap, inputFiles []string, entity *model.MyEntity) {
+func GenConvert(outputFile, tmplName string, funcMap template.FuncMap, inputFiles []string, entity *model.MyEnv) {
 	tmplName = ""
 	if 0 < len(inputFiles) {
 		_, fileName := filepath.Split(inputFiles[0])

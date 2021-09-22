@@ -13,7 +13,7 @@ import (
 type RepositoryGenerate struct {
 }
 
-func (g RepositoryGenerate) PreCheck(env *model.MyEnv) {
+func (g *RepositoryGenerate) PreCheck(env *model.MyEnv) {
 }
 
 var _ IGenerate = (*RepositoryGenerate)(nil)
@@ -22,7 +22,7 @@ func (g RepositoryGenerate) GenCode(env *model.MyEnv) {
 	funcMap := map[string]interface{}{}
 	inputFiles := []string{"tmpl/repository.tmpl"}
 	for _, v := range env.EntityList {
-		filePath := fmt.Sprintf("%v%v/%v/internal/repository/%v.go", env.ProjectBasePath, env.ClusterPath,
+		filePath := fmt.Sprintf("%v%v/internal/repository/%v.go", env.ClusterPath,
 			charater.LowerFirstChar(env.ServerName), charater.LowerFirstChar(v.ModelName))
 		GenRepository(filePath, v.ModelName, funcMap, inputFiles, v)
 	}

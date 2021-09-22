@@ -14,7 +14,7 @@ import (
 type EntityGenerate struct {
 }
 
-func (g EntityGenerate) PreCheck(env *model.MyEnv) {
+func (g *EntityGenerate) PreCheck(env *model.MyEnv) {
 }
 
 var _ IGenerate = (*EntityGenerate)(nil)
@@ -23,7 +23,7 @@ func (g EntityGenerate) GenCode(env *model.MyEnv) {
 	funcMap := map[string]interface{}{}
 	inputFiles := []string{"tmpl/entity.tmpl"}
 	for _, v := range env.EntityList {
-		filePath := fmt.Sprintf("%v%v/%v/internal/domain/entity/%v.go", env.ProjectBasePath, env.ClusterPath,
+		filePath := fmt.Sprintf("%v%v/internal/domain/entity/%v.go", env.ClusterPath,
 			charater.LowerFirstChar(env.ServerName), charater.LowerFirstChar(v.ModelName))
 		GenEntity(filePath, v.ModelName, funcMap, inputFiles, v)
 	}

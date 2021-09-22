@@ -2,31 +2,168 @@ package repository
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	"github.com/rs/xid"
+	"gorm.io/gorm"
 	"solarland/backendv2/cluster/email/internal/domain/entity"
+	"solarland/backendv2/infra/log"
+	gormtx "solarland/backendv2/pkg/transactional/gorm"
+	"time"
 )
 
-// {{ .ModelName }}Repository {{ .ModelName }}Repository
-type {{ .ModelName }}Repository struct {
+func generateEmailID() string {
+	return "emailid:" + xid.New().String()
 }
 
-var _ entity.{{ .ModelName }}Repository = (*{{ .ModelName }}Repository)(nil)
-
-func (e {{ .ModelName }}Repository) Get(ctx context.Context, id string) (*entity.{{ .ModelName }}, error) {
-	panic("implement me")
+// EmailRepository EmailRepository
+type EmailRepository struct {
+	Proxy *gormtx.Proxy
 }
 
-func (e {{ .ModelName }}Repository) BatchGet(ctx context.Context, filter *entity.BatchGet{{ .ModelName }}Filter) ([]*entity.{{ .ModelName }}, error) {
-	panic("implement me")
+var _ entity.EmailRepository = (*EmailRepository)(nil)
+
+func (e EmailRepository) Get(ctx context.Context, id string) (*entity.Email, error) {
+	log.L(ctx).Debug("Get", log.String("id", id))
+	result := new(entity.Email)
+	err := e.Proxy.Do(ctx, func(ctx context.Context, tx *gorm.DB) error {
+		err := tx.Model(result).Where("email_id", id).First(result).Error
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
-func (e {{ .ModelName }}Repository) Update(ctx context.Context, id string, input *entity.Update{{ .ModelName }}Input) error {
-	panic("implement me")
+func (e EmailRepository) BatchGet(ctx context.Context, filter *entity.BatchGetEmailFilter) ([]*entity.Email, int64, error) {
+	log.L(ctx).Debug("BatchGet", log.Any("filter", filter))
+	var res []*entity.Email
+	var count int64
+	err := e.Proxy.Do(ctx, func(ctx context.Context, tx *gorm.DB) error {
+		if err := tx.Model(new(entity.Email)).Scopes(emailFilterScope(filter), emailOrderScope(filter),
+			emailPageScope(filter)).Find(&res).Error; err != nil {
+			return errors.WithStack(err)
+		}
+		if err := tx.Model(new(entity.Email)).Scopes(emailFilterScope(filter)).Count(&count).Error; err != nil {
+			return errors.WithStack(err)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+	return res, count, nil
 }
 
-func (e {{ .ModelName }}Repository) Create(ctx context.Context, input *entity.Update{{ .ModelName }}Input) error {
-	panic("implement me")
+func (e EmailRepository) Update(ctx context.Context, id string, input *entity.UpdateEmailInput) (*entity.Email, error) {
+	log.L(ctx).Debug("Update", log.String("id", id), log.Any("input", input))
+	var email entity.Email
+	dbUpdate := make(map[string]interface{})
+	{
+		if input.Priority != nil {
+			dbUpdate["priority"] = *input.Priority
+		}
+		if input.Content != nil {
+			dbUpdate["content"] = *input.Content
+		}
+		if input.SendTime != nil {
+			dbUpdate["send_time"] = time.Unix(*input.SendTime, 0)
+		}
+		if input.ValidTime != nil {
+			dbUpdate["valid_time"] = time.Unix(*input.ValidTime, 0)
+		}
+	}
+	err := e.Proxy.Do(ctx, func(ctx context.Context, tx *gorm.DB) error {
+		tx = tx.Model(new(entity.Email))
+		if err := tx.Where("email_id = ?", id).Updates(dbUpdate).Error; err != nil {
+			return errors.WithStack(err)
+		}
+		if err := tx.Where("email_id = ?", id).First(&email).Error; err != nil {
+			return errors.WithStack(err)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &email, nil
 }
 
-func (e {{ .ModelName }}Repository) Delete(ctx context.Context, id string) error {
-	panic("implement me")
+func (e EmailRepository) Create(ctx context.Context, emailV0 entity.EmailVo) (*entity.Email, error) {
+	log.L(ctx).Debug("Create", log.Any("emailV0", emailV0))
+	email := &entity.Email{
+		Model:   gorm.Model{},
+		EmailID: generateEmailID(),
+		EmailVo: emailV0,
+	}
+	if err := e.Proxy.Do(ctx, func(ctx context.Context, tx *gorm.DB) error {
+		return errors.WithStack(tx.Create(email).Error)
+	}); err != nil {
+		return nil, err
+	}
+	return email, nil
+}
+
+func (e EmailRepository) Delete(ctx context.Context, id string) error {
+	log.L(ctx).Debug("Delete", log.String("id", id))
+	err := e.Proxy.Do(ctx, func(ctx context.Context, tx *gorm.DB) error {
+		if err := tx.Delete(new(entity.Email), "email_id = ?", id).Error; err != nil {
+			return errors.WithStack(err)
+		}
+		return nil
+	})
+	return errors.WithStack(err)
+}
+
+func emailFilterScope(filter *entity.BatchGetEmailFilter) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if filter.IDList != nil {
+			db = db.Where("email_id in ?", *filter.IDList)
+		}
+		if filter.Priority != nil {
+			db = db.Where("priority = ?", *filter.Priority)
+		}
+		if filter.Content != nil {
+			db = db.Where("content ~ ?", *filter.Content)
+		}
+		if filter.SendTimeSearchEnd != nil {
+			db = db.Where("send_time < ?", time.Unix(*filter.SendTimeSearchEnd, 0))
+		}
+		if filter.SendTimeSearchBegin != nil {
+			db = db.Where("send_time > ?", time.Unix(*filter.SendTimeSearchBegin, 0))
+		}
+		if filter.ValidTimeSearchEnd != nil {
+			db = db.Where("valid_time < ?", time.Unix(*filter.ValidTimeSearchEnd, 0))
+		}
+		if filter.ValidTimeSearchBegin != nil {
+			db = db.Where("valid_time > ?", time.Unix(*filter.ValidTimeSearchBegin, 0))
+		}
+		return db
+	}
+}
+
+func emailPageScope(filter *entity.BatchGetEmailFilter) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if filter.Offset > 0 {
+			db = db.Offset(filter.Offset)
+		}
+		if filter.Limit > 0 {
+			db = db.Limit(filter.Limit)
+		}
+		return db
+	}
+}
+
+func emailOrderScope(filter *entity.BatchGetEmailFilter) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		// TODO
+		if filter.Order != nil {
+			//db = db.Order("send_time ASC")
+		}
+		//default
+		return db.Order("id ASC")
+	}
 }

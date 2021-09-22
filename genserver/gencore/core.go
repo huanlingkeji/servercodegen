@@ -1,11 +1,14 @@
 package gencore
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
+	"text/template"
 )
 
 const UseCacheBackupFile = false
@@ -36,12 +39,25 @@ type InsertContentInput struct {
 	PInsertType  ContentInsertPosition
 }
 
+func templateGen(str string, data interface{}) string {
+	bf := bytes.NewBuffer(nil)
+	t, err := template.New("").Parse(str)
+	if err != nil {
+		log.Fatalf("template.ParseFiles %v", err)
+	}
+	err = t.Execute(bf, data)
+	if err != nil {
+		log.Fatalf("error while Execute %v", err)
+	}
+	return bf.String()
+}
+
 //在文件中查找指定内容的位置 然后插入自己的内容
 //首次操作会生成备份 然后会基于备份进行插入内容 即可重复操作
-func InsertContent2File(in *InsertContentInput) error {
+func InsertContent2File(in *InsertContentInput, data interface{}) error {
 	filePath := in.FilePath
 	searchSubStr := in.SearchSubStr
-	content := in.Content
+	content := templateGen(in.Content, data)
 	pType := in.PInsertType
 	openFile := filePath
 	fileExist := Exists(fmt.Sprintf("%v.back.txt", filePath))

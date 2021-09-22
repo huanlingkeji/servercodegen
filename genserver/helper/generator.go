@@ -27,18 +27,20 @@ type Generator struct {
 func MakeGenerator() *Generator {
 	return &Generator{
 		GenItemList: []genItem.IGenerate{
-			genItem.BundleGenerate{},
-			genItem.CmdGenerate{},
-			genItem.ConfigGenerate{},
-			genItem.EntityGenerate{},
-			genItem.GateGenerate{},
-			genItem.DeployGenerate{},
-			genItem.MainGenerate{},
-			genItem.ProtoGenerate{},
-			genItem.RepositoryGenerate{},
-			genItem.ServiceGenerate{},
-			genItem.UsecaseGenerate{},
-			genItem.WireGenerate{},
+			&genItem.BundleGenerate{},
+			&genItem.CmdGenerate{},
+			&genItem.ConfigGenerate{},
+			&genItem.EntityGenerate{},
+			&genItem.GateGenerate{},
+			&genItem.DeployGenerate{},
+			&genItem.MainGenerate{},
+			&genItem.ProtoGenerate{},
+			&genItem.RepositoryGenerate{},
+			&genItem.ServiceGenerate{},
+			&genItem.UsecaseGenerate{},
+			&genItem.WireGenerate{},
+			&genItem.NeventGenerate{},
+			&genItem.ConvertGenerate{},
 		},
 	}
 }

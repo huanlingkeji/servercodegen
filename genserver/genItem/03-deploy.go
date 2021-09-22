@@ -11,14 +11,16 @@ import (
 	"path/filepath"
 )
 
-var kustfile = `/kustomization.yaml`
-
 //
 type DeployGenerate struct {
+	kustfile      string
+	patchyamlfile string
 }
 
-func (g DeployGenerate) PreCheck(env *model.MyEnv) {
-	if !gencore.Exists(fmt.Sprintf("%v%v%v", env.ProjectBasePath, env.DeployPath, kustfile)) {
+func (g *DeployGenerate) PreCheck(env *model.MyEnv) {
+	g.kustfile = fmt.Sprintf("%v%v", env.DeployPath, "kustomization.yaml")
+	g.patchyamlfile = fmt.Sprintf("%v%v", env.ProtoPath, "deploy/app/local/patch.yaml")
+	if !gencore.Exists(g.kustfile) {
 		panic("no file")
 	}
 }
@@ -27,21 +29,48 @@ var _ IGenerate = (*DeployGenerate)(nil)
 
 func (g DeployGenerate) GenCode(env *model.MyEnv) {
 	insertContentInputArr := []*gencore.InsertContentInput{
+		// kustomization.yaml
 		{
-			FilePath:     fmt.Sprintf("%v%v%v", env.ProjectBasePath, env.DeployPath, kustfile),
+			FilePath:     g.kustfile,
 			SearchSubStr: `resources:`,
-			Content: fmt.Sprintf(`  - %v.yaml
-`, charater.LowerFirstChar(env.ServerName)),
-			PInsertType: gencore.StrPointNextLine,
+			Content:      `  - email.yaml`,
+			PInsertType:  gencore.StrPointNextLine,
+		},
+		{
+			FilePath:     g.kustfile,
+			SearchSubStr: `resources:`,
+			Content: `apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: email
+          imagePullPolicy: Never
+          resources:
+            requests:
+              cpu: 1m
+              memory: 64Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+
+---`,
+			PInsertType: gencore.FileEnd,
 		},
 	}
 	for _, v := range insertContentInputArr {
-		gencore.CheckErr(gencore.InsertContent2File(v))
+		gencore.CheckErr(gencore.InsertContent2File(v, env))
 	}
 
 	funcMap := map[string]interface{}{}
 	inputFiles := []string{"tmpl/deploy.tmpl"}
-	filePath := fmt.Sprintf("%v%v/%v.yaml", env.ProjectBasePath, env.DeployPath, charater.LowerFirstChar(env.ServerName))
+	filePath := fmt.Sprintf("%v%v.yaml", env.DeployPath, charater.LowerFirstChar(env.ServerName))
 	GenDeploy(filePath, env.ServerName, funcMap, inputFiles, env)
 }
 

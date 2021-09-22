@@ -1,1 +1,103 @@
-package gate
+package service
+
+import (
+	"context"
+	"solarland/backendv2/cluster/gate/gate/convert"
+	"solarland/backendv2/cluster/gate/gate/gen"
+	"solarland/backendv2/pkg/castx"
+	emailpb "solarland/backendv2/proto/gen/go/avatar/email"
+)
+
+func (r *QueryMutationResolver) SendEmail2User(ctx context.Context, input gen.SendEmail2UserInput) (bool, error) {
+	_, err := r.RPC().Email().SendEmail2User(ctx, &emailpb.SendEmail2UserRequest{
+		SenderId:       input.SenderID,
+		ReceiverIdList: input.ReceiverIDList,
+		Content:        input.Content,
+		IsPriority:     input.IsPriority,
+		SendTime:       int64(input.SendTime),
+		GameId:         input.GameID,
+		ValidTime:      int64(input.ValidTime),
+	})
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (r *QueryMutationResolver) DeleteEmail(ctx context.Context, input gen.DeleteEmailInput) (bool, error) {
+	_, err := r.RPC().Email().DeleteEmail(ctx, &emailpb.DeleteEmailRequest{
+		EmailId: input.EmailID,
+		GameId:  input.GameID,
+	})
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (r *QueryMutationResolver) ModifyEmail(ctx context.Context, input gen.ModifyEmailInput) (bool, error) {
+	_, err := r.RPC().Email().ModifyEmail(ctx, &emailpb.ModifyEmailRequest{
+		EmailId:    input.EmailID,
+		GameId:     input.GameID,
+		IsRead:     castx.Boolp2BoolValue(input.IsRead),
+		IsOperated: castx.Boolp2BoolValue(input.IsOperated),
+		Receiver:   input.Receiver,
+	})
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (r *QueryMutationResolver) EmailLike(ctx context.Context, input gen.EmailLikeInput) (bool, error) {
+	_, err := r.RPC().Email().EmailLike(ctx, &emailpb.EmailLikeRequest{
+		EmailId:     input.EmailID,
+		GameId:      input.GameID,
+		LikerPlayer: input.LikerPlayer,
+		LikedPlayer: input.LikedPlayer,
+	})
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (r *QueryMutationResolver) EmailList(ctx context.Context, input gen.EmailListInput) (*gen.EmailListPayload, error) {
+	res, err := r.RPC().Email().BatchFetchUserEmail(ctx, &emailpb.BatchFetchUserEmailRequest{
+		ReceiverId: input.ReceiverID,
+		GameId:     input.GameID,
+		Page:       int32(input.Page),
+		PerPageNum: int32(input.PerPageNum),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &gen.EmailListPayload{
+		EmailList:  convert.Emails2Gen(res.EmailList),
+		TotalCount: int(res.TotalCount),
+	}, nil
+}
+
+func (r *QueryMutationResolver) Email(ctx context.Context, input gen.EmailInput) (*gen.Email, error) {
+	res, err := r.RPC().Email().FetchUserEmail(ctx, &emailpb.FetchUserEmailRequest{
+		EmailId: input.EmailID,
+		GameId:  input.GameID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return convert.Email2Gen(res.Email), nil
+}
+
+func (r *QueryMutationResolver) EmailLikeList(ctx context.Context, input gen.EmailLikeListInput) (*gen.EmailLikeListPayload, error) {
+	res, err := r.RPC().Email().GetEmailLikeInfo(ctx, &emailpb.GetEmailLikeInfoRequest{
+		EmailId: input.EmailID,
+		GameId:  input.GameID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &gen.EmailLikeListPayload{
+		EmailLikeList: convert.EmailLikes2Gen(res.EmailLikeList),
+	}, nil
+}

@@ -14,7 +14,7 @@ import (
 type WireGenerate struct {
 }
 
-func (g WireGenerate) PreCheck(env *model.MyEnv) {
+func (g *WireGenerate) PreCheck(env *model.MyEnv) {
 }
 
 var _ IGenerate = (*WireGenerate)(nil)
@@ -22,7 +22,7 @@ var _ IGenerate = (*WireGenerate)(nil)
 func (g WireGenerate) GenCode(env *model.MyEnv) {
 	funcMap := map[string]interface{}{}
 	inputFiles := []string{"tmpl/wire.tmpl"}
-	filePath := fmt.Sprintf("%v%v/%v/wire.go", env.ProjectBasePath, env.ClusterPath, charater.LowerFirstChar(env.ServerName))
+	filePath := fmt.Sprintf("%v%v/wire.go", env.ClusterPath, charater.LowerFirstChar(env.ServerName))
 	GenWire(filePath, env.ServerName, funcMap, inputFiles, env)
 }
 

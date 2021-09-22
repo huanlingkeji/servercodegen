@@ -8,10 +8,11 @@ import (
 )
 
 func main() {
+	projectBasePath := "I:/GoProjects/src/solarland/backendv2/"
 	mv := model.MyEnv{
-		ServerName:      "Email",
-		UsePort:         "9233",
-		ProjectBasePath: "C:/Users/Administrator/GoProjects/src/solarland/backendv2",
+		ServerName: "Email",
+		UsePort:    "9233",
+		ModelName:  "Email",
 		EntityList: []*model.MyEntity{{
 			ModelName: "Email",
 			Fields: []*model.MyField{{
@@ -19,17 +20,15 @@ func main() {
 				Type: "",
 			}},
 		}},
-		ClusterPath: "/cluster", // /email/main.go
-		//RepositoryPath: "/cluster/email/internal/repository",// /email.go
-		//ServicePath:    "/cluster/email/internal/service",// /email.go
-		//UsecasePath:    "/cluster/email/internal/usecase", // /email.go
-		//EntityPath:     "/cluster/email/internal/domain/entity",// /email.go
-		DeployPath:  "/deploy/app/base",              // /email.yaml
-		ProtoPath:   "/deploy/app/base/proto/avatar", // /email/grpc.proto
-		GraphqlPath: "/deploy/app/base/proto/avatar", // /email/grpc.proto
-		GatePath:    "/cluster/gate/gate",            // /email.go
-		ConfigPath:  "/cluster/config",
-		BundlePath:  "/infra/wireinject/bundle",
+
+		ProjectBasePath: projectBasePath,
+		ClusterPath:     fmt.Sprintf("%v%v", projectBasePath, "cluster/"),
+		DeployPath:      fmt.Sprintf("%v%v", projectBasePath, "deploy/app/base/"),
+		ProtoPath:       fmt.Sprintf("%v%v", projectBasePath, "deploy/app/base/proto/avatar/"),
+		GraphqlPath:     fmt.Sprintf("%v%v", projectBasePath, "deploy/app/base/proto/avatar/"),
+		GatePath:        fmt.Sprintf("%v%v", projectBasePath, "cluster/gate/gate/"),
+		ConfigPath:      fmt.Sprintf("%v%v", projectBasePath, "cluster/config/"),
+		BundlePath:      fmt.Sprintf("%v%v", projectBasePath, "infra/wireinject/"),
 	}
 	gencore.CheckErr(mv.Encode("yaml/env.yaml"))
 	if !CheckEnv(&mv) {
@@ -51,27 +50,27 @@ func CheckEnv(m *model.MyEnv) bool {
 
 //检测文件路径是否都存在
 func CheckPath(m *model.MyEnv) bool {
-	if !gencore.Exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.ClusterPath)) {
+	if !gencore.Exists(m.ClusterPath) {
 		fmt.Println("m.ClusterPath not found")
 		return false
 	}
-	if !gencore.Exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.DeployPath)) {
+	if !gencore.Exists(m.DeployPath) {
 		fmt.Println("m.DeployPath not found")
 		return false
 	}
-	if !gencore.Exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.ProtoPath)) {
+	if !gencore.Exists(m.ProtoPath) {
 		fmt.Println("m.ProtoPath not found")
 		return false
 	}
-	if !gencore.Exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.GraphqlPath)) {
+	if !gencore.Exists(m.GraphqlPath) {
 		fmt.Println("m.GraphqlPath not found")
 		return false
 	}
-	if !gencore.Exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.GatePath)) {
+	if !gencore.Exists(m.GatePath) {
 		fmt.Println("m.GatePath not found")
 		return false
 	}
-	if !gencore.Exists(fmt.Sprintf("%v%v", m.ProjectBasePath, m.ConfigPath)) {
+	if !gencore.Exists(m.ConfigPath) {
 		fmt.Println("m.ConfigPath not found")
 		return false
 	}

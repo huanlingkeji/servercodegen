@@ -1,1 +1,259 @@
 package usecase
+
+import (
+	"context"
+	"errors"
+	"solarland/backendv2/cluster/email/internal/domain/entity"
+	"solarland/backendv2/infra/log"
+	"solarland/backendv2/proto/gen/go/avatar/email"
+	"time"
+)
+
+var (
+	ErrNotGameEmail  = errors.New("email is not send in the game") //非游戏邮件
+	ErrEmailInValid  = errors.New("email invalid")                 //邮件无效
+	ErrCantFindEmail = errors.New("email can not find")            //邮件无效
+)
+
+// EmailUseCase EmailUseCase
+type EmailUseCase struct {
+	EmailRepository       entity.EmailRepository
+	EmailLikeRepository   entity.EmailLikeRepository
+	EmailRecordRepository entity.EmailRecordRepository
+}
+
+var _ entity.EmailUseCase = (*EmailUseCase)(nil)
+var _ email.SendEmailListener = (*EmailUseCase)(nil)
+
+func (e EmailUseCase) OnSendEmail(ctx context.Context, m *email.SendEmailEvent) {
+	senderId := m.SenderId
+	receiverIdList := m.ReceiverIdList
+	content := m.Content
+	isPriority := m.IsPriority
+	sendTime := m.SendTime
+	gameId := m.GameId
+	validTime := m.ValidTime
+	err := e.SendEmail2User(ctx, gameId, senderId, content, receiverIdList, sendTime, validTime, isPriority)
+	if err != nil {
+		log.L(ctx).Error("EmailUseCase) OnSendEmail", log.Any("event", m), log.Error(err))
+	}
+}
+
+func (e EmailUseCase) SendEmail2User(ctx context.Context, gameID, sender, content string, receiverList []string, sendTime, validTime int64, isPriority bool) error {
+	// 将邮件进行投递
+	email, err := e.EmailRepository.Create(ctx, entity.EmailVo{
+		Priority:  isPriority,
+		Content:   content,
+		SendTime:  time.Unix(sendTime, 0).UTC(),
+		ValidTime: time.Unix(validTime, 0).UTC(),
+	})
+	if err != nil {
+		return err
+	}
+	for _, v := range receiverList {
+		_, err := e.EmailRecordRepository.Create(ctx, entity.EmailRecordVo{
+			EmailID:   email.EmailID,
+			SenderID:  sender,
+			ReceiveID: v,
+			GameID:    gameID,
+			Status:    entity.EmailRecordStatusNone,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (e EmailUseCase) GetEmailLikeInfo(ctx context.Context, emailID, gameID string) ([]*entity.EmailLike, error) {
+	emailIDList := []string{emailID}
+	likeList, _, err := e.EmailLikeRepository.BatchGet(ctx, &entity.BatchGetEmailLikeFilter{
+		Limit:       0,
+		Offset:      0,
+		Order:       nil,
+		IDList:      &emailIDList,
+		LikerPlayer: nil,
+		LikedPlayer: nil,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return likeList, err
+}
+
+func (e EmailUseCase) EmailLike(ctx context.Context, emailID, gameID, likerPlayer, likedPlayer string) error {
+	_, err := e.EmailLikeRepository.Create(ctx, entity.EmailLikeVo{
+		EmailID:     emailID,
+		LikerPlayer: likerPlayer,
+		LikedPlayer: likedPlayer,
+	})
+	return err
+}
+
+func (e EmailUseCase) ModifyEmail(ctx context.Context, emailID, gameID, receiverID string, isRead, isOperate *bool) error {
+	// 获取邮件记录
+	emailIDList := []string{emailID}
+	records, _, err := e.EmailRecordRepository.BatchGet(ctx, &entity.BatchGetEmailRecordFilter{
+		IDList:         &emailIDList,
+		FilterSender:   nil,
+		FilterReceiver: &receiverID,
+		GameID:         &gameID,
+		Limit:          1,
+		Offset:         0,
+		Order:          nil,
+		Status:         nil,
+	})
+	if err != nil {
+		return err
+	}
+	if len(records) < 1 {
+		return ErrCantFindEmail
+	}
+	newStatus := records[0].Status
+	if isOperate != nil && *isOperate {
+		newStatus = newStatus.SetStatus(entity.EmailRecordStatusOperated)
+	}
+	if isRead != nil && *isRead {
+		newStatus = newStatus.SetStatus(entity.EmailRecordStatusReaded)
+	}
+	_, err = e.EmailRecordRepository.Update(ctx, emailID, &entity.UpdateEmailRecordInput{
+		Status: &newStatus,
+	})
+	return err
+}
+
+func (e EmailUseCase) DeleteEmail(ctx context.Context, emailID, gameID string) error {
+	return e.EmailRepository.Delete(ctx, emailID)
+}
+
+func (e EmailUseCase) FetchUserEmail(ctx context.Context, emailID, gameID string) (*entity.DisplayEmail, error) {
+	// 获取邮件记录
+	record, err := e.EmailRecordRepository.Get(ctx, emailID)
+	if err != nil {
+		return nil, err
+	}
+	if record.GameID != gameID {
+		return nil, ErrNotGameEmail
+	}
+	// 通过记录找出邮件
+	email, err := e.EmailRepository.Get(ctx, emailID)
+	if err != nil {
+		return nil, err
+	}
+	if !email.Valid() {
+		return nil, ErrEmailInValid
+	}
+	emailIDList := []string{emailID}
+	// 这些邮件的所有发送记录
+	records, _, err := e.EmailRecordRepository.BatchGet(ctx, &entity.BatchGetEmailRecordFilter{
+		IDList:         &emailIDList,
+		FilterSender:   nil,
+		FilterReceiver: nil,
+		Limit:          0,
+		Offset:         0,
+		Order:          nil,
+		Status:         nil,
+	})
+	if err != nil {
+		return nil, err
+	}
+	// 统计邮件的接收人
+	receiverList := make([]string, len(records))
+	for i, v := range records {
+		receiverList[i] = v.ReceiveID
+	}
+	ret := &entity.DisplayEmail{
+		ID:           email.EmailID,
+		Priority:     email.Priority,
+		Content:      email.Content,
+		SendTime:     email.SendTime,
+		ValidTime:    email.ValidTime,
+		IsReaded:     record.Status.IsReaded(),
+		IsOperate:    record.Status.IsOperated(),
+		ReceiverList: receiverList,
+	}
+	return ret, nil
+}
+
+// BatchFetchUserEmail
+// 获取玩家的邮件
+// page从0开始
+func (e EmailUseCase) BatchFetchUserEmail(ctx context.Context, gameID, receiverID string, page, perPageNum int32) ([]*entity.DisplayEmail, int64, error) {
+	// 获取用户所有收到的邮件记录
+	records, _, err := e.EmailRecordRepository.BatchGet(ctx, &entity.BatchGetEmailRecordFilter{
+		IDList:         nil,
+		FilterSender:   nil,
+		FilterReceiver: &receiverID,
+		GameID:         &gameID,
+		Limit:          0,
+		Offset:         0,
+		Order:          nil,
+		Status:         nil,
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+	log.L(ctx).Debug("EmailRecordRepository.BatchGet", log.Any("records", records))
+	emailIDList := make([]string, 0, len(records))
+	for _, v := range records {
+		emailIDList = append(emailIDList, v.EmailID)
+	}
+	timeNow := time.Now().Unix()
+	limit := perPageNum
+	offset := page * perPageNum
+	log.L(ctx).Debug("timeNow", log.Int("timeNow unix", int(timeNow)))
+	// 通过记录找出所有可获取的邮件
+	emailList, count, err := e.EmailRepository.BatchGet(ctx, &entity.BatchGetEmailFilter{
+		Limit:                int(limit),
+		Offset:               int(offset),
+		Order:                nil,
+		IDList:               &emailIDList,
+		Priority:             nil,
+		Content:              nil,
+		SendTimeSearchBegin:  nil,
+		SendTimeSearchEnd:    &timeNow, //已经开始发送了
+		ValidTimeSearchBegin: &timeNow, //未过期
+		ValidTimeSearchEnd:   nil,
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+	log.L(ctx).Debug("EmailRepository.BatchGet", log.Any("emailList", emailList))
+	// 这些邮件的所有发送记录
+	records, _, err = e.EmailRecordRepository.BatchGet(ctx, &entity.BatchGetEmailRecordFilter{
+		IDList:         &emailIDList,
+		FilterSender:   nil,
+		FilterReceiver: nil,
+		Limit:          0,
+		Offset:         0,
+		Order:          nil,
+		Status:         nil,
+	})
+	if err != nil {
+		return nil, 0, err
+	}
+	log.L(ctx).Debug("All EmailRecordRepository.BatchGet", log.Any("records", records))
+	// 统计邮件的接收人
+	receiverListMap := make(map[string][]string)
+	for _, v := range records {
+		receiverListMap[v.EmailID] = append(receiverListMap[v.EmailID], v.ReceiveID)
+	}
+	recordMap := make(map[string]*entity.EmailRecord)
+	for _, v := range records {
+		recordMap[v.EmailID] = v
+	}
+	retList := make([]*entity.DisplayEmail, len(emailList))
+	for i, v := range emailList {
+		retList[i] = &entity.DisplayEmail{
+			ID:           v.EmailID,
+			Priority:     v.Priority,
+			Content:      v.Content,
+			SendTime:     v.SendTime,
+			ValidTime:    v.ValidTime,
+			IsReaded:     recordMap[v.EmailID].Status.IsReaded(),
+			IsOperate:    recordMap[v.EmailID].Status.IsOperated(),
+			ReceiverList: receiverListMap[v.EmailID],
+		}
+	}
+	return retList, count, nil
+}

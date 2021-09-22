@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: email
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 0
   strategy:
     type: RollingUpdate
@@ -44,7 +44,7 @@ spec:
               cpu: "1"
           readinessProbe:
             exec:
-              command: ["/bin/grpc_health_probe", "-addr=:9191", "-connect-timeout", "250ms", "-rpc-timeout", "100ms"]
+              command: ["/bin/grpc_health_probe", "-addr=:9233", "-connect-timeout", "250ms", "-rpc-timeout", "100ms"]
             initialDelaySeconds: 3
             periodSeconds: 10
             timeoutSeconds: 1

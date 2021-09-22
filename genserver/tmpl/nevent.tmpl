@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "solarland/backendv2/proto/gen/go/avatar/email";
+
+import "proto/nevent.proto";
+
+message SendEmailEvent {
+  string sender_id = 1;
+  repeated string receiver_id_list = 2;
+  string content = 3;
+  bool is_priority = 4;
+  int64 send_time = 5;
+  string game_id = 6;
+  int64 valid_time = 7;
+}
+
+service EmailEvent {
+  rpc SendEmail(SendEmailEvent) returns (nevent.Void);
+}

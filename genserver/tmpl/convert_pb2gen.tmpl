@@ -1,0 +1,53 @@
+package convert
+
+import (
+	"solarland/backendv2/cluster/gate/gate/gen"
+	"solarland/backendv2/proto/gen/go/avatar/email"
+)
+
+//Email2Gen Email2Gen
+func Email2Gen(res *email.Email) *gen.Email {
+	if res == nil {
+		return &gen.Email{}
+	}
+	return &gen.Email{
+		ID:            res.Id,
+		Content:       res.Content,
+		Priority:      res.Priority,
+		SendTime:      int(res.SendTime),
+		ValidTime:     int(res.ValidTime),
+		ReceiveIDList: res.ReceiveIdList,
+		IsReaded:      res.IsReaded,
+		IsOperate:     res.IsOperate,
+	}
+}
+
+//Emails2Gen Emails2Gen
+func Emails2Gen(res []*email.Email) []*gen.Email {
+	ret := make([]*gen.Email, len(res))
+	for i, v := range res {
+		ret[i] = Email2Gen(v)
+	}
+	return ret
+}
+
+//EmailLike2Gen EmailLike2Gen
+func EmailLike2Gen(res *email.EmailLike) *gen.EmailLike {
+	if res == nil {
+		return &gen.EmailLike{}
+	}
+	return &gen.EmailLike{
+		EmailID:     res.EmailId,
+		LikerPlayer: res.LikerPlayer,
+		LikedPlayer: res.LikedPlayer,
+	}
+}
+
+//EmailLikes2Gen EmailLikes2Gen
+func EmailLikes2Gen(res []*email.EmailLike) []*gen.EmailLike {
+	ret := make([]*gen.EmailLike, len(res))
+	for i, v := range res {
+		ret[i] = EmailLike2Gen(v)
+	}
+	return ret
+}

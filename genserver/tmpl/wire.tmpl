@@ -1,4 +1,4 @@
-// go:generate wire
+//go:generate wire
 //go:build wireinject
 // +build wireinject
 
@@ -6,13 +6,22 @@ package email
 
 import (
 	"context"
+	"github.com/LilithGames/nevent"
 	"github.com/google/wire"
+	"github.com/nats-io/nats.go"
 	"github.com/spf13/viper"
+	"net"
+	"solarland/backendv2/cluster/config"
 	"solarland/backendv2/cluster/email/internal/domain/entity"
 	"solarland/backendv2/cluster/email/internal/repository"
 	"solarland/backendv2/cluster/email/internal/service"
+	"solarland/backendv2/cluster/email/internal/usecase"
+	"solarland/backendv2/infra/aevent"
+	"solarland/backendv2/infra/grpc"
 	"solarland/backendv2/infra/log"
 	"solarland/backendv2/infra/wireinject"
+	"solarland/backendv2/pkg/run"
+	emailpb "solarland/backendv2/proto/gen/go/avatar/email"
 )
 
 var set = wire.NewSet(
@@ -20,14 +29,23 @@ var set = wire.NewSet(
 	wire.Struct(new(container), "*"),
 	wire.Struct(new(service.BasicService), "*"),
 	service.NewBasicService,
+	provideEmailEventListener,
+	provideRunGroup,
 
-    {{- range $ind,$Entity:=.EntityList }}
-    wire.Struct(new(repository.{{ $Entity.ModelName }}RecordRepository), "*"),
-    wire.Bind(new(entity.{{ $Entity.ModelName }}RecordRepository), new(*repository.{{ $Entity.ModelName }}RecordRepository)),
-    {{- end }}
+	wire.Struct(new(repository.EmailRecordRepository), "*"),
+	wire.Bind(new(entity.EmailRecordRepository), new(*repository.EmailRecordRepository)),
+
+	wire.Struct(new(repository.EmailLikeRepository), "*"),
+	wire.Bind(new(entity.EmailLikeRepository), new(*repository.EmailLikeRepository)),
+
+	wire.Struct(new(repository.EmailRepository), "*"),
+	wire.Bind(new(entity.EmailRepository), new(*repository.EmailRepository)),
+
+	wire.Struct(new(usecase.EmailUseCase), "*"),
+	wire.Bind(new(entity.EmailUseCase), new(*usecase.EmailUseCase)),
 )
 
-func initialize(ctx context.Context, cfg *viper.Viper) (*container, func()) {
+func initialize(ctx context.Context, cfg *viper.Viper) (*container, func(), error) {
 	panic(wire.Build(set))
 }
 
@@ -35,4 +53,41 @@ func check(err error, message string) {
 	if err != nil {
 		log.L().Panic(message, log.Error(err))
 	}
+}
+
+func provideEmailEventListener(cfg *viper.Viper, conn *nats.Conn) *nevent.Server {
+	ns, err := aevent.NewServer(conn, nevent.Queue("email"))
+	check(err, "nevent server failed")
+	return ns
+}
+
+func provideRunGroup(ctx context.Context, ns *nevent.Server, basicService service.BasicService) *run.Group {
+	var g run.Group
+	gs := grpc.NewServer(ctx)
+	emailpb.RegisterEmailServiceServer(gs, basicService)
+	gl, err := net.Listen("tcp", ":"+config.EmailGRPCPort())
+	if err != nil {
+		log.L(ctx).Panic("grpc tcp listen", log.Error(err))
+	}
+	subList := make([]*nats.Subscription, 0)
+	g.Add(func() error {
+		log.L(ctx).Info("emailpb.RegisterSendEmail...")
+		sub, err := emailpb.RegisterSendEmail(ns, basicService.EmailUseCase)
+		if err != nil {
+			return err
+		}
+		subList = append(subList, sub)
+		select {}
+	}, func(error) {
+		for _, v := range subList {
+			_ = v.Unsubscribe()
+		}
+	})
+	g.Add(func() error {
+		log.L(ctx).Info("start email grpc server")
+		return gs.Serve(gl)
+	}, func(error) {
+		gs.GracefulStop()
+	})
+	return &g
 }

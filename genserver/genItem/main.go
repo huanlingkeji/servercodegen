@@ -14,7 +14,7 @@ import (
 type MainGenerate struct {
 }
 
-func (g MainGenerate) PreCheck(env *model.MyEnv) {
+func (g *MainGenerate) PreCheck(env *model.MyEnv) {
 }
 
 var _ IGenerate = (*MainGenerate)(nil)
@@ -22,7 +22,7 @@ var _ IGenerate = (*MainGenerate)(nil)
 func (g MainGenerate) GenCode(env *model.MyEnv) {
 	funcMap := map[string]interface{}{}
 	inputFiles := []string{"tmpl/main.tmpl"}
-	filePath := fmt.Sprintf("%v%v/%v/main.go", env.ProjectBasePath, env.ClusterPath, charater.LowerFirstChar(env.ServerName))
+	filePath := fmt.Sprintf("%v%v/main.go", env.ClusterPath, charater.LowerFirstChar(env.ServerName))
 	GenMain(filePath, env.ServerName, funcMap, inputFiles, env)
 }
 

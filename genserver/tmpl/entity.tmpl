@@ -2,45 +2,96 @@ package entity
 
 import (
 	"context"
+	"gorm.io/gorm"
 	"time"
 )
 
-// {{ .ModelName }} 邮件记录
-type {{ .ModelName }} struct {
-	ID        string    `` // ID
-	Priority  bool      `` // 优先级
-	Content   string    `` // 内容
-	SendTime  time.Time `` // 发送时间
-	ValidTime time.Time `` // 有效截止时间
-	ExtraData string    `` // 额外信息
-	//Deleted   bool   // 标记删除
+// Email 邮件记录
+type Email struct {
+	gorm.Model
+	EmailID string `gorm:"type:varchar(255) not null;unique:uix_email_id"` //邮件ID
+	EmailVo `gorm:"embedded"`
 }
 
-// BatchGet{{ .ModelName }}Filter 批量筛选
-type BatchGet{{ .ModelName }}Filter struct {
-	IDList               []string
-	Priority             bool
-	Content              string
-	SendTimeSearchBegin  time.Time `` // 发送时间
-	SendTimeSearchEnd    time.Time `` // 发送时间
-	ValidTimeSearchBegin time.Time `` // 有效截止时间
-	ValidTimeSearchEnd   time.Time `` // 有效截止时间
+// Valid Valid
+func (e Email) Valid() bool {
+	timeNow := time.Now()
+	// 未达到发送时间
+	if e.SendTime.After(timeNow) {
+		return false
+	}
+	// 已过期
+	if e.ValidTime.Before(timeNow) {
+		return false
+	}
+	return true
 }
 
-// Update{{ .ModelName }}Input 更新结构
-type Update{{ .ModelName }}Input struct {
-	Priority  bool      `` // 优先级
-	Content   string    `` // 内容
-	SendTime  time.Time `` // 发送时间
-	ValidTime time.Time `` // 有效截止时间
-	ExtraData string    `` // 额外信息
+// EmailVo 邮件记录
+type EmailVo struct {
+	Priority  bool      ``                           // 优先级
+	Content   string    ``                           // 内容
+	SendTime  time.Time `gorm:"type:timestamptz(0)"` // 发送时间    为了保持查询使用时间戳 所以这里截取精度 截取之后秒数存入值四舍五入
+	ValidTime time.Time `gorm:"type:timestamptz(0)"` // 有效截止时间 为了保持查询使用时间戳 所以这里截取精度 截取之后秒数存入值四舍五入
 }
 
-// {{ .ModelName }}Repository 接口
-type {{ .ModelName }}Repository interface {
-	Get(ctx context.Context, id string) (*{{ .ModelName }}, error)
-	BatchGet(ctx context.Context, filter *BatchGet{{ .ModelName }}Filter) ([]*{{ .ModelName }}, error)
-	Update(ctx context.Context, id string, input *Update{{ .ModelName }}Input) error
-	Create(ctx context.Context, input *Update{{ .ModelName }}Input) error
+// BatchGetEmailFilter 批量筛选
+type BatchGetEmailFilter struct {
+	Limit                int
+	Offset               int
+	Order                *string //排序 预留实现
+	IDList               *[]string
+	Priority             *bool
+	Content              *string
+	SendTimeSearchBegin  *int64 `` // 发送时间
+	SendTimeSearchEnd    *int64 `` // 发送时间
+	ValidTimeSearchBegin *int64 `` // 有效截止时间
+	ValidTimeSearchEnd   *int64 `` // 有效截止时间
+}
+
+// UpdateEmailInput 更新结构
+type UpdateEmailInput struct {
+	Priority  *bool   `` // 优先级
+	Content   *string `` // 内容
+	SendTime  *int64  `` // 发送时间
+	ValidTime *int64  `` // 有效截止时间
+}
+
+// DisplayEmail struct
+type DisplayEmail struct {
+	ID           string
+	Priority     bool
+	Content      string
+	SendTime     time.Time
+	ValidTime    time.Time
+	IsReaded     bool
+	IsOperate    bool
+	ReceiverList []string
+}
+
+// EmailRepository 接口
+type EmailRepository interface {
+	Get(ctx context.Context, id string) (*Email, error)
+	BatchGet(ctx context.Context, filter *BatchGetEmailFilter) ([]*Email, int64, error)
+	Update(ctx context.Context, id string, input *UpdateEmailInput) (*Email, error)
+	Create(ctx context.Context, emailVo EmailVo) (*Email, error)
 	Delete(ctx context.Context, id string) error
+}
+
+// EmailUseCase interface
+type EmailUseCase interface {
+	// 获取邮件的点赞信息
+	GetEmailLikeInfo(ctx context.Context, emailID, gameID string) ([]*EmailLike, error)
+	// 点赞邮件
+	EmailLike(ctx context.Context, emailID, gameID, likePlayer, likedPlayer string) error
+	// 修改邮件的状态
+	ModifyEmail(ctx context.Context, emailID, gameID, receiver string, isRead, isOperate *bool) error
+	// 删除邮件
+	DeleteEmail(ctx context.Context, emailID, gameID string) error
+	// 发送邮件给玩家
+	SendEmail2User(ctx context.Context, gameID, sender, content string, receiverList []string, sendTime, validTime int64, isPriority bool) error
+	// 获取单封邮件
+	FetchUserEmail(ctx context.Context, emailID, gameID string) (*DisplayEmail, error)
+	// 获取多封邮件
+	BatchFetchUserEmail(ctx context.Context, gameID, receiverID string, page, perPageNum int32) ([]*DisplayEmail, int64, error)
 }

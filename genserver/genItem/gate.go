@@ -14,7 +14,7 @@ import (
 type GateGenerate struct {
 }
 
-func (g GateGenerate) PreCheck(env *model.MyEnv) {
+func (g *GateGenerate) PreCheck(env *model.MyEnv) {
 }
 
 var _ IGenerate = (*GateGenerate)(nil)
@@ -23,7 +23,7 @@ func (g GateGenerate) GenCode(env *model.MyEnv) {
 	funcMap := map[string]interface{}{}
 	inputFiles := []string{"tmpl/gate.tmpl"}
 	for _, v := range env.EntityList {
-		filePath :=  fmt.Sprintf("%v%v/%v.go", env.ProjectBasePath, env.GatePath, charater.LowerFirstChar(v.ModelName))
+		filePath := fmt.Sprintf("%v%v.go", env.GatePath, charater.LowerFirstChar(v.ModelName))
 		GenGate(filePath, v.ModelName, funcMap, inputFiles, v)
 	}
 }

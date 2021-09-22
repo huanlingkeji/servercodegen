@@ -14,7 +14,7 @@ import (
 type UsecaseGenerate struct {
 }
 
-func (g UsecaseGenerate) PreCheck(env *model.MyEnv) {
+func (g *UsecaseGenerate) PreCheck(env *model.MyEnv) {
 }
 
 var _ IGenerate = (*UsecaseGenerate)(nil)
@@ -23,7 +23,7 @@ func (g UsecaseGenerate) GenCode(env *model.MyEnv) {
 	funcMap := map[string]interface{}{}
 	inputFiles := []string{"tmpl/usecase.tmpl"}
 	for _, v := range env.EntityList {
-		filePath := fmt.Sprintf("%v%v/%v/internal/usecase/%v.go", env.ProjectBasePath, env.ClusterPath,
+		filePath := fmt.Sprintf("%v%v/internal/usecase/%v.go", env.ClusterPath,
 			charater.LowerFirstChar(env.ServerName), charater.LowerFirstChar(v.ModelName))
 		GenUsecase(filePath, v.ModelName, funcMap, inputFiles, v)
 	}

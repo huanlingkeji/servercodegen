@@ -1,0 +1,53 @@
+package convert
+
+import (
+	"solarland/backendv2/cluster/email/internal/domain/entity"
+	"solarland/backendv2/proto/gen/go/avatar/email"
+)
+
+//Email2Pb Email2Pb
+func Email2Pb(res *entity.DisplayEmail) *email.Email {
+	if res == nil {
+		return &email.Email{}
+	}
+	return &email.Email{
+		Id:            res.ID,
+		Priority:      res.Priority,
+		Content:       res.Content,
+		SendTime:      res.SendTime.Unix(),
+		ValidTime:     res.ValidTime.Unix(),
+		ReceiveIdList: res.ReceiverList,
+		IsReaded:      res.IsReaded,
+		IsOperate:     res.IsOperate,
+	}
+}
+
+//Emails2Pb Emails2Pb
+func Emails2Pb(res []*entity.DisplayEmail) []*email.Email {
+	ret := make([]*email.Email, len(res))
+	for i, v := range res {
+		ret[i] = Email2Pb(v)
+	}
+	return ret
+}
+
+//EmailLike2Pb EmailLike2Pb
+func EmailLike2Pb(res *entity.EmailLike) *email.EmailLike {
+	if res == nil {
+		return &email.EmailLike{}
+	}
+	return &email.EmailLike{
+		EmailId:     res.EmailID,
+		LikerPlayer: res.LikerPlayer,
+		LikedPlayer: res.LikedPlayer,
+	}
+}
+
+//EmailLikes2Pb EmailLikes2Pb
+func EmailLikes2Pb(res []*entity.EmailLike) []*email.EmailLike {
+	ret := make([]*email.EmailLike, len(res))
+	for i, v := range res {
+		ret[i] = EmailLike2Pb(v)
+	}
+	return ret
+}
