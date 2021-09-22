@@ -2,19 +2,29 @@ package entity
 
 import (
 	"context"
+	_"github.com/rs/xid"
 	"gorm.io/gorm"
-	_"time"
+	"time"
 )
 
-// {{ .ModelName }}
+var (
+    _ = time.Now
+)
+
+// Generate{{ .ModelName }}ID Generate{{ .ModelName }}ID
+func Generate{{ .ModelName }}ID() string {
+	return "{{ .ModelName | LowerFirstChar }}_" + xid.New().String()
+}
+
+// {{ .ModelName }} {{ .ModelZH }}
 type {{ .ModelName }} struct {
 	gorm.Model
-	{{ .ModelName }}ID string `gorm:"type:varchar(255) not null;unique:uix_{{ .ModelName | LowerFirstChar }}_id"`
 	{{ .ModelName }}Vo `gorm:"embedded"`
 }
 
 // {{ .ModelName }}Vo
 type {{ .ModelName }}Vo struct {
+	{{ .ModelName }}ID string `gorm:"type:varchar(255) not null;unique:uix_{{ .ModelName | LowerFirstChar }}_id"`
   // TODO 填充自己的结构
   {{ if .ShowExample}}
 	Priority  bool      ``

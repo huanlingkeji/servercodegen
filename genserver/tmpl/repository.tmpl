@@ -11,10 +11,6 @@ import (
 	_"time"
 )
 
-func generate{{ .ModelName }}ID() string {
-	return "{{ .ModelName | LowerFirstChar }}id:" + xid.New().String()
-}
-
 // {{ .ModelName }}Repository {{ .ModelName }}Repository
 type {{ .ModelName }}Repository struct {
 	Proxy *gormtx.Proxy
@@ -22,6 +18,7 @@ type {{ .ModelName }}Repository struct {
 
 var _ entity.{{ .ModelName }}Repository = (*{{ .ModelName }}Repository)(nil)
 
+// Get Get
 func (e {{ .ModelName }}Repository) Get(ctx context.Context, id string) (*entity.{{ .ModelName }}, error) {
 	log.L(ctx).Debug("Get", log.String("id", id))
 	result := new(entity.{{ .ModelName }})
@@ -38,6 +35,7 @@ func (e {{ .ModelName }}Repository) Get(ctx context.Context, id string) (*entity
 	return result, nil
 }
 
+// BatchGet BatchGet
 func (e {{ .ModelName }}Repository) BatchGet(ctx context.Context, filter *entity.BatchGet{{ .ModelName }}Filter) ([]*entity.{{ .ModelName }}, int64, error) {
 	log.L(ctx).Debug("BatchGet", log.Any("filter", filter))
 	var res []*entity.{{ .ModelName }}
@@ -58,6 +56,7 @@ func (e {{ .ModelName }}Repository) BatchGet(ctx context.Context, filter *entity
 	return res, count, nil
 }
 
+// Update Update
 func (e {{ .ModelName }}Repository) Update(ctx context.Context, id string, input *entity.Update{{ .ModelName }}Input) (*entity.{{ .ModelName }}, error) {
 	log.L(ctx).Debug("Update", log.String("id", id), log.Any("input", input))
 	var {{ .ModelName | LowerFirstChar }} entity.{{ .ModelName }}
@@ -95,11 +94,11 @@ func (e {{ .ModelName }}Repository) Update(ctx context.Context, id string, input
 	return &{{ .ModelName | LowerFirstChar }}, nil
 }
 
+// Create Create
 func (e {{ .ModelName }}Repository) Create(ctx context.Context, {{ .ModelName | LowerFirstChar }}V0 entity.{{ .ModelName }}Vo) (*entity.{{ .ModelName }}, error) {
 	log.L(ctx).Debug("Create", log.Any("{{ .ModelName | LowerFirstChar }}V0", {{ .ModelName | LowerFirstChar }}V0))
 	{{ .ModelName | LowerFirstChar }} := &entity.{{ .ModelName }}{
 		Model:   gorm.Model{},
-		{{ .ModelName }}ID: generate{{ .ModelName }}ID(),
 		{{ .ModelName }}Vo: {{ .ModelName | LowerFirstChar }}V0,
 	}
 	if err := e.Proxy.Do(ctx, func(ctx context.Context, tx *gorm.DB) error {
@@ -110,6 +109,7 @@ func (e {{ .ModelName }}Repository) Create(ctx context.Context, {{ .ModelName | 
 	return {{ .ModelName | LowerFirstChar }}, nil
 }
 
+// Delete Delete
 func (e {{ .ModelName }}Repository) Delete(ctx context.Context, id string) error {
 	log.L(ctx).Debug("Delete", log.String("id", id))
 	err := e.Proxy.Do(ctx, func(ctx context.Context, tx *gorm.DB) error {
@@ -167,9 +167,9 @@ func {{ .ModelName | LowerFirstChar }}OrderScope(filter *entity.BatchGet{{ .Mode
 	return func(db *gorm.DB) *gorm.DB {
 		// TODO
 		if filter.Order != nil {
-			//db = db.Order("send_time ASC")
+			// db = db.Order("send_time ASC")
 		}
-		//default
+		// default
 		return db.Order("id ASC")
 	}
 }

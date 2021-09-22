@@ -2,7 +2,7 @@ package genItem
 
 import (
 	"fmt"
-	"solarland/backendv2/tools/genserver/model"
+	"genserver/genserver/model"
 	"testing"
 )
 

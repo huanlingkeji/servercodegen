@@ -3,13 +3,19 @@ package usecase
 import (
 	"context"
 	_"errors"
+	"fmt"
+    _"gorm.io/gorm"
 	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/domain/entity"
+	"solarland/backendv2/infra/cadence"
 	_"solarland/backendv2/infra/log"
+	"solarland/backendv2/pkg/transactional"
 	"solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}"
 	_"time"
 )
 
 var (
+    _ = fmt.Println
+
 	// ErrNotGame{{ .ModelName }}  = errors.New("{{ .ModelName | LowerFirstChar }} is not send in the game") //非游戏邮件
 	// Err{{ .ModelName }}InValid  = errors.New("{{ .ModelName | LowerFirstChar }} invalid")                 //邮件无效
 	// ErrCantFind{{ .ModelName }} = errors.New("{{ .ModelName | LowerFirstChar }} can not find")            //邮件无效
@@ -18,6 +24,8 @@ var (
 // {{ .ModelName }}UseCase {{ .ModelName }}UseCase
 type {{ .ModelName }}UseCase struct {
 	{{ .ModelName }}Repository       entity.{{ .ModelName }}Repository
+	CadenceClient         cadence.ICadence
+    {{ .ModelName }}EventClient      *{{ .ModelName | LowerFirstChar }}.{{ .ModelName }}EventClient
 }
 
 var _ entity.{{ .ModelName }}UseCase = (*{{ .ModelName }}UseCase)(nil)
@@ -116,6 +124,7 @@ func (e {{ .ModelName }}UseCase) Fetch{{ .ModelName }}(ctx context.Context, {{ .
   	ret := &entity.Display{{ .ModelName }}{}
   {{ if .ShowExample}}
   	//// 获取邮件记录
+  	// err := transactional.Do(ctx, func(ctx context.Context) error {
 	//record, err := e.{{ .ModelName }}RecordRepository.Get(ctx, {{ .ModelName | LowerFirstChar }}ID)
 	//if err != nil {
 	//	return nil, err
@@ -160,6 +169,10 @@ func (e {{ .ModelName }}UseCase) Fetch{{ .ModelName }}(ctx context.Context, {{ .
 	//	IsOperate:    record.Status.IsOperated(),
 	//	ReceiverList: receiverList,
 	//}
+    // if err!=nil{
+    //	return nil
+    //	}
+    // })
 	{{- end }}
 	return ret, nil
 }

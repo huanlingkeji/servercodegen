@@ -1,9 +1,12 @@
 package gen
 
 import (
-	"genserver/gqlmodels2pb/other"
 	"time"
 )
+
+type A struct {
+	Age string
+}
 
 type BannerShowPolicy string
 
@@ -15,10 +18,10 @@ type BannerInput struct {
 	Policy       *BannerShowPolicy         `json:"showPolicy"`
 	PolicyArr    []*BannerShowPolicy       `json:"showPolicy"`
 	PolicyMap    map[int]*BannerShowPolicy `json:"showPolicy"`
-	Person       other.A
-	Persons      []other.A
-	PersonsPtr   []*other.A
-	PersonMap    map[int]*other.A
+	Person       A
+	Persons      []A
+	PersonsPtr   []*A
+	PersonMap    map[int]*A
 	PersonMapInt map[int]interface{}
 }
 

@@ -10,6 +10,11 @@ func LowerFirstChar(s string) string {
 	return strings.ToLower(string(s[0])) + s[1:]
 }
 
+// UpperAllChar UpperAllChar
+func UpperAllChar(s string) string {
+	return strings.ToUpper(s)
+}
+
 // UpperFirstChar UpperFirstChar
 func UpperFirstChar(s string) string {
 	if s == "ip" {

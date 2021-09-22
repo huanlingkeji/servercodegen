@@ -3,11 +3,22 @@ package {{ .ServerName | LowerFirstChar }}
 import (
 	"context"
 	"github.com/spf13/viper"
+    _ "go.elastic.co/apm"
+    _ "go.uber.org/cadence/activity"
+    _ "go.uber.org/cadence/worker"
+    _ "go.uber.org/cadence/workflow"
 	"gorm.io/gorm"
 	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/domain/entity"
 	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/service"
+    _ "solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/usecase"
+    _ "solarland/backendv2/infra/cadence"
+    _ "solarland/backendv2/infra/consts"
 	"solarland/backendv2/infra/log"
 	"solarland/backendv2/pkg/run"
+)
+
+var (
+
 )
 
 type container struct {
@@ -26,6 +37,10 @@ func Run(ctx context.Context, cfg *viper.Viper) {
 	container, cleanup, err := initialize(ctx, cfg)
 	check(err, "{{ .ServerName | LowerFirstChar }} run failed")
 	defer cleanup()
+    _, err = cadence.InitCadenceClient(cfg, apm.DefaultTracer)
+    if err != nil {
+        log.L(ctx).Panic("init cadence client error", log.Error(err))
+    }
 	check(InitTables(container.db), "db init migrate failed")
 	if err := run.Run(container.runGroup); err != nil {
 		log.L(ctx).Error("runtime error", log.Error(err))
@@ -35,7 +50,29 @@ func Run(ctx context.Context, cfg *viper.Viper) {
 // InitTables 初始化表结构
 func InitTables(db *gorm.DB) error {
 	tables := []interface{}{
-		entity.{{ .ModelName }}{},
+		new(entity.{{ .ModelName }}),
 	}
 	return db.AutoMigrate(tables...)
+}
+
+// WorkerInitiator WorkerInitiator
+type WorkerInitiator struct {
+	{{ if .ShowExample}}
+	// RunSendEmailCheck *usecase.RunSendEmailCheck
+	{{- end }}
+}
+
+// Setup Setup
+func (i *WorkerInitiator) Setup(ctx context.Context, worker worker.Worker, cadence cadence.ICadence, db *gorm.DB) error {
+	check(InitTables(db), "InitTables failed!!!")
+	{{ if .ShowExample}}
+	// worker.RegisterActivityWithOptions(i.RunSendEmailCheck.Activity, activity.RegisterOptions{Name: consts.EmailCheckSendActivity})
+	// worker.RegisterWorkflowWithOptions(i.RunSendEmailCheck.Cron, workflow.RegisterOptions{Name: consts.EmailCheckSendCron})
+
+	// _, err := cadence.CreateCron(ctx, consts.EmailCheckSendCron, consts.EmailCheckSendCron, "@every 5s")
+	// if err != nil {
+	// 	return err
+	// }
+	{{- end }}
+	return nil
 }

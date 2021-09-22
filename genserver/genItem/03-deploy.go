@@ -2,9 +2,9 @@ package genItem
 
 import (
 	"fmt"
-	"solarland/backendv2/tools/genserver/charater"
-	"solarland/backendv2/tools/genserver/gencore"
-	"solarland/backendv2/tools/genserver/model"
+	"genserver/genserver/charater"
+	"genserver/genserver/gencore"
+	"genserver/genserver/model"
 )
 
 // DeployGenerate DeployGenerate
@@ -37,6 +37,14 @@ func (g DeployGenerate) GenCode(env *model.MyEnv) {
 			FilePath:     g.kustfile,
 			SearchSubStr: `resources:`,
 			Content: `  - {{ .ServerName | LowerFirstChar }}.yaml
+`,
+			PInsertType: gencore.StrPointNextLine,
+		},
+		{
+			FilePath: g.kustfile,
+			SearchSubStr: `literals:
+`,
+			Content: `		- AVATAR_{{ .ServerName | UpperAllChar }}_URL="{{ .ServerName | LowerFirstChar }}:{{ .UsePort }}"
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},

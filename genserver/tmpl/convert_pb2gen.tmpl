@@ -1,14 +1,26 @@
 package convert
 
 import (
-	"solarland/backendv2/cluster/gate/gate/gen"
+	"solarland/backendv2/graphql/gate/gen"
 	"solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}"
 )
 
 //{{ .ModelName }}2Gen {{ .ModelName }}2Gen
 func {{ .ModelName }}2Gen(res *{{ .ServerName | LowerFirstChar }}.{{ .ModelName }}) *gen.{{ .ModelName }} {
 	if res == nil {
-		return &gen.{{ .ModelName }}{}
+		return &gen.{{ .ModelName }}{
+		    	  // TODO 填充自己的结构
+                  {{ if .ShowExample}}
+                	//ID:            res.Id,
+            		//Content:       res.Content,
+            		//Priority:      res.Priority,
+            		//SendTime:      int(res.SendTime),
+            		//ValidTime:     int(res.ValidTime),
+            		//ReceiveIDList: res.ReceiveIdList,
+            		//IsReaded:      res.IsReaded,
+            		//IsOperate:     res.IsOperate,
+            		  {{- end }}
+		}
 	}
 	return &gen.{{ .ModelName }}{
 	  // TODO 填充自己的结构

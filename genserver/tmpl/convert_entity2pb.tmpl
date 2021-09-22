@@ -8,7 +8,19 @@ import (
 //{{ .ModelName }}2Pb {{ .ModelName }}2Pb
 func {{ .ModelName }}2Pb(res *entity.Display{{ .ModelName }}) *{{ .ServerName | LowerFirstChar }}.{{ .ModelName }} {
 	if res == nil {
-		return &{{ .ServerName | LowerFirstChar }}.{{ .ModelName }}{}
+		return &{{ .ServerName | LowerFirstChar }}.{{ .ModelName }}{
+		  // TODO 填充自己的结构
+          {{ if .ShowExample}}
+        		//Id:            res.ID,
+        		//Priority:      res.Priority,
+        		//Content:       res.Content,
+        		//SendTime:      res.SendTime.Unix(),
+        		//ValidTime:     res.ValidTime.Unix(),
+        		//ReceiveIdList: res.ReceiverList,
+        		//IsReaded:      res.IsReaded,
+        		//IsOperate:     res.IsOperate,
+          {{- end }}
+		}
 	}
 	return &{{ .ServerName | LowerFirstChar }}.{{ .ModelName }}{
   // TODO 填充自己的结构

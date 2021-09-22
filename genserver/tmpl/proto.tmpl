@@ -5,6 +5,7 @@ package {{ .ServerName | LowerFirstChar }};
 import "google/protobuf/descriptor.proto";
 import "google/protobuf/wrappers.proto";
 import "avatar/{{ .ServerName | LowerFirstChar }}/types.proto";
+import "proto/nrpc.proto";
 
 option go_package = "solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}";
 
@@ -80,9 +81,20 @@ message Modify{{ .ModelName }}Response {
 }
 
 service {{ .ServerName }}Service {
-  rpc BatchFetch{{ .ModelName }}(BatchFetch{{ .ModelName }}Request)returns(BatchFetch{{ .ModelName }}Response);
-  rpc Fetch{{ .ModelName }}(Fetch{{ .ModelName }}Request)returns(Fetch{{ .ModelName }}Response);
-  rpc Create{{ .ModelName }}(Create{{ .ModelName }}Request)returns(Create{{ .ModelName }}Response);
-  rpc Delete{{ .ModelName }}(Delete{{ .ModelName }}Request)returns(Delete{{ .ModelName }}Response);
-  rpc Modify{{ .ModelName }}(Modify{{ .ModelName }}Request)returns(Modify{{ .ModelName }}Response);
+  option (nrpc.soptions) = {nrpc: true};
+  rpc BatchFetch{{ .ModelName }}(BatchFetch{{ .ModelName }}Request)returns(BatchFetch{{ .ModelName }}Response){
+    option (nrpc.moptions) = {nrpc: true};
+  };
+  rpc Fetch{{ .ModelName }}(Fetch{{ .ModelName }}Request)returns(Fetch{{ .ModelName }}Response){
+    option (nrpc.moptions) = {nrpc: true};
+  };
+  rpc Create{{ .ModelName }}(Create{{ .ModelName }}Request)returns(Create{{ .ModelName }}Response){
+    option (nrpc.moptions) = {nrpc: true};
+  };
+  rpc Delete{{ .ModelName }}(Delete{{ .ModelName }}Request)returns(Delete{{ .ModelName }}Response){
+    option (nrpc.moptions) = {nrpc: true};
+  };
+  rpc Modify{{ .ModelName }}(Modify{{ .ModelName }}Request)returns(Modify{{ .ModelName }}Response){
+    option (nrpc.moptions) = {nrpc: true};
+  };
 }

@@ -1,7 +1,7 @@
 package genItem
 
 import (
-	"solarland/backendv2/tools/genserver/model"
+	"genserver/genserver/model"
 )
 
 // IGenerate 生成代码的接口

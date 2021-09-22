@@ -13,7 +13,6 @@ import (
 type BasicService struct {
 	bundle.{{ .ServerName }}ServerBasisBundle
 	{{ .ModelName }}UseCase     usecase.{{ .ModelName }}UseCase
-	{{ .ServerName }}EventClient *{{ .ServerName | LowerFirstChar }}.{{ .ServerName }}EventClient
 }
 
 var _ {{ .ServerName | LowerFirstChar }}.{{ .ServerName }}ServiceServer = (*BasicService)(nil)
@@ -25,6 +24,7 @@ func NewBasicService(baseService bundle.{{ .ServerName }}ServerBasisBundle) {{ .
 	}
 }
 
+// BatchFetch BatchFetch
 func (b BasicService) BatchFetch{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.BatchFetch{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.BatchFetch{{ .ModelName }}Response, error) {
 	ret := &{{ .ServerName | LowerFirstChar }}.BatchFetch{{ .ModelName }}Response{}
     // TODO 实现自己的service
@@ -45,6 +45,7 @@ func (b BasicService) BatchFetch{{ .ModelName }}(ctx context.Context, request *{
 	return ret, nil
 }
 
+// Fetch Fetch
 func (b BasicService) Fetch{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.Fetch{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.Fetch{{ .ModelName }}Response, error) {
 	ret := &{{ .ServerName | LowerFirstChar }}.Fetch{{ .ModelName }}Response{}
 	// TODO 实现自己的service
@@ -62,6 +63,7 @@ func (b BasicService) Fetch{{ .ModelName }}(ctx context.Context, request *{{ .Se
 	return ret, nil
 }
 
+// Create Create
 func (b BasicService) Create{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.Create{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.Create{{ .ModelName }}Response, error) {
     // TODO 实现自己的service
     {{ if .ShowExample}}
@@ -81,6 +83,7 @@ func (b BasicService) Create{{ .ModelName }}(ctx context.Context, request *{{ .S
 	return &{{ .ServerName | LowerFirstChar }}.Create{{ .ModelName }}Response{}, nil
 }
 
+// Delete Delete
 func (b BasicService) Delete{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.Delete{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.Delete{{ .ModelName }}Response, error) {
     // TODO 实现自己的service
     {{ if .ShowExample}}
@@ -94,6 +97,7 @@ func (b BasicService) Delete{{ .ModelName }}(ctx context.Context, request *{{ .S
     return &{{ .ServerName | LowerFirstChar }}.Delete{{ .ModelName }}Response{}, nil
 }
 
+// Modify Modify
 func (b BasicService) Modify{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.Modify{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.Modify{{ .ModelName }}Response, error) {
     // TODO 实现自己的service
     {{ if .ShowExample}}

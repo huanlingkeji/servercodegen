@@ -2,9 +2,9 @@ package genItem
 
 import (
 	"fmt"
-	"solarland/backendv2/tools/genserver/charater"
-	"solarland/backendv2/tools/genserver/gencore"
-	"solarland/backendv2/tools/genserver/model"
+	"genserver/genserver/charater"
+	"genserver/genserver/gencore"
+	"genserver/genserver/model"
 )
 
 // NeventGenerate NeventGenerate

@@ -2,8 +2,8 @@ package genItem
 
 import (
 	"fmt"
-	"solarland/backendv2/tools/genserver/gencore"
-	"solarland/backendv2/tools/genserver/model"
+	"genserver/genserver/gencore"
+	"genserver/genserver/model"
 )
 
 // graphql的结构至少定义一个字段！！！

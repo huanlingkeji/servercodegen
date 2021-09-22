@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
-	"solarland/backendv2/tools/genserver/cmd"
-	"solarland/backendv2/tools/genserver/gencore"
-	"solarland/backendv2/tools/genserver/helper"
-	"solarland/backendv2/tools/genserver/model"
+	"genserver/genserver/gencore"
+	"genserver/genserver/helper"
+	"genserver/genserver/model"
 )
 
 func main() {
@@ -44,7 +43,7 @@ func main() {
 	generator := helper.MakeGenerator()
 	generator.PreCheck(mv)
 	generator.GenAll(mv)
-	gencore.CheckErr(cmd.GitAdd(mv.ProjectBasePath))
+	// gencore.CheckErr(cmd.GitAdd(mv.ProjectBasePath))
 }
 
 // CheckPath 检测文件路径是否都存在

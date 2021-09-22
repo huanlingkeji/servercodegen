@@ -3,12 +3,12 @@ package gencore
 import (
 	"bytes"
 	"errors"
+	"genserver/genserver/charater"
+	"genserver/genserver/model"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
-	"solarland/backendv2/tools/genserver/charater"
-	"solarland/backendv2/tools/genserver/model"
 	"strings"
 	"text/template"
 )
@@ -56,10 +56,10 @@ func templateGen(str string, data interface{}) string {
 
 // InsertContent2File 在文件中查找指定内容的位置 然后插入自己的内容
 // 首次操作会生成备份 然后会基于备份进行插入内容 即可重复操作
-func InsertContent2File(in *InsertContentInput, data interface{}) error {
+func InsertContent2File(in *InsertContentInput, env *model.MyEnv) error {
 	filePath := in.FilePath
 	searchSubStr := in.SearchSubStr
-	content := templateGen(in.Content, data)
+	content := templateGen(in.Content, env)
 	pType := in.PInsertType
 	bs, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -81,6 +81,20 @@ func InsertContent2File(in *InsertContentInput, data interface{}) error {
 		return errors.New("can not find position")
 	}
 	newData := fileData[:indx] + content + fileData[indx:]
+	{
+		cmprFile := strings.Replace(filePath, env.ProjectBasePath, "./cmpr/", 1)
+		dir, _ := filepath.Split(cmprFile)
+		_ = os.MkdirAll(dir, 0777)
+		fOutput, err := os.Create(cmprFile)
+		if err != nil {
+			return err
+		}
+		fOutput.Close()
+		err = ioutil.WriteFile(cmprFile, []byte(newData), 0600)
+		if err != nil {
+			return err
+		}
+	}
 	err = ioutil.WriteFile(filePath, []byte(newData), 0600)
 	if err != nil {
 		return err
@@ -151,6 +165,12 @@ func CheckErr(err error) {
 
 // GenProto GenProto
 func GenProto(outputFile, tmplName string, inputFiles []string, env *model.MyEnv) {
+	genProto(outputFile, tmplName, inputFiles, env)
+	cmprFile := strings.Replace(outputFile, env.ProjectBasePath, "./cmpr/", 1)
+	genProto(cmprFile, tmplName, inputFiles, env)
+}
+
+func genProto(outputFile, tmplName string, inputFiles []string, env *model.MyEnv) {
 	if len(inputFiles) > 0 {
 		_, fileName := filepath.Split(inputFiles[0])
 		tmplName = fileName
@@ -177,5 +197,6 @@ func getFuncMap() template.FuncMap {
 	return template.FuncMap{
 		"LowerFirstChar": charater.LowerFirstChar,
 		"UpperFirstChar": charater.UpperFirstChar,
+		"UpperAllChar":   charater.UpperAllChar,
 	}
 }

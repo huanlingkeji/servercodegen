@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package user;
+package {{ .ServerName | LowerFirstChar }};
 
 option go_package = "solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}";
 
