@@ -2,258 +2,250 @@ package usecase
 
 import (
 	"context"
-	"errors"
-	"solarland/backendv2/cluster/email/internal/domain/entity"
-	"solarland/backendv2/infra/log"
-	"solarland/backendv2/proto/gen/go/avatar/email"
-	"time"
+	_"errors"
+	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/domain/entity"
+	_"solarland/backendv2/infra/log"
+	"solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}"
+	_"time"
 )
 
 var (
-	ErrNotGameEmail  = errors.New("email is not send in the game") //非游戏邮件
-	ErrEmailInValid  = errors.New("email invalid")                 //邮件无效
-	ErrCantFindEmail = errors.New("email can not find")            //邮件无效
+	// ErrNotGame{{ .ModelName }}  = errors.New("{{ .ModelName | LowerFirstChar }} is not send in the game") //非游戏邮件
+	// Err{{ .ModelName }}InValid  = errors.New("{{ .ModelName | LowerFirstChar }} invalid")                 //邮件无效
+	// ErrCantFind{{ .ModelName }} = errors.New("{{ .ModelName | LowerFirstChar }} can not find")            //邮件无效
 )
 
-// EmailUseCase EmailUseCase
-type EmailUseCase struct {
-	EmailRepository       entity.EmailRepository
-	EmailLikeRepository   entity.EmailLikeRepository
-	EmailRecordRepository entity.EmailRecordRepository
+// {{ .ModelName }}UseCase {{ .ModelName }}UseCase
+type {{ .ModelName }}UseCase struct {
+	{{ .ModelName }}Repository       entity.{{ .ModelName }}Repository
 }
 
-var _ entity.EmailUseCase = (*EmailUseCase)(nil)
-var _ email.SendEmailListener = (*EmailUseCase)(nil)
+var _ entity.{{ .ModelName }}UseCase = (*{{ .ModelName }}UseCase)(nil)
+var _ {{ .ServerName | LowerFirstChar }}.Create{{ .ServerName }}Listener = (*{{ .ModelName }}UseCase)(nil)
 
-func (e EmailUseCase) OnSendEmail(ctx context.Context, m *email.SendEmailEvent) {
-	senderId := m.SenderId
-	receiverIdList := m.ReceiverIdList
-	content := m.Content
-	isPriority := m.IsPriority
-	sendTime := m.SendTime
-	gameId := m.GameId
-	validTime := m.ValidTime
-	err := e.SendEmail2User(ctx, gameId, senderId, content, receiverIdList, sendTime, validTime, isPriority)
-	if err != nil {
-		log.L(ctx).Error("EmailUseCase) OnSendEmail", log.Any("event", m), log.Error(err))
-	}
+func (e {{ .ModelName }}UseCase) OnCreate{{ .ModelName }}(ctx context.Context, m *{{ .ServerName | LowerFirstChar }}.Create{{ .ModelName }}Event) {
+  // TODO 实现自己的usecase
+  {{ if .ShowExample}}
+  	//senderId := m.SenderId
+	//receiverIdList := m.ReceiverIdList
+	//content := m.Content
+	//isPriority := m.IsPriority
+	//sendTime := m.SendTime
+	//gameId := m.GameId
+	//validTime := m.ValidTime
+	//err := e.Create{{ .ModelName }}(ctx, gameId, senderId, content, receiverIdList, sendTime, validTime, isPriority)
+	//if err != nil {
+	//	log.L(ctx).Error("{{ .ModelName }}UseCase) OnCreate{{ .ModelName }}", log.Any("event", m), log.Error(err))
+	//}
+	{{- end }}
 }
 
-func (e EmailUseCase) SendEmail2User(ctx context.Context, gameID, sender, content string, receiverList []string, sendTime, validTime int64, isPriority bool) error {
-	// 将邮件进行投递
-	email, err := e.EmailRepository.Create(ctx, entity.EmailVo{
-		Priority:  isPriority,
-		Content:   content,
-		SendTime:  time.Unix(sendTime, 0).UTC(),
-		ValidTime: time.Unix(validTime, 0).UTC(),
-	})
-	if err != nil {
-		return err
-	}
-	for _, v := range receiverList {
-		_, err := e.EmailRecordRepository.Create(ctx, entity.EmailRecordVo{
-			EmailID:   email.EmailID,
-			SenderID:  sender,
-			ReceiveID: v,
-			GameID:    gameID,
-			Status:    entity.EmailRecordStatusNone,
-		})
-		if err != nil {
-			return err
-		}
-	}
+func (e {{ .ModelName }}UseCase) Create{{ .ModelName }}(ctx context.Context, gameID, sender, content string, receiverList []string, sendTime, validTime int64, isPriority bool) error {
+  // TODO 实现自己的usecase
+  {{ if .ShowExample}}
+  	//// 将邮件进行投递
+	//{{ .ModelName | LowerFirstChar }}, err := e.{{ .ModelName }}Repository.Create(ctx, entity.{{ .ModelName }}Vo{
+	//	Priority:  isPriority,
+	//	Content:   content,
+	//	SendTime:  time.Unix(sendTime, 0).UTC(),
+	//	ValidTime: time.Unix(validTime, 0).UTC(),
+	//})
+	//if err != nil {
+	//	return err
+	//}
+	//for _, v := range receiverList {
+	//	_, err := e.{{ .ModelName }}RecordRepository.Create(ctx, entity.{{ .ModelName }}RecordVo{
+	//		{{ .ModelName }}ID:   {{ .ModelName }}.{{ .ModelName }}ID,
+	//		SenderID:  sender,
+	//		ReceiveID: v,
+	//		GameID:    gameID,
+	//		Status:    entity.{{ .ModelName }}RecordStatusNone,
+	//	})
+	//	if err != nil {
+	//		return err
+	//	}
+	//}
+	{{- end }}
 	return nil
 }
 
-func (e EmailUseCase) GetEmailLikeInfo(ctx context.Context, emailID, gameID string) ([]*entity.EmailLike, error) {
-	emailIDList := []string{emailID}
-	likeList, _, err := e.EmailLikeRepository.BatchGet(ctx, &entity.BatchGetEmailLikeFilter{
-		Limit:       0,
-		Offset:      0,
-		Order:       nil,
-		IDList:      &emailIDList,
-		LikerPlayer: nil,
-		LikedPlayer: nil,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return likeList, err
+func (e {{ .ModelName }}UseCase) Modify{{ .ModelName }}(ctx context.Context, {{ .ModelName | LowerFirstChar }}ID, gameID, receiverID string, isRead, isOperate *bool) error {
+  // TODO 实现自己的usecase
+  {{ if .ShowExample}}
+  	//// 获取邮件记录
+	//{{ .ModelName | LowerFirstChar }}IDList := []string{ {{- .ModelName | LowerFirstChar }}ID}
+	//records, _, err := e.{{ .ModelName }}RecordRepository.BatchGet(ctx, &entity.BatchGet{{ .ModelName }}RecordFilter{
+	//	IDList:         &{{ .ModelName | LowerFirstChar }}IDList,
+	//	FilterSender:   nil,
+	//	FilterReceiver: &receiverID,
+	//	GameID:         &gameID,
+	//	Limit:          1,
+	//	Offset:         0,
+	//	Order:          nil,
+	//	Status:         nil,
+	//})
+	//if err != nil {
+	//	return err
+	//}
+	//if len(records) < 1 {
+	//	return ErrCantFind{{ .ModelName }}
+	//}
+	//newStatus := records[0].Status
+	//if isOperate != nil && *isOperate {
+	//	newStatus = newStatus.SetStatus(entity.{{ .ModelName }}RecordStatusOperated)
+	//}
+	//if isRead != nil && *isRead {
+	//	newStatus = newStatus.SetStatus(entity.{{ .ModelName }}RecordStatusReaded)
+	//}
+	//_, err = e.{{ .ModelName }}RecordRepository.Update(ctx, {{ .ModelName | LowerFirstChar }}ID, &entity.Update{{ .ModelName }}RecordInput{
+	//	Status: &newStatus,
+	//})
+	//if err!=nil{
+	//    return err
+	//}
+	{{- end }}
+	return nil
 }
 
-func (e EmailUseCase) EmailLike(ctx context.Context, emailID, gameID, likerPlayer, likedPlayer string) error {
-	_, err := e.EmailLikeRepository.Create(ctx, entity.EmailLikeVo{
-		EmailID:     emailID,
-		LikerPlayer: likerPlayer,
-		LikedPlayer: likedPlayer,
-	})
-	return err
+func (e {{ .ModelName }}UseCase) Delete{{ .ModelName }}(ctx context.Context, {{ .ModelName | LowerFirstChar }}ID, gameID string) error {
+	return e.{{ .ModelName }}Repository.Delete(ctx, {{ .ModelName | LowerFirstChar }}ID)
 }
 
-func (e EmailUseCase) ModifyEmail(ctx context.Context, emailID, gameID, receiverID string, isRead, isOperate *bool) error {
-	// 获取邮件记录
-	emailIDList := []string{emailID}
-	records, _, err := e.EmailRecordRepository.BatchGet(ctx, &entity.BatchGetEmailRecordFilter{
-		IDList:         &emailIDList,
-		FilterSender:   nil,
-		FilterReceiver: &receiverID,
-		GameID:         &gameID,
-		Limit:          1,
-		Offset:         0,
-		Order:          nil,
-		Status:         nil,
-	})
-	if err != nil {
-		return err
-	}
-	if len(records) < 1 {
-		return ErrCantFindEmail
-	}
-	newStatus := records[0].Status
-	if isOperate != nil && *isOperate {
-		newStatus = newStatus.SetStatus(entity.EmailRecordStatusOperated)
-	}
-	if isRead != nil && *isRead {
-		newStatus = newStatus.SetStatus(entity.EmailRecordStatusReaded)
-	}
-	_, err = e.EmailRecordRepository.Update(ctx, emailID, &entity.UpdateEmailRecordInput{
-		Status: &newStatus,
-	})
-	return err
-}
-
-func (e EmailUseCase) DeleteEmail(ctx context.Context, emailID, gameID string) error {
-	return e.EmailRepository.Delete(ctx, emailID)
-}
-
-func (e EmailUseCase) FetchUserEmail(ctx context.Context, emailID, gameID string) (*entity.DisplayEmail, error) {
-	// 获取邮件记录
-	record, err := e.EmailRecordRepository.Get(ctx, emailID)
-	if err != nil {
-		return nil, err
-	}
-	if record.GameID != gameID {
-		return nil, ErrNotGameEmail
-	}
-	// 通过记录找出邮件
-	email, err := e.EmailRepository.Get(ctx, emailID)
-	if err != nil {
-		return nil, err
-	}
-	if !email.Valid() {
-		return nil, ErrEmailInValid
-	}
-	emailIDList := []string{emailID}
-	// 这些邮件的所有发送记录
-	records, _, err := e.EmailRecordRepository.BatchGet(ctx, &entity.BatchGetEmailRecordFilter{
-		IDList:         &emailIDList,
-		FilterSender:   nil,
-		FilterReceiver: nil,
-		Limit:          0,
-		Offset:         0,
-		Order:          nil,
-		Status:         nil,
-	})
-	if err != nil {
-		return nil, err
-	}
-	// 统计邮件的接收人
-	receiverList := make([]string, len(records))
-	for i, v := range records {
-		receiverList[i] = v.ReceiveID
-	}
-	ret := &entity.DisplayEmail{
-		ID:           email.EmailID,
-		Priority:     email.Priority,
-		Content:      email.Content,
-		SendTime:     email.SendTime,
-		ValidTime:    email.ValidTime,
-		IsReaded:     record.Status.IsReaded(),
-		IsOperate:    record.Status.IsOperated(),
-		ReceiverList: receiverList,
-	}
+func (e {{ .ModelName }}UseCase) FetchUser{{ .ModelName }}(ctx context.Context, {{ .ModelName | LowerFirstChar }}ID, gameID string) (*entity.Display{{ .ModelName }}, error) {
+  // TODO 实现自己的usecase
+  	ret := &entity.Display{{ .ModelName }}{}
+  {{ if .ShowExample}}
+  	//// 获取邮件记录
+	//record, err := e.{{ .ModelName }}RecordRepository.Get(ctx, {{ .ModelName | LowerFirstChar }}ID)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//if record.GameID != gameID {
+	//	return nil, ErrNotGame{{ .ModelName }}
+	//}
+	//// 通过记录找出邮件
+	//{{ .ModelName | LowerFirstChar }}, err := e.{{ .ModelName }}Repository.Get(ctx, {{ .ModelName | LowerFirstChar }}ID)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//if !{{ .ModelName | LowerFirstChar }}.Valid() {
+	//	return nil, Err{{ .ModelName }}InValid
+	//}
+	//{{ .ModelName | LowerFirstChar }}IDList := []string{ {{- .ModelName | LowerFirstChar }}ID}
+	//// 这些邮件的所有发送记录
+	//records, _, err := e.{{ .ModelName }}RecordRepository.BatchGet(ctx, &entity.BatchGet{{ .ModelName }}RecordFilter{
+	//	IDList:         &{{ .ModelName | LowerFirstChar }}IDList,
+	//	FilterSender:   nil,
+	//	FilterReceiver: nil,
+	//	Limit:          0,
+	//	Offset:         0,
+	//	Order:          nil,
+	//	Status:         nil,
+	//})
+	//if err != nil {
+	//	return nil, err
+	//}
+	//// 统计邮件的接收人
+	//receiverList := make([]string, len(records))
+	//for i, v := range records {
+	//	receiverList[i] = v.ReceiveID
+	//}
+	//ret := &entity.Display{{ .ModelName }}{
+	//	ID:           {{ .ModelName | LowerFirstChar }}.{{ .ModelName }}ID,
+	//	Priority:     {{ .ModelName | LowerFirstChar }}.Priority,
+	//	Content:      {{ .ModelName | LowerFirstChar }}.Content,
+	//	SendTime:     {{ .ModelName | LowerFirstChar }}.SendTime,
+	//	ValidTime:    {{ .ModelName | LowerFirstChar }}.ValidTime,
+	//	IsReaded:     record.Status.IsReaded(),
+	//	IsOperate:    record.Status.IsOperated(),
+	//	ReceiverList: receiverList,
+	//}
+	{{- end }}
 	return ret, nil
 }
 
-// BatchFetchUserEmail
-// 获取玩家的邮件
-// page从0开始
-func (e EmailUseCase) BatchFetchUserEmail(ctx context.Context, gameID, receiverID string, page, perPageNum int32) ([]*entity.DisplayEmail, int64, error) {
-	// 获取用户所有收到的邮件记录
-	records, _, err := e.EmailRecordRepository.BatchGet(ctx, &entity.BatchGetEmailRecordFilter{
-		IDList:         nil,
-		FilterSender:   nil,
-		FilterReceiver: &receiverID,
-		GameID:         &gameID,
-		Limit:          0,
-		Offset:         0,
-		Order:          nil,
-		Status:         nil,
-	})
-	if err != nil {
-		return nil, 0, err
-	}
-	log.L(ctx).Debug("EmailRecordRepository.BatchGet", log.Any("records", records))
-	emailIDList := make([]string, 0, len(records))
-	for _, v := range records {
-		emailIDList = append(emailIDList, v.EmailID)
-	}
-	timeNow := time.Now().Unix()
-	limit := perPageNum
-	offset := page * perPageNum
-	log.L(ctx).Debug("timeNow", log.Int("timeNow unix", int(timeNow)))
-	// 通过记录找出所有可获取的邮件
-	emailList, count, err := e.EmailRepository.BatchGet(ctx, &entity.BatchGetEmailFilter{
-		Limit:                int(limit),
-		Offset:               int(offset),
-		Order:                nil,
-		IDList:               &emailIDList,
-		Priority:             nil,
-		Content:              nil,
-		SendTimeSearchBegin:  nil,
-		SendTimeSearchEnd:    &timeNow, //已经开始发送了
-		ValidTimeSearchBegin: &timeNow, //未过期
-		ValidTimeSearchEnd:   nil,
-	})
-	if err != nil {
-		return nil, 0, err
-	}
-	log.L(ctx).Debug("EmailRepository.BatchGet", log.Any("emailList", emailList))
-	// 这些邮件的所有发送记录
-	records, _, err = e.EmailRecordRepository.BatchGet(ctx, &entity.BatchGetEmailRecordFilter{
-		IDList:         &emailIDList,
-		FilterSender:   nil,
-		FilterReceiver: nil,
-		Limit:          0,
-		Offset:         0,
-		Order:          nil,
-		Status:         nil,
-	})
-	if err != nil {
-		return nil, 0, err
-	}
-	log.L(ctx).Debug("All EmailRecordRepository.BatchGet", log.Any("records", records))
-	// 统计邮件的接收人
-	receiverListMap := make(map[string][]string)
-	for _, v := range records {
-		receiverListMap[v.EmailID] = append(receiverListMap[v.EmailID], v.ReceiveID)
-	}
-	recordMap := make(map[string]*entity.EmailRecord)
-	for _, v := range records {
-		recordMap[v.EmailID] = v
-	}
-	retList := make([]*entity.DisplayEmail, len(emailList))
-	for i, v := range emailList {
-		retList[i] = &entity.DisplayEmail{
-			ID:           v.EmailID,
-			Priority:     v.Priority,
-			Content:      v.Content,
-			SendTime:     v.SendTime,
-			ValidTime:    v.ValidTime,
-			IsReaded:     recordMap[v.EmailID].Status.IsReaded(),
-			IsOperate:    recordMap[v.EmailID].Status.IsOperated(),
-			ReceiverList: receiverListMap[v.EmailID],
-		}
-	}
+// BatchFetchUser{{ .ModelName }}
+func (e {{ .ModelName }}UseCase) BatchFetchUser{{ .ModelName }}(ctx context.Context, gameID, receiverID string, page, perPageNum int32) ([]*entity.Display{{ .ModelName }}, int64, error) {
+  // TODO 实现自己的usecase
+  	retList := make([]*entity.Display{{ .ModelName }}, 0)
+    var count int64
+  {{ if .ShowExample}}
+  	//// 获取用户所有收到的邮件记录
+	//records, _, err := e.{{ .ModelName }}RecordRepository.BatchGet(ctx, &entity.BatchGet{{ .ModelName }}RecordFilter{
+	//	IDList:         nil,
+	//	FilterSender:   nil,
+	//	FilterReceiver: &receiverID,
+	//	GameID:         &gameID,
+	//	Limit:          0,
+	//	Offset:         0,
+	//	Order:          nil,
+	//	Status:         nil,
+	//})
+	//if err != nil {
+	//	return nil, 0, err
+	//}
+	//log.L(ctx).Debug("{{ .ModelName }}RecordRepository.BatchGet", log.Any("records", records))
+	//{{ .ModelName | LowerFirstChar }}IDList := make([]string, 0, len(records))
+	//for _, v := range records {
+	//	{{ .ModelName | LowerFirstChar }}IDList = append({{ .ModelName | LowerFirstChar }}IDList, v.{{ .ModelName }}ID)
+	//}
+	//timeNow := time.Now().Unix()
+	//limit := perPageNum
+	//offset := page * perPageNum
+	//log.L(ctx).Debug("timeNow", log.Int("timeNow unix", int(timeNow)))
+	//// 通过记录找出所有可获取的邮件
+	//{{ .ModelName | LowerFirstChar }}List, count, err := e.{{ .ModelName }}Repository.BatchGet(ctx, &entity.BatchGet{{ .ModelName }}Filter{
+	//	Limit:                int(limit),
+	//	Offset:               int(offset),
+	//	Order:                nil,
+	//	IDList:               &{{ .ModelName | LowerFirstChar }}IDList,
+	//	Priority:             nil,
+	//	Content:              nil,
+	//	SendTimeSearchBegin:  nil,
+	//	SendTimeSearchEnd:    &timeNow, //已经开始发送了
+	//	ValidTimeSearchBegin: &timeNow, //未过期
+	//	ValidTimeSearchEnd:   nil,
+	//})
+	//if err != nil {
+	//	return nil, 0, err
+	//}
+	//log.L(ctx).Debug("{{ .ModelName }}Repository.BatchGet", log.Any("{{ .ModelName | LowerFirstChar }}List", {{ .ModelName | LowerFirstChar }}List))
+	//// 这些邮件的所有发送记录
+	//records, _, err = e.{{ .ModelName }}RecordRepository.BatchGet(ctx, &entity.BatchGet{{ .ModelName }}RecordFilter{
+	//	IDList:         &{{ .ModelName | LowerFirstChar }}IDList,
+	//	FilterSender:   nil,
+	//	FilterReceiver: nil,
+	//	Limit:          0,
+	//	Offset:         0,
+	//	Order:          nil,
+	//	Status:         nil,
+	//})
+	//if err != nil {
+	//	return nil, 0, err
+	//}
+	//log.L(ctx).Debug("All {{ .ModelName }}RecordRepository.BatchGet", log.Any("records", records))
+	//// 统计邮件的接收人
+	//receiverListMap := make(map[string][]string)
+	//for _, v := range records {
+	//	receiverListMap[v.{{ .ModelName }}ID] = append(receiverListMap[v.{{ .ModelName }}ID], v.ReceiveID)
+	//}
+	//recordMap := make(map[string]*entity.{{ .ModelName }}Record)
+	//for _, v := range records {
+	//	recordMap[v.{{ .ModelName }}ID] = v
+	//}
+	//retList := make([]*entity.Display{{ .ModelName }}, len({{ .ModelName | LowerFirstChar }}List))
+	//for i, v := range {{ .ModelName | LowerFirstChar }}List {
+	//	retList[i] = &entity.Display{{ .ModelName }}{
+	//		ID:           v.{{ .ModelName }}ID,
+	//		Priority:     v.Priority,
+	//		Content:      v.Content,
+	//		SendTime:     v.SendTime,
+	//		ValidTime:    v.ValidTime,
+	//		IsReaded:     recordMap[v.{{ .ModelName }}ID].Status.IsReaded(),
+	//		IsOperate:    recordMap[v.{{ .ModelName }}ID].Status.IsOperated(),
+	//		ReceiverList: receiverListMap[v.{{ .ModelName }}ID],
+	//	}
+	//}
+	{{- end }}
 	return retList, count, nil
 }

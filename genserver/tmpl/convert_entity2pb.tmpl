@@ -1,53 +1,35 @@
 package convert
 
 import (
-	"solarland/backendv2/cluster/email/internal/domain/entity"
-	"solarland/backendv2/proto/gen/go/avatar/email"
+	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/domain/entity"
+	"solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}"
 )
 
-//Email2Pb Email2Pb
-func Email2Pb(res *entity.DisplayEmail) *email.Email {
+//{{ .ModelName }}2Pb {{ .ModelName }}2Pb
+func {{ .ModelName }}2Pb(res *entity.Display{{ .ModelName }}) *{{ .ServerName | LowerFirstChar }}.{{ .ModelName }} {
 	if res == nil {
-		return &email.Email{}
+		return &{{ .ServerName | LowerFirstChar }}.{{ .ModelName }}{}
 	}
-	return &email.Email{
-		Id:            res.ID,
-		Priority:      res.Priority,
-		Content:       res.Content,
-		SendTime:      res.SendTime.Unix(),
-		ValidTime:     res.ValidTime.Unix(),
-		ReceiveIdList: res.ReceiverList,
-		IsReaded:      res.IsReaded,
-		IsOperate:     res.IsOperate,
+	return &{{ .ServerName | LowerFirstChar }}.{{ .ModelName }}{
+  // TODO 填充自己的结构
+  {{ if .ShowExample}}
+		//Id:            res.ID,
+		//Priority:      res.Priority,
+		//Content:       res.Content,
+		//SendTime:      res.SendTime.Unix(),
+		//ValidTime:     res.ValidTime.Unix(),
+		//ReceiveIdList: res.ReceiverList,
+		//IsReaded:      res.IsReaded,
+		//IsOperate:     res.IsOperate,
+  {{- end }}
 	}
 }
 
-//Emails2Pb Emails2Pb
-func Emails2Pb(res []*entity.DisplayEmail) []*email.Email {
-	ret := make([]*email.Email, len(res))
+//{{ .ModelName }}s2Pb {{ .ModelName }}s2Pb
+func {{ .ModelName }}s2Pb(res []*entity.Display{{ .ModelName }}) []*{{ .ServerName | LowerFirstChar }}.{{ .ModelName }} {
+	ret := make([]*{{ .ServerName | LowerFirstChar }}.{{ .ModelName }}, len(res))
 	for i, v := range res {
-		ret[i] = Email2Pb(v)
-	}
-	return ret
-}
-
-//EmailLike2Pb EmailLike2Pb
-func EmailLike2Pb(res *entity.EmailLike) *email.EmailLike {
-	if res == nil {
-		return &email.EmailLike{}
-	}
-	return &email.EmailLike{
-		EmailId:     res.EmailID,
-		LikerPlayer: res.LikerPlayer,
-		LikedPlayer: res.LikedPlayer,
-	}
-}
-
-//EmailLikes2Pb EmailLikes2Pb
-func EmailLikes2Pb(res []*entity.EmailLike) []*email.EmailLike {
-	ret := make([]*email.EmailLike, len(res))
-	for i, v := range res {
-		ret[i] = EmailLike2Pb(v)
+		ret[i] = {{ .ModelName }}2Pb(v)
 	}
 	return ret
 }

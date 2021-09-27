@@ -1,11 +1,11 @@
-package email
+package {{ .ServerName | LowerFirstChar }}
 
 import (
 	"context"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
-	"solarland/backendv2/cluster/email/internal/domain/entity"
-	"solarland/backendv2/cluster/email/internal/service"
+	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/domain/entity"
+	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/service"
 	"solarland/backendv2/infra/log"
 	"solarland/backendv2/pkg/run"
 )
@@ -24,7 +24,7 @@ func Run(ctx context.Context, cfg *viper.Viper) {
 		}
 	}()
 	container, cleanup, err := initialize(ctx, cfg)
-	check(err, "email run failed")
+	check(err, "{{ .ServerName | LowerFirstChar }} run failed")
 	defer cleanup()
 	check(InitTables(container.db), "db init migrate failed")
 	if err := run.Run(container.runGroup); err != nil {
@@ -35,9 +35,7 @@ func Run(ctx context.Context, cfg *viper.Viper) {
 // InitTables 初始化表结构
 func InitTables(db *gorm.DB) error {
 	tables := []interface{}{
-		entity.Email{},
-		entity.EmailLike{},
-		entity.EmailRecord{},
+		entity.{{ .ModelName }}{},
 	}
 	return db.AutoMigrate(tables...)
 }

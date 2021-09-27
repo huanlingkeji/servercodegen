@@ -4,15 +4,15 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"genserver/genserver/charater"
+	"genserver/genserver/model"
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"text/template"
 )
-
-const UseCacheBackupFile = false
-const AlwaysCopy = true
 
 type ContentInsertPosition int
 
@@ -41,7 +41,7 @@ type InsertContentInput struct {
 
 func templateGen(str string, data interface{}) string {
 	bf := bytes.NewBuffer(nil)
-	t, err := template.New("").Parse(str)
+	t, err := template.New("").Funcs(getFuncMap()).Parse(str)
 	if err != nil {
 		log.Fatalf("template.ParseFiles %v", err)
 	}
@@ -59,15 +59,7 @@ func InsertContent2File(in *InsertContentInput, data interface{}) error {
 	searchSubStr := in.SearchSubStr
 	content := templateGen(in.Content, data)
 	pType := in.PInsertType
-	openFile := filePath
-	fileExist := Exists(fmt.Sprintf("%v.back.txt", filePath))
-	if fileExist && UseCacheBackupFile {
-		openFile = fmt.Sprintf("%v.back.txt", filePath)
-	}
-	if !fileExist || AlwaysCopy {
-		CopyBackup(filePath)
-	}
-	bs, err := ioutil.ReadFile(openFile)
+	bs, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
@@ -123,7 +115,9 @@ func GetFilePointNextLineIndex(fileData string, searchSubStr string) int {
 }
 
 // 如果文件还没有备份则备份
+//find . -name "*.back.txt"  | xargs rm -f
 func CopyBackup(prefixPath string) {
+	return
 	backupFileName := fmt.Sprintf("%v.back.txt", prefixPath)
 	if !Exists(backupFileName) {
 		bs, err := ioutil.ReadFile(prefixPath)
@@ -152,5 +146,35 @@ func Exists(path string) bool {
 func CheckErr(err error) {
 	if err != nil {
 		panic(err)
+	}
+}
+
+func GenProto(outputFile, tmplName string, inputFiles []string, env *model.MyEnv) {
+	tmplName = ""
+	if 0 < len(inputFiles) {
+		_, fileName := filepath.Split(inputFiles[0])
+		tmplName = fileName
+	}
+	dir, _ := filepath.Split(outputFile)
+	_ = os.MkdirAll(dir, 0777)
+	fOutput, err := os.Create(outputFile)
+	defer fOutput.Close()
+	if err != nil {
+		log.Fatalf("error while opening %q: %v", outputFile, err)
+	}
+	t, err := template.New(tmplName).Funcs(getFuncMap()).ParseFiles(inputFiles...)
+	if err != nil {
+		log.Fatalf("template.ParseFiles %v", err)
+	}
+	err = t.Execute(fOutput, env)
+	if err != nil {
+		log.Fatalf("error while Execute %v", err)
+	}
+}
+
+func getFuncMap() template.FuncMap {
+	return template.FuncMap{
+		"LowerFirstChar": charater.LowerFirstChar,
+		"UpperFirstChar": charater.UpperFirstChar,
 	}
 }

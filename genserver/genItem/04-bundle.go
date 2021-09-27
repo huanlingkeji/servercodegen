@@ -36,6 +36,11 @@ func (g *BundleGenerate) PreCheck(env *model.MyEnv) {
 	if !gencore.Exists(g.neventgofile) {
 		panic("no file")
 	}
+	gencore.CopyBackup(g.rpcgofile)
+	gencore.CopyBackup(g.servergofile)
+	gencore.CopyBackup(g.wiregofile)
+	gencore.CopyBackup(g.grpcclientgofile)
+	gencore.CopyBackup(g.neventgofile)
 }
 
 var _ IGenerate = (*BundleGenerate)(nil)
@@ -54,15 +59,16 @@ func (g BundleGenerate) GenRpcCode(env *model.MyEnv) {
 		{
 			FilePath:     g.rpcgofile,
 			SearchSubStr: `import (`,
-			Content:      `emailpb "solarland/backendv2/proto/gen/go/avatar/email"`,
-			PInsertType:  gencore.StrPointNextLine,
+			Content: `	{{ .ServerName | LowerFirstChar }}pb "solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}"
+`,
+			PInsertType: gencore.StrPointNextLine,
 		},
 		// RPCBundle
 		{
 			FilePath:     g.rpcgofile,
 			SearchSubStr: ``,
-			Content: `// EmailRPCBundle interface
-type EmailRPCBundle interface {
+			Content: `// {{ .ServerName  }}RPCBundle interface
+type {{ .ServerName  }}RPCBundle interface {
 }
 `,
 			PInsertType: gencore.FileEnd,
@@ -71,7 +77,7 @@ type EmailRPCBundle interface {
 		{
 			FilePath:     g.rpcgofile,
 			SearchSubStr: `type GateRPCBundle interface {`,
-			Content: `	Email() emailpb.EmailServiceClient
+			Content: `	{{ .ServerName  }}() {{ .ServerName | LowerFirstChar }}pb.{{ .ServerName  }}ServiceClient
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},
@@ -79,7 +85,7 @@ type EmailRPCBundle interface {
 		{
 			FilePath:     g.rpcgofile,
 			SearchSubStr: `type tGateRPCBundle struct {`,
-			Content: `	IEmail         emailpb.EmailServiceClient
+			Content: `	I{{ .ServerName  }}         {{ .ServerName | LowerFirstChar }}pb.{{ .ServerName  }}ServiceClient
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},
@@ -88,8 +94,8 @@ type EmailRPCBundle interface {
 			FilePath:     g.rpcgofile,
 			SearchSubStr: ``,
 			Content: `
-func (t *tGateRPCBundle) Email() emailpb.EmailServiceClient {
-	return t.IEmail
+func (t *tGateRPCBundle) {{ .ServerName  }}() {{ .ServerName | LowerFirstChar }}pb.{{ .ServerName  }}ServiceClient {
+	return t.I{{ .ServerName  }}
 }
 `,
 			PInsertType: gencore.FileEnd,
@@ -106,19 +112,19 @@ func (g BundleGenerate) GenServerCode(env *model.MyEnv) {
 		{
 			FilePath:     g.servergofile,
 			SearchSubStr: ``,
-			Content: `// EmailServerBasisBundle type
-type EmailServerBasisBundle struct {
+			Content: `// {{ .ServerName  }}ServerBasisBundle type
+type {{ .ServerName  }}ServerBasisBundle struct {
 	ServerBasisBundle
-	rpc *tEmailRPCBundle
+	rpc *t{{ .ServerName  }}RPCBundle
 }
 
 // RPC func
-func (t EmailServerBasisBundle) RPC() EmailRPCBundle {
+func (t {{ .ServerName  }}ServerBasisBundle) RPC() {{ .ServerName  }}RPCBundle {
 	return t.rpc
 }
 
-// tEmailRPCBundle type
-type tEmailRPCBundle struct {
+// t{{ .ServerName  }}RPCBundle type
+type t{{ .ServerName  }}RPCBundle struct {
 }
 `,
 			PInsertType: gencore.FileEnd,
@@ -135,8 +141,8 @@ func (g BundleGenerate) GenWireCode(env *model.MyEnv) {
 		{
 			FilePath:     g.wiregofile,
 			SearchSubStr: `var WireRPCBasisBundleSet = wire.NewSet(`,
-			Content: `	wire.Struct(new(tEmailRPCBundle), "*"),
-	wire.Bind(new(EmailRPCBundle), new(*tEmailRPCBundle)),
+			Content: `	wire.Struct(new(t{{ .ServerName  }}RPCBundle), "*"),
+	wire.Bind(new({{ .ServerName  }}RPCBundle), new(*t{{ .ServerName  }}RPCBundle)),
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},
@@ -144,7 +150,7 @@ func (g BundleGenerate) GenWireCode(env *model.MyEnv) {
 		{
 			FilePath:     g.wiregofile,
 			SearchSubStr: `var ServiceBasisBundleSet = wire.NewSet(`,
-			Content: `	wire.Struct(new(EmailServerBasisBundle), "*"),
+			Content: `	wire.Struct(new({{ .ServerName  }}ServerBasisBundle), "*"),
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},
@@ -152,7 +158,7 @@ func (g BundleGenerate) GenWireCode(env *model.MyEnv) {
 		{
 			FilePath:     g.wiregofile,
 			SearchSubStr: `var InitializerSet = wire.NewSet(`,
-			Content: `	InitializeEmailServerBasisBundle,
+			Content: `	Initialize{{ .ServerName  }}ServerBasisBundle,
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},
@@ -160,9 +166,10 @@ func (g BundleGenerate) GenWireCode(env *model.MyEnv) {
 		{
 			FilePath:     g.wiregofile,
 			SearchSubStr: ``,
-			Content: `func InitializeEmailServerBasisBundle(ctx context.Context, cfg *viper.Viper) EmailServerBasisBundle {
+			Content: `func Initialize{{ .ServerName  }}ServerBasisBundle(ctx context.Context, cfg *viper.Viper) {{ .ServerName  }}ServerBasisBundle {
 	panic(wire.Build(Set))
-}`,
+}
+`,
 			PInsertType: gencore.FileEnd,
 		},
 	}
@@ -177,7 +184,7 @@ func (g BundleGenerate) GenGRPCClientCode(env *model.MyEnv) {
 		{
 			FilePath:     g.grpcclientgofile,
 			SearchSubStr: `import (`,
-			Content: `	emailpb "solarland/backendv2/proto/gen/go/avatar/email"
+			Content: `	{{ .ServerName | LowerFirstChar }}pb "solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}"
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},
@@ -185,7 +192,7 @@ func (g BundleGenerate) GenGRPCClientCode(env *model.MyEnv) {
 		{
 			FilePath:     g.grpcclientgofile,
 			SearchSubStr: `var GrpcClientSet = wire.NewSet(`,
-			Content: `	ProvideEmailClient,
+			Content: `	Provide{{ .ServerName  }}Client,
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},
@@ -193,10 +200,10 @@ func (g BundleGenerate) GenGRPCClientCode(env *model.MyEnv) {
 		{
 			FilePath:     g.grpcclientgofile,
 			SearchSubStr: ``,
-			Content: `func ProvideEmailClient(ctx context.Context, cfg *viper.Viper) emailpb.EmailServiceClient {
-	conn, err := infra_grpc.NewClient(ctx, "email:"+config.EmailGRPCPort(), grpc.WithInsecure())
+			Content: `func Provide{{ .ServerName  }}Client(ctx context.Context, cfg *viper.Viper) {{ .ServerName | LowerFirstChar }}pb.{{ .ServerName  }}ServiceClient {
+	conn, err := infra_grpc.NewClient(ctx, "{{ .ServerName | LowerFirstChar }}:"+config.{{ .ServerName  }}GRPCPort(), grpc.WithInsecure())
 	check(err, "create grpc client for push failed")
-	client := emailpb.NewEmailServiceClient(conn)
+	client := {{ .ServerName | LowerFirstChar }}pb.New{{ .ServerName  }}ServiceClient(conn)
 	return client
 }
 `,
@@ -214,7 +221,7 @@ func (g BundleGenerate) GenNeventCode(env *model.MyEnv) {
 		{
 			FilePath:     g.neventgofile,
 			SearchSubStr: `import (`,
-			Content: `	"solarland/backendv2/proto/gen/go/avatar/email"
+			Content: `	"solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}"
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},
@@ -222,7 +229,7 @@ func (g BundleGenerate) GenNeventCode(env *model.MyEnv) {
 		{
 			FilePath:     g.neventgofile,
 			SearchSubStr: `var NeventSet = wire.NewSet(`,
-			Content: `	email.NewEmailEventClient,
+			Content: `	{{ .ServerName | LowerFirstChar }}.New{{ .ServerName }}EventClient,
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},

@@ -7,10 +7,12 @@ import (
 
 // 环境定义
 type MyEnv struct {
-	ServerName string      //微服务的名字
-	UsePort    string      //端口号
-	EntityList []*MyEntity //新加的实体
-	ModelName  string      // 引用 第一个实体的名字（由于可能只有一个实体，为了便捷所做的冗余）
+	ServerName  string      //微服务的名字
+	UsePort     string      //端口号
+	EntityList  []*MyEntity //新加的实体
+	ModelName   string      //引用 第一个实体的名称（由于可能只有一个实体，为了便捷所做的冗余）
+	ModelZH     string      //引用 第一个实体的备注
+	ShowExample bool        //是否显示示例在生成代码中
 
 	ProjectBasePath string //项目路径
 	ClusterPath     string //集群文件夹路径

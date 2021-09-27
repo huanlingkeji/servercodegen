@@ -27,3 +27,6 @@
 
 ---
 实现nast（自己发送自己接收）
+
+###将备份的文件删除    
+find . -name "*.back.txt"  | xargs rm -f

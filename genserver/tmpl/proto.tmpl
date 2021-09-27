@@ -1,35 +1,49 @@
 syntax = "proto3";
 
-package email;
+package {{ .ServerName | LowerFirstChar }};
 
 import "google/protobuf/descriptor.proto";
 import "google/protobuf/wrappers.proto";
-import "avatar/email/types.proto";
+import "avatar/{{ .ServerName | LowerFirstChar }}/types.proto";
 
-option go_package = "solarland/backendv2/proto/gen/go/avatar/email";
+option go_package = "solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}";
 
-message BatchFetchUserEmailRequest {
+message BatchFetchUser{{ .ModelName }}Request {
+  // TODO 填充自己的结构
+  {{ if .ShowExample}}
   string receiver_id = 1;
   string game_id = 2;
   int32 page = 3;
   int32 per_page_num = 4;
+  {{- end }}
 }
 
-message BatchFetchUserEmailResponse {
-  repeated Email email_list = 1;
+message BatchFetchUser{{ .ModelName }}Response {
+  // TODO 填充自己的结构
+  {{ if .ShowExample}}
+  repeated {{ .ModelName }} {{ .ModelName | LowerFirstChar }}_list = 1;
   int64 total_count = 2;
+  {{- end }}
 }
 
-message FetchUserEmailRequest {
-  string email_id = 1;
+message FetchUser{{ .ModelName }}Request {
+  // TODO 填充自己的结构
+  {{ if .ShowExample}}
+  string {{ .ModelName | LowerFirstChar }}_id = 1;
   string game_id = 2;
+  {{- end }}
 }
 
-message FetchUserEmailResponse {
-  Email email = 1;
+message FetchUser{{ .ModelName }}Response {
+  // TODO 填充自己的结构
+  {{ if .ShowExample}}
+  {{ .ModelName }} {{ .ModelName | LowerFirstChar }} = 1;
+  {{- end }}
 }
 
-message SendEmail2UserRequest {
+message Create{{ .ModelName }}Request {
+  // TODO 填充自己的结构
+  {{ if .ShowExample}}
   string sender_id = 1;
   repeated string receiver_id_list = 2;
   string content = 3;
@@ -37,59 +51,44 @@ message SendEmail2UserRequest {
   int64 send_time = 5;
   string game_id = 6;
   int64 valid_time = 7;
+  {{- end }}
 }
 
-message SendEmail2UserResponse {
+message Create{{ .ModelName }}Response {
 
 }
 
-message DeleteEmailRequest {
-  string email_id = 1;
+message Delete{{ .ModelName }}Request {
+  // TODO 填充自己的结构
+  {{ if .ShowExample}}
+  string {{ .ModelName | LowerFirstChar }}_id = 1;
   string game_id = 2; //未使用
+  {{- end }}
 }
 
-message DeleteEmailResponse {
+message Delete{{ .ModelName }}Response {
 
 }
 
-message ModifyEmailRequest {
-  string email_id = 1;
+message Modify{{ .ModelName }}Request {
+  // TODO 填充自己的结构
+  {{ if .ShowExample}}
+  string {{ .ModelName | LowerFirstChar }}_id = 1;
   string game_id = 2;
   google.protobuf.BoolValue is_read = 3;
   google.protobuf.BoolValue is_operated = 4;
   string receiver = 5;
+  {{- end }}
 }
 
-message ModifyEmailResponse {
-
-}
-
-message EmailLikeRequest {
-  string email_id = 1;
-  string game_id = 2; //未使用
-  string liker_player = 3;
-  string liked_player = 4;
-}
-
-message EmailLikeResponse {
+message Modify{{ .ModelName }}Response {
 
 }
 
-message GetEmailLikeInfoRequest {
-  string email_id = 1;
-  string game_id = 2;
-}
-
-message GetEmailLikeInfoResponse {
-  repeated EmailLike email_like_list = 1;
-}
-
-service EmailService {
-  rpc BatchFetchUserEmail(BatchFetchUserEmailRequest)returns(BatchFetchUserEmailResponse);  // 批量获取用户邮件
-  rpc FetchUserEmail(FetchUserEmailRequest)returns(FetchUserEmailResponse);  // 获取用户单封邮件
-  rpc SendEmail2User(SendEmail2UserRequest)returns(SendEmail2UserResponse); // 发邮件给用户
-  rpc DeleteEmail(DeleteEmailRequest)returns(DeleteEmailResponse); // 删除邮件
-  rpc ModifyEmail(ModifyEmailRequest)returns(ModifyEmailResponse); // 改动邮件状态
-  rpc EmailLike(EmailLikeRequest)returns(EmailLikeResponse); // 邮件点赞（奇怪的需求）
-  rpc GetEmailLikeInfo(GetEmailLikeInfoRequest)returns(GetEmailLikeInfoResponse); // 获取邮件的点赞信息
+service {{ .ServerName }}Service {
+  rpc BatchFetchUser{{ .ModelName }}(BatchFetchUser{{ .ModelName }}Request)returns(BatchFetchUser{{ .ModelName }}Response);
+  rpc FetchUser{{ .ModelName }}(FetchUser{{ .ModelName }}Request)returns(FetchUser{{ .ModelName }}Response);
+  rpc Create{{ .ModelName }}(Create{{ .ModelName }}Request)returns(Create{{ .ModelName }}Response);
+  rpc Delete{{ .ModelName }}(Delete{{ .ModelName }}Request)returns(Delete{{ .ModelName }}Response);
+  rpc Modify{{ .ModelName }}(Modify{{ .ModelName }}Request)returns(Modify{{ .ModelName }}Response);
 }

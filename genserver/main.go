@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"genserver/genserver/cmd"
 	"genserver/genserver/gencore"
 	"genserver/genserver/helper"
 	"genserver/genserver/model"
@@ -10,16 +11,18 @@ import (
 func main() {
 	projectBasePath := "I:/GoProjects/src/solarland/backendv2/"
 	mv := model.MyEnv{
-		ServerName: "Email",
-		UsePort:    "9233",
-		ModelName:  "Email",
+		ServerName: "Avserver",
+		UsePort:    "888888888",
 		EntityList: []*model.MyEntity{{
-			ModelName: "Email",
+			ModelName: "MyEntity",
 			Fields: []*model.MyField{{
 				Name: "",
 				Type: "",
 			}},
 		}},
+		ModelName:   "MyEntity",
+		ModelZH:     "我的结构体",
+		ShowExample: false,
 
 		ProjectBasePath: projectBasePath,
 		ClusterPath:     fmt.Sprintf("%v%v", projectBasePath, "cluster/"),
@@ -38,6 +41,7 @@ func main() {
 	generator := helper.MakeGenerator()
 	generator.PreCheck(&mv)
 	generator.GenAll(&mv)
+	cmd.GitAdd(mv.ProjectBasePath)
 }
 
 // 检测环境是否正常

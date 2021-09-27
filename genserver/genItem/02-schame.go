@@ -6,16 +6,19 @@ import (
 	"genserver/genserver/model"
 )
 
+// graphql的结构至少定义一个字段！！！
+
 //
 type SchemaGenerate struct {
 	schemagraphqlfile string
 }
 
 func (g *SchemaGenerate) PreCheck(env *model.MyEnv) {
-	g.schemagraphqlfile = fmt.Sprintf("%v%v", env.ProtoPath, "proto/gate/schema.graphql")
+	g.schemagraphqlfile = fmt.Sprintf("%v%v", env.ProtoPath, "gate/schema.graphql")
 	if !gencore.Exists(g.schemagraphqlfile) {
 		panic("no file")
 	}
+	gencore.CopyBackup(g.schemagraphqlfile)
 }
 
 var _ IGenerate = (*SchemaGenerate)(nil)
@@ -26,12 +29,10 @@ func (g SchemaGenerate) GenCode(env *model.MyEnv) {
 		{
 			FilePath:     g.schemagraphqlfile,
 			SearchSubStr: `type Query {`,
-			Content: `    """批量获取用户邮件"""
-    emailList(input:EmailListInput!):EmailListPayload!
-    """获取用户单封邮件"""
-    email(input:EmailInput!):Email!
-    """获取邮件的点赞信息"""
-    emailLikeList(input:EmailLikeListInput!):EmailLikeListPayload!
+			Content: `    """{{.ModelZH}}列表"""
+    {{ .ModelName }}List(input:{{ .ModelName }}ListInput!):{{ .ModelName }}ListPayload!
+    """{{.ModelZH}}"""
+    {{ .ModelName }}(input:{{ .ModelName }}Input!):{{ .ModelName }}!
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},
@@ -39,14 +40,12 @@ func (g SchemaGenerate) GenCode(env *model.MyEnv) {
 		{
 			FilePath:     g.schemagraphqlfile,
 			SearchSubStr: `type Mutation {`,
-			Content: `    """发邮件给用户"""
-    sendEmail2User(input:SendEmail2UserInput!): Boolean!
-    """删除邮件"""
-    deleteEmail(input:DeleteEmailInput!): Boolean!
-    """改动邮件状态"""
-    modifyEmail(input:ModifyEmailInput!): Boolean!
-    """邮件点赞"""
-    emailLike(input:EmailLikeInput!): Boolean!
+			Content: `    """创建{{.ModelZH}}"""
+    create{{ .ModelName }}(input:Create{{ .ModelName }}Input!): Boolean!
+    """删除{{.ModelZH}}"""
+    delete{{ .ModelName }}(input:Delete{{ .ModelName }}Input!): Boolean!
+    """修改{{.ModelZH}}"""
+    modify{{ .ModelName }}(input:Modify{{ .ModelName }}Input!): Boolean!
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},
@@ -54,78 +53,82 @@ func (g SchemaGenerate) GenCode(env *model.MyEnv) {
 		{
 			FilePath:     g.schemagraphqlfile,
 			SearchSubStr: ``,
-			Content: `input EmailListInput {
-    receiverID:String!
-    gameID:String!
-    page:Int!
-    perPageNum:Int!
+			Content: `input {{ .ModelName }}ListInput {
+	skip:Int!
+	limit:Int!
+    # TODO 填充自己的结构
+  {{ if .ShowExample}}
+   #receiverID:String!
+   #gameID:String!
+   #page:Int!
+   #perPageNum:Int!
+  {{- end }}
 }
 
-type EmailListPayload {
-    emailList:[Email!]
+type {{ .ModelName }}ListPayload {
+   	{{ .ModelName }}List:[{{ .ModelName }}!]
     totalCount:Int!
 }
 
-type Email {
-    id :String!
-    content :String!
-    priority :Boolean!
-    sendTime:Int!
-    validTime:Int!
-    receiveIDList :[String!]
-    isReaded :Boolean!
-    isOperate :Boolean!
+type {{ .ModelName }} {
+	id :String!
+   # TODO 填充自己的结构
+  {{ if .ShowExample}}
+    #id :String!
+    #content :String!
+    #priority :Boolean!
+    #sendTime:Int!
+    #validTime:Int!
+    #receiveIDList :[String!]
+    #isReaded :Boolean!
+    #isOperate :Boolean!
+  {{- end }}
 }
 
-type EmailLike {
-    emailID :String!
-    likerPlayer :String!
-    likedPlayer :String!
+input {{ .ModelName }}Input {
+	{{ .ModelName }}ID:String!
+   # TODO 填充自己的结构
+  {{ if .ShowExample}}
+    #{{ .ModelName }}ID:String!
+    #gameID :String!
+  {{- end }}
 }
 
-input EmailInput {
-    emailID:String!
-    gameID :String!
+input Create{{ .ModelName }}Input{
+	content:String!
+   # TODO 填充自己的结构
+  {{ if .ShowExample}}
+    #senderID:String!
+    #content:String!
+    #receiverIDList:[String!]
+    #isPriority:Boolean!
+    #sendTime:Int!
+    #gameID:String!
+    #validTime:Int!
+  {{- end }}
 }
 
-input EmailLikeListInput{
-    emailID:String!
-    gameID :String!
+input Delete{{ .ModelName }}Input{
+	{{ .ModelName }}ID:String!
+  # TODO 填充自己的结构
+  {{ if .ShowExample}}
+	#{{ .ModelName }}ID:String!
+    #gameID :String!
+  {{- end }}
 }
 
-type EmailLikeListPayload{
-    emailLikeList:[EmailLike]
+input Modify{{ .ModelName }}Input{
+    {{ .ModelName }}ID:String!
+  # TODO 填充自己的结构
+  {{ if .ShowExample}}
+    #gameID:String!
+    #receiver:String!
+    #isRead:Boolean
+    #isOperated:Boolean
+  {{- end }}
 }
 
-input SendEmail2UserInput{
-    senderID:String!
-    content:String!
-    receiverIDList:[String!]
-    isPriority:Boolean!
-    sendTime:Int!
-    gameID:String!
-    validTime:Int!
-}
-
-input DeleteEmailInput{
-    emailID:String!
-    gameID :String!
-}
-
-input ModifyEmailInput{
-    emailID:String!
-    gameID:String!
-    receiver:String!
-    isRead:Boolean
-    isOperated:Boolean
-}
-
-input EmailLikeInput {
-    emailID:String!
-    gameID:String!
-    likerPlayer:String!
-    likedPlayer:String!
-}`,
+`,
 			PInsertType: gencore.FileEnd,
 		},
 	}

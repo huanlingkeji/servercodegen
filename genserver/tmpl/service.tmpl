@@ -2,117 +2,110 @@ package service
 
 import (
 	"context"
-	"solarland/backendv2/cluster/email/internal/convert"
-	"solarland/backendv2/cluster/email/internal/usecase"
+	_"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/convert"
+	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/usecase"
 	"solarland/backendv2/infra/wireinject/bundle"
-	"solarland/backendv2/pkg/castx"
-	"solarland/backendv2/proto/gen/go/avatar/email"
+	_"solarland/backendv2/pkg/castx"
+	"solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}"
 )
 
 // BasicService struct
 type BasicService struct {
-	bundle.EmailServerBasisBundle
-	EmailUseCase     usecase.EmailUseCase
-	EmailEventClient *email.EmailEventClient
+	bundle.{{ .ServerName }}ServerBasisBundle
+	{{ .ModelName }}UseCase     usecase.{{ .ModelName }}UseCase
+	{{ .ServerName }}EventClient *{{ .ServerName | LowerFirstChar }}.{{ .ServerName }}EventClient
 }
 
-var _ email.EmailServiceServer = (*BasicService)(nil)
+var _ {{ .ServerName | LowerFirstChar }}.{{ .ServerName }}ServiceServer = (*BasicService)(nil)
 
 // NewBasicService create new basicService
-func NewBasicService(baseService bundle.EmailServerBasisBundle) email.EmailServiceServer {
+func NewBasicService(baseService bundle.{{ .ServerName }}ServerBasisBundle) {{ .ServerName | LowerFirstChar }}.{{ .ServerName }}ServiceServer {
 	return &BasicService{
-		EmailServerBasisBundle: baseService,
+		{{ .ServerName }}ServerBasisBundle: baseService,
 	}
 }
 
-func (b BasicService) BatchFetchUserEmail(ctx context.Context, request *email.BatchFetchUserEmailRequest) (*email.BatchFetchUserEmailResponse, error) {
-	receiverId := request.ReceiverId
-	gameId := request.GameId
-	page := request.Page
-	perPageNum := request.PerPageNum
-	res, count, err := b.EmailUseCase.BatchFetchUserEmail(ctx, gameId, receiverId, page, perPageNum)
-	if err != nil {
-		return nil, err
-	}
-	ret := &email.BatchFetchUserEmailResponse{
-		EmailList:  convert.Emails2Pb(res),
-		TotalCount: count,
-	}
+func (b BasicService) BatchFetchUser{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.BatchFetchUser{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.BatchFetchUser{{ .ModelName }}Response, error) {
+	ret := &{{ .ServerName | LowerFirstChar }}.BatchFetchUser{{ .ModelName }}Response{}
+    // TODO 实现自己的service
+    {{ if .ShowExample}}
+    // receiverId := request.ReceiverId
+	// gameId := request.GameId
+	// page := request.Page
+	// perPageNum := request.PerPageNum
+	// res, count, err := b.{{ .ModelName }}UseCase.BatchFetchUser{{ .ModelName }}(ctx, gameId, receiverId, page, perPageNum)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// ret := &{{ .ServerName | LowerFirstChar }}.BatchFetchUser{{ .ModelName }}Response{
+	// 	{{ .ModelName }}List:  convert.{{ .ModelName }}s2Pb(res),
+	// 	TotalCount: count,
+	// }
+	{{- end }}
 	return ret, nil
 }
 
-func (b BasicService) FetchUserEmail(ctx context.Context, request *email.FetchUserEmailRequest) (*email.FetchUserEmailResponse, error) {
-	emailId := request.EmailId
-	gameId := request.GameId
-	res, err := b.EmailUseCase.FetchUserEmail(ctx, emailId, gameId)
-	if err != nil {
-		return nil, err
-	}
-	ret := &email.FetchUserEmailResponse{
-		Email: convert.Email2Pb(res),
-	}
+func (b BasicService) FetchUser{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.FetchUser{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.FetchUser{{ .ModelName }}Response, error) {
+	ret := &{{ .ServerName | LowerFirstChar }}.FetchUser{{ .ModelName }}Response{}
+	// TODO 实现自己的service
+    {{ if .ShowExample}}
+	// {{ .ModelName | LowerFirstChar }}Id := request.{{ .ModelName }}Id
+	// gameId := request.GameId
+	// res, err := b.{{ .ModelName }}UseCase.FetchUser{{ .ModelName }}(ctx, {{ .ModelName | LowerFirstChar }}Id, gameId)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// ret := &{{ .ServerName | LowerFirstChar }}.FetchUser{{ .ModelName }}Response{
+	// 	{{ .ModelName }}: convert.{{ .ModelName }}2Pb(res),
+	// }
+	{{- end }}
 	return ret, nil
 }
 
-func (b BasicService) SendEmail2User(ctx context.Context, request *email.SendEmail2UserRequest) (*email.SendEmail2UserResponse, error) {
-	err := b.EmailEventClient.SendEmail(ctx, &email.SendEmailEvent{
-		SenderId:       request.SenderId,
-		ReceiverIdList: request.ReceiverIdList,
-		Content:        request.Content,
-		IsPriority:     request.IsPriority,
-		SendTime:       request.SendTime,
-		GameId:         request.GameId,
-		ValidTime:      request.ValidTime,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &email.SendEmail2UserResponse{}, nil
+func (b BasicService) Create{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.Create{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.Create{{ .ModelName }}Response, error) {
+    // TODO 实现自己的service
+    {{ if .ShowExample}}
+	// err := b.{{ .ModelName }}EventClient.Create{{ .ModelName }}(ctx, &{{ .ServerName | LowerFirstChar }}.Create{{ .ModelName }}Event{
+	// 	SenderId:       request.SenderId,
+	// 	ReceiverIdList: request.ReceiverIdList,
+	// 	Content:        request.Content,
+	// 	IsPriority:     request.IsPriority,
+	// 	SendTime:       request.SendTime,
+	// 	GameId:         request.GameId,
+	// 	ValidTime:      request.ValidTime,
+	// })
+	// if err != nil {
+	// 	return nil, err
+	// }
+	{{- end }}
+	return &{{ .ServerName | LowerFirstChar }}.Create{{ .ModelName }}Response{}, nil
 }
 
-func (b BasicService) DeleteEmail(ctx context.Context, request *email.DeleteEmailRequest) (*email.DeleteEmailResponse, error) {
-	emailId := request.EmailId
-	gameId := request.GameId
-	err := b.EmailUseCase.DeleteEmail(ctx, emailId, gameId)
-	if err != nil {
-		return nil, err
-	}
-	return &email.DeleteEmailResponse{}, nil
+func (b BasicService) Delete{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.Delete{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.Delete{{ .ModelName }}Response, error) {
+    // TODO 实现自己的service
+    {{ if .ShowExample}}
+	// {{ .ModelName | LowerFirstChar }}Id := request.{{ .ModelName }}Id
+	// gameId := request.GameId
+	// err := b.{{ .ModelName }}UseCase.Delete{{ .ModelName }}(ctx, {{ .ModelName | LowerFirstChar }}Id, gameId)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	{{- end }}
+    return &{{ .ServerName | LowerFirstChar }}.Delete{{ .ModelName }}Response{}, nil
 }
 
-func (b BasicService) ModifyEmail(ctx context.Context, request *email.ModifyEmailRequest) (*email.ModifyEmailResponse, error) {
-	emailId := request.EmailId
-	gameId := request.GameId
-	isRead := castx.BoolValue2Boolp(request.IsRead)
-	isOperated := castx.BoolValue2Boolp(request.IsOperated)
-	receiver := request.Receiver
-	err := b.EmailUseCase.ModifyEmail(ctx, emailId, gameId, receiver, isRead, isOperated)
-	if err != nil {
-		return nil, err
-	}
-	return &email.ModifyEmailResponse{}, nil
-}
-
-func (b BasicService) EmailLike(ctx context.Context, request *email.EmailLikeRequest) (*email.EmailLikeResponse, error) {
-	emailId := request.EmailId
-	gameId := request.GameId
-	likePlayer := request.LikerPlayer
-	likedPlayer := request.LikedPlayer
-	err := b.EmailUseCase.EmailLike(ctx, emailId, gameId, likePlayer, likedPlayer)
-	if err != nil {
-		return nil, err
-	}
-	return &email.EmailLikeResponse{}, nil
-}
-
-func (b BasicService) GetEmailLikeInfo(ctx context.Context, request *email.GetEmailLikeInfoRequest) (*email.GetEmailLikeInfoResponse, error) {
-	emailId := request.EmailId
-	gameId := request.GameId
-	res, err := b.EmailUseCase.GetEmailLikeInfo(ctx, emailId, gameId)
-	if err != nil {
-		return nil, err
-	}
-	return &email.GetEmailLikeInfoResponse{
-		EmailLikeList: convert.EmailLikes2Pb(res),
-	}, nil
+func (b BasicService) Modify{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.Modify{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.Modify{{ .ModelName }}Response, error) {
+    // TODO 实现自己的service
+    {{ if .ShowExample}}
+	// {{ .ModelName | LowerFirstChar }}Id := request.{{ .ModelName }}Id
+	// gameId := request.GameId
+	// isRead := castx.BoolValue2Boolp(request.IsRead)
+	// isOperated := castx.BoolValue2Boolp(request.IsOperated)
+	// receiver := request.Receiver
+	// err := b.{{ .ModelName }}UseCase.Modify{{ .ModelName }}(ctx, {{ .ModelName | LowerFirstChar }}Id, gameId, receiver, isRead, isOperated)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	{{- end }}
+	return &{{ .ServerName | LowerFirstChar }}.Modify{{ .ModelName }}Response{}, nil
 }

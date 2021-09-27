@@ -2,7 +2,7 @@
 //go:build wireinject
 // +build wireinject
 
-package email
+package {{ .ServerName | LowerFirstChar }}
 
 import (
 	"context"
@@ -12,16 +12,16 @@ import (
 	"github.com/spf13/viper"
 	"net"
 	"solarland/backendv2/cluster/config"
-	"solarland/backendv2/cluster/email/internal/domain/entity"
-	"solarland/backendv2/cluster/email/internal/repository"
-	"solarland/backendv2/cluster/email/internal/service"
-	"solarland/backendv2/cluster/email/internal/usecase"
+	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/domain/entity"
+	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/repository"
+	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/service"
+	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/usecase"
 	"solarland/backendv2/infra/aevent"
 	"solarland/backendv2/infra/grpc"
 	"solarland/backendv2/infra/log"
 	"solarland/backendv2/infra/wireinject"
 	"solarland/backendv2/pkg/run"
-	emailpb "solarland/backendv2/proto/gen/go/avatar/email"
+	{{ .ServerName | LowerFirstChar }}pb "solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}"
 )
 
 var set = wire.NewSet(
@@ -29,20 +29,14 @@ var set = wire.NewSet(
 	wire.Struct(new(container), "*"),
 	wire.Struct(new(service.BasicService), "*"),
 	service.NewBasicService,
-	provideEmailEventListener,
+	provide{{ .ServerName }}EventListener,
 	provideRunGroup,
 
-	wire.Struct(new(repository.EmailRecordRepository), "*"),
-	wire.Bind(new(entity.EmailRecordRepository), new(*repository.EmailRecordRepository)),
+	wire.Struct(new(repository.{{ .ModelName }}Repository), "*"),
+	wire.Bind(new(entity.{{ .ModelName }}Repository), new(*repository.{{ .ModelName }}Repository)),
 
-	wire.Struct(new(repository.EmailLikeRepository), "*"),
-	wire.Bind(new(entity.EmailLikeRepository), new(*repository.EmailLikeRepository)),
-
-	wire.Struct(new(repository.EmailRepository), "*"),
-	wire.Bind(new(entity.EmailRepository), new(*repository.EmailRepository)),
-
-	wire.Struct(new(usecase.EmailUseCase), "*"),
-	wire.Bind(new(entity.EmailUseCase), new(*usecase.EmailUseCase)),
+	wire.Struct(new(usecase.{{ .ModelName }}UseCase), "*"),
+	wire.Bind(new(entity.{{ .ModelName }}UseCase), new(*usecase.{{ .ModelName }}UseCase)),
 )
 
 func initialize(ctx context.Context, cfg *viper.Viper) (*container, func(), error) {
@@ -55,8 +49,8 @@ func check(err error, message string) {
 	}
 }
 
-func provideEmailEventListener(cfg *viper.Viper, conn *nats.Conn) *nevent.Server {
-	ns, err := aevent.NewServer(conn, nevent.Queue("email"))
+func provide{{ .ServerName }}EventListener(cfg *viper.Viper, conn *nats.Conn) *nevent.Server {
+	ns, err := aevent.NewServer(conn, nevent.Queue("{{ .ServerName | LowerFirstChar }}"))
 	check(err, "nevent server failed")
 	return ns
 }
@@ -64,15 +58,15 @@ func provideEmailEventListener(cfg *viper.Viper, conn *nats.Conn) *nevent.Server
 func provideRunGroup(ctx context.Context, ns *nevent.Server, basicService service.BasicService) *run.Group {
 	var g run.Group
 	gs := grpc.NewServer(ctx)
-	emailpb.RegisterEmailServiceServer(gs, basicService)
-	gl, err := net.Listen("tcp", ":"+config.EmailGRPCPort())
+	{{ .ServerName | LowerFirstChar }}pb.Register{{ .ServerName }}ServiceServer(gs, basicService)
+	gl, err := net.Listen("tcp", ":"+config.{{ .ServerName }}GRPCPort())
 	if err != nil {
 		log.L(ctx).Panic("grpc tcp listen", log.Error(err))
 	}
 	subList := make([]*nats.Subscription, 0)
 	g.Add(func() error {
-		log.L(ctx).Info("emailpb.RegisterSendEmail...")
-		sub, err := emailpb.RegisterSendEmail(ns, basicService.EmailUseCase)
+		log.L(ctx).Info("{{ .ServerName | LowerFirstChar }}pb.RegisterCreate{{ .ServerName }}...")
+		sub, err := {{ .ServerName | LowerFirstChar }}pb.RegisterCreate{{ .ServerName }}(ns, basicService.{{ .ModelName }}UseCase)
 		if err != nil {
 			return err
 		}
@@ -84,7 +78,7 @@ func provideRunGroup(ctx context.Context, ns *nevent.Server, basicService servic
 		}
 	})
 	g.Add(func() error {
-		log.L(ctx).Info("start email grpc server")
+		log.L(ctx).Info("start {{ .ModelName | LowerFirstChar }} grpc server")
 		return gs.Serve(gl)
 	}, func(error) {
 		gs.GracefulStop()

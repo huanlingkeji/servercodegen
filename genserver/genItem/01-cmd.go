@@ -16,6 +16,7 @@ func (g *CmdGenerate) PreCheck(env *model.MyEnv) {
 	if !gencore.Exists(g.cmdgofile) {
 		panic("no file")
 	}
+	gencore.CopyBackup(g.cmdgofile)
 }
 
 var _ IGenerate = (*CmdGenerate)(nil)
@@ -26,15 +27,16 @@ func (g CmdGenerate) GenCode(env *model.MyEnv) {
 		{
 			FilePath:     g.cmdgofile,
 			SearchSubStr: `import (`,
-			Content:      `solarland/backendv2/cluster/email`,
-			PInsertType:  gencore.StrPointNextLine,
+			Content: `	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}"
+`,
+			PInsertType: gencore.StrPointNextLine,
 		},
 		// 写入调用
 		{
 			FilePath:     g.cmdgofile,
 			SearchSubStr: `switch cmdName {`,
-			Content: `	case "email":
-		email.Run(ctx, cfg)
+			Content: `	case "{{ .ServerName | LowerFirstChar }}":
+		{{ .ServerName | LowerFirstChar }}.Run(ctx, cfg)
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},

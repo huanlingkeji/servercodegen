@@ -4,19 +4,36 @@ import (
 	"context"
 	"solarland/backendv2/cluster/gate/gate/convert"
 	"solarland/backendv2/cluster/gate/gate/gen"
-	"solarland/backendv2/pkg/castx"
-	emailpb "solarland/backendv2/proto/gen/go/avatar/email"
+	_"solarland/backendv2/pkg/castx"
+	{{ .ServerName | LowerFirstChar }}pb "solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}"
 )
 
-func (r *QueryMutationResolver) SendEmail2User(ctx context.Context, input gen.SendEmail2UserInput) (bool, error) {
-	_, err := r.RPC().Email().SendEmail2User(ctx, &emailpb.SendEmail2UserRequest{
-		SenderId:       input.SenderID,
-		ReceiverIdList: input.ReceiverIDList,
-		Content:        input.Content,
-		IsPriority:     input.IsPriority,
-		SendTime:       int64(input.SendTime),
-		GameId:         input.GameID,
-		ValidTime:      int64(input.ValidTime),
+func (r *QueryMutationResolver) Create{{ .ModelName }}(ctx context.Context, input gen.Create{{ .ModelName }}Input) (bool, error) {
+	_, err := r.RPC().{{ .ServerName }}().Create{{ .ModelName }}(ctx, &{{ .ServerName | LowerFirstChar }}pb.Create{{ .ModelName }}Request{
+  // TODO 填充自己的结构
+  {{ if .ShowExample}}
+		//SenderId:       input.SenderID,
+		//ReceiverIdList: input.ReceiverIDList,
+		//Content:        input.Content,
+		//IsPriority:     input.IsPriority,
+		//SendTime:       int64(input.SendTime),
+		//GameId:         input.GameID,
+		//ValidTime:      int64(input.ValidTime),
+  {{- end }}
+  	})
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (r *QueryMutationResolver) Delete{{ .ModelName }}(ctx context.Context, input gen.Delete{{ .ModelName }}Input) (bool, error) {
+	_, err := r.RPC().{{ .ServerName }}().Delete{{ .ModelName }}(ctx, &{{ .ServerName | LowerFirstChar }}pb.Delete{{ .ModelName }}Request{
+  // TODO 填充自己的结构
+  {{ if .ShowExample}}
+		//{{ .ModelName }}Id: input.{{ .ModelName }}ID,
+		//GameId:  input.GameID,
+  {{- end }}
 	})
 	if err != nil {
 		return false, err
@@ -24,10 +41,16 @@ func (r *QueryMutationResolver) SendEmail2User(ctx context.Context, input gen.Se
 	return true, nil
 }
 
-func (r *QueryMutationResolver) DeleteEmail(ctx context.Context, input gen.DeleteEmailInput) (bool, error) {
-	_, err := r.RPC().Email().DeleteEmail(ctx, &emailpb.DeleteEmailRequest{
-		EmailId: input.EmailID,
-		GameId:  input.GameID,
+func (r *QueryMutationResolver) Modify{{ .ModelName }}(ctx context.Context, input gen.Modify{{ .ModelName }}Input) (bool, error) {
+	_, err := r.RPC().{{ .ServerName }}().Modify{{ .ModelName }}(ctx, &{{ .ServerName | LowerFirstChar }}pb.Modify{{ .ModelName }}Request{
+        // TODO 填充自己的结构
+        {{ if .ShowExample}}
+		//{{ .ModelName }}Id:    input.{{ .ModelName }}ID,
+		//GameId:     input.GameID,
+		//IsRead:     castx.Boolp2BoolValue(input.IsRead),
+		//IsOperated: castx.Boolp2BoolValue(input.IsOperated),
+		//Receiver:   input.Receiver,
+        {{- end }}
 	})
 	if err != nil {
 		return false, err
@@ -35,69 +58,35 @@ func (r *QueryMutationResolver) DeleteEmail(ctx context.Context, input gen.Delet
 	return true, nil
 }
 
-func (r *QueryMutationResolver) ModifyEmail(ctx context.Context, input gen.ModifyEmailInput) (bool, error) {
-	_, err := r.RPC().Email().ModifyEmail(ctx, &emailpb.ModifyEmailRequest{
-		EmailId:    input.EmailID,
-		GameId:     input.GameID,
-		IsRead:     castx.Boolp2BoolValue(input.IsRead),
-		IsOperated: castx.Boolp2BoolValue(input.IsOperated),
-		Receiver:   input.Receiver,
-	})
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-func (r *QueryMutationResolver) EmailLike(ctx context.Context, input gen.EmailLikeInput) (bool, error) {
-	_, err := r.RPC().Email().EmailLike(ctx, &emailpb.EmailLikeRequest{
-		EmailId:     input.EmailID,
-		GameId:      input.GameID,
-		LikerPlayer: input.LikerPlayer,
-		LikedPlayer: input.LikedPlayer,
-	})
-	if err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-func (r *QueryMutationResolver) EmailList(ctx context.Context, input gen.EmailListInput) (*gen.EmailListPayload, error) {
-	res, err := r.RPC().Email().BatchFetchUserEmail(ctx, &emailpb.BatchFetchUserEmailRequest{
-		ReceiverId: input.ReceiverID,
-		GameId:     input.GameID,
-		Page:       int32(input.Page),
-		PerPageNum: int32(input.PerPageNum),
+func (r *QueryMutationResolver) {{ .ModelName }}List(ctx context.Context, input gen.{{ .ModelName }}ListInput) (*gen.{{ .ModelName }}ListPayload, error) {
+	res, err := r.RPC().{{ .ServerName }}().BatchFetchUser{{ .ModelName }}(ctx, &{{ .ServerName | LowerFirstChar }}pb.BatchFetchUser{{ .ModelName }}Request{
+        // TODO 填充自己的结构
+        {{ if .ShowExample}}
+		//ReceiverId: input.ReceiverID,
+		//GameId:     input.GameID,
+		//Page:       int32(input.Page),
+		//PerPageNum: int32(input.PerPageNum),
+        {{- end }}
 	})
 	if err != nil {
 		return nil, err
 	}
-	return &gen.EmailListPayload{
-		EmailList:  convert.Emails2Gen(res.EmailList),
+	return &gen.{{ .ModelName }}ListPayload{
+		{{ .ModelName }}List:  convert.{{ .ModelName }}s2Gen(res.{{ .ModelName }}List),
 		TotalCount: int(res.TotalCount),
 	}, nil
 }
 
-func (r *QueryMutationResolver) Email(ctx context.Context, input gen.EmailInput) (*gen.Email, error) {
-	res, err := r.RPC().Email().FetchUserEmail(ctx, &emailpb.FetchUserEmailRequest{
-		EmailId: input.EmailID,
-		GameId:  input.GameID,
+func (r *QueryMutationResolver) {{ .ModelName }}(ctx context.Context, input gen.{{ .ModelName }}Input) (*gen.{{ .ModelName }}, error) {
+	res, err := r.RPC().{{ .ServerName }}().FetchUser{{ .ModelName }}(ctx, &{{ .ServerName | LowerFirstChar }}pb.FetchUser{{ .ModelName }}Request{
+        // TODO 填充自己的结构
+        {{ if .ShowExample}}
+  		//{{ .ModelName }}Id: input.{{ .ModelName }}ID,
+		//GameId:  input.GameID,
+        {{- end }}
 	})
 	if err != nil {
 		return nil, err
 	}
-	return convert.Email2Gen(res.Email), nil
-}
-
-func (r *QueryMutationResolver) EmailLikeList(ctx context.Context, input gen.EmailLikeListInput) (*gen.EmailLikeListPayload, error) {
-	res, err := r.RPC().Email().GetEmailLikeInfo(ctx, &emailpb.GetEmailLikeInfoRequest{
-		EmailId: input.EmailID,
-		GameId:  input.GameID,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &gen.EmailLikeListPayload{
-		EmailLikeList: convert.EmailLikes2Gen(res.EmailLikeList),
-	}, nil
+	return convert.{{ .ModelName }}2Gen(res.{{ .ModelName }}), nil
 }

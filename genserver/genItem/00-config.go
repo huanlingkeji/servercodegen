@@ -21,6 +21,8 @@ func (g *ConfigGenerate) PreCheck(env *model.MyEnv) {
 	if !gencore.Exists(g.configyamlfile) {
 		panic("no file")
 	}
+	gencore.CopyBackup(g.configgofile)
+	gencore.CopyBackup(g.configyamlfile)
 }
 
 var _ IGenerate = (*ConfigGenerate)(nil)
@@ -31,9 +33,9 @@ func (g ConfigGenerate) GenCode(env *model.MyEnv) {
 		{
 			FilePath:     g.configgofile,
 			SearchSubStr: ``,
-			Content: `// EmailGRPCPort Email server port
-func EmailGRPCPort() string {
-	return cfg.GetString("service.email.port.grpc")
+			Content: `// {{ .ServerName }}GRPCPort {{ .ServerName }} server port
+func {{ .ServerName }}GRPCPort() string {
+	return cfg.GetString("service.{{ .ServerName | LowerFirstChar }}.port.grpc")
 }
 `,
 			PInsertType: gencore.FileEnd,
@@ -42,9 +44,9 @@ func EmailGRPCPort() string {
 		{
 			FilePath:     g.configyamlfile,
 			SearchSubStr: `service:`,
-			Content: `  email:
+			Content: `  {{ .ServerName | LowerFirstChar }}:
     port:
-      grpc: 9233
+      grpc: {{ .UsePort }}
 `,
 			PInsertType: gencore.StrPointNextLine,
 		},

@@ -41,6 +41,7 @@ func MakeGenerator() *Generator {
 			&genItem.WireGenerate{},
 			&genItem.NeventGenerate{},
 			&genItem.ConvertGenerate{},
+			&genItem.SchemaGenerate{},
 		},
 	}
 }

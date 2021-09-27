@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: email
+  name: {{ .ServerName | LowerFirstChar }}
 
 spec:
   selector:
     matchLabels:
-      app: email
+      app: {{ .ServerName | LowerFirstChar }}
   replicas: 1
   revisionHistoryLimit: 0
   strategy:
@@ -17,18 +17,18 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/port: "6060"
       labels:
-        app: email
+        app: {{ .ServerName | LowerFirstChar }}
     spec:
       restartPolicy: Always
       containers:
-        - name: email
+        - name: {{ .ServerName | LowerFirstChar }}
           image: lilith-registry.cn-shanghai.cr.aliyuncs.com/avatar/code:latest
           imagePullPolicy: Always
           command: ["bin/cmd"]
-          args: ["-c","email"]
+          args: ["-c","{{ .ServerName | LowerFirstChar }}"]
           env:
             - name: ELASTIC_APM_SERVICE_NAME
-              value: email
+              value: {{- .ServerName | LowerFirstChar }}
           envFrom:
             - configMapRef:
                 name: avatar-config
@@ -44,7 +44,7 @@ spec:
               cpu: "1"
           readinessProbe:
             exec:
-              command: ["/bin/grpc_health_probe", "-addr=:9233", "-connect-timeout", "250ms", "-rpc-timeout", "100ms"]
+              command: ["/bin/grpc_health_probe", "-addr=:{{ .UsePort }}", "-connect-timeout", "250ms", "-rpc-timeout", "100ms"]
             initialDelaySeconds: 3
             periodSeconds: 10
             timeoutSeconds: 1
@@ -67,18 +67,18 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: email
+  name: {{- .ServerName | LowerFirstChar }}
 
   labels:
-    app: email
+    app: {{- .ServerName | LowerFirstChar }}
 spec:
   selector:
-    app: email
+    app: {{- .ServerName | LowerFirstChar }}
   type: ClusterIP
   ports:
     - name: grpc
-      port: 9233
-      targetPort: 9233
+      port: {{ .UsePort }}
+      targetPort: {{ .UsePort }}
 
 ---
 
