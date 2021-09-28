@@ -28,7 +28,7 @@ spec:
           args: ["-c","{{ .ServerName | LowerFirstChar }}"]
           env:
             - name: ELASTIC_APM_SERVICE_NAME
-              value: {{- .ServerName | LowerFirstChar }}
+              value: {{ .ServerName | LowerFirstChar }}
           envFrom:
             - configMapRef:
                 name: avatar-config
@@ -67,13 +67,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{- .ServerName | LowerFirstChar }}
+  name: {{ .ServerName | LowerFirstChar }}
 
   labels:
-    app: {{- .ServerName | LowerFirstChar }}
+    app: {{ .ServerName | LowerFirstChar }}
 spec:
   selector:
-    app: {{- .ServerName | LowerFirstChar }}
+    app: {{ .ServerName | LowerFirstChar }}
   type: ClusterIP
   ports:
     - name: grpc

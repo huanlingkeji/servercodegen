@@ -25,19 +25,19 @@ func NewBasicService(baseService bundle.{{ .ServerName }}ServerBasisBundle) {{ .
 	}
 }
 
-func (b BasicService) BatchFetchUser{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.BatchFetchUser{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.BatchFetchUser{{ .ModelName }}Response, error) {
-	ret := &{{ .ServerName | LowerFirstChar }}.BatchFetchUser{{ .ModelName }}Response{}
+func (b BasicService) BatchFetch{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.BatchFetch{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.BatchFetch{{ .ModelName }}Response, error) {
+	ret := &{{ .ServerName | LowerFirstChar }}.BatchFetch{{ .ModelName }}Response{}
     // TODO 实现自己的service
     {{ if .ShowExample}}
     // receiverId := request.ReceiverId
 	// gameId := request.GameId
 	// page := request.Page
 	// perPageNum := request.PerPageNum
-	// res, count, err := b.{{ .ModelName }}UseCase.BatchFetchUser{{ .ModelName }}(ctx, gameId, receiverId, page, perPageNum)
+	// res, count, err := b.{{ .ModelName }}UseCase.BatchFetch{{ .ModelName }}(ctx, gameId, receiverId, page, perPageNum)
 	// if err != nil {
 	// 	return nil, err
 	// }
-	// ret := &{{ .ServerName | LowerFirstChar }}.BatchFetchUser{{ .ModelName }}Response{
+	// ret := &{{ .ServerName | LowerFirstChar }}.BatchFetch{{ .ModelName }}Response{
 	// 	{{ .ModelName }}List:  convert.{{ .ModelName }}s2Pb(res),
 	// 	TotalCount: count,
 	// }
@@ -45,17 +45,17 @@ func (b BasicService) BatchFetchUser{{ .ModelName }}(ctx context.Context, reques
 	return ret, nil
 }
 
-func (b BasicService) FetchUser{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.FetchUser{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.FetchUser{{ .ModelName }}Response, error) {
-	ret := &{{ .ServerName | LowerFirstChar }}.FetchUser{{ .ModelName }}Response{}
+func (b BasicService) Fetch{{ .ModelName }}(ctx context.Context, request *{{ .ServerName | LowerFirstChar }}.Fetch{{ .ModelName }}Request) (*{{ .ServerName | LowerFirstChar }}.Fetch{{ .ModelName }}Response, error) {
+	ret := &{{ .ServerName | LowerFirstChar }}.Fetch{{ .ModelName }}Response{}
 	// TODO 实现自己的service
     {{ if .ShowExample}}
 	// {{ .ModelName | LowerFirstChar }}Id := request.{{ .ModelName }}Id
 	// gameId := request.GameId
-	// res, err := b.{{ .ModelName }}UseCase.FetchUser{{ .ModelName }}(ctx, {{ .ModelName | LowerFirstChar }}Id, gameId)
+	// res, err := b.{{ .ModelName }}UseCase.Fetch{{ .ModelName }}(ctx, {{ .ModelName | LowerFirstChar }}Id, gameId)
 	// if err != nil {
 	// 	return nil, err
 	// }
-	// ret := &{{ .ServerName | LowerFirstChar }}.FetchUser{{ .ModelName }}Response{
+	// ret := &{{ .ServerName | LowerFirstChar }}.Fetch{{ .ModelName }}Response{
 	// 	{{ .ModelName }}: convert.{{ .ModelName }}2Pb(res),
 	// }
 	{{- end }}

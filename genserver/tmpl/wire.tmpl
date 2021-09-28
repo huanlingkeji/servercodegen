@@ -66,7 +66,7 @@ func provideRunGroup(ctx context.Context, ns *nevent.Server, basicService servic
 	subList := make([]*nats.Subscription, 0)
 	g.Add(func() error {
 		log.L(ctx).Info("{{ .ServerName | LowerFirstChar }}pb.RegisterCreate{{ .ServerName }}...")
-		sub, err := {{ .ServerName | LowerFirstChar }}pb.RegisterCreate{{ .ServerName }}(ns, basicService.{{ .ModelName }}UseCase)
+		sub, err := {{ .ServerName | LowerFirstChar }}pb.RegisterCreate{{ .ModelName }}(ns, basicService.{{ .ModelName }}UseCase)
 		if err != nil {
 			return err
 		}
@@ -78,7 +78,7 @@ func provideRunGroup(ctx context.Context, ns *nevent.Server, basicService servic
 		}
 	})
 	g.Add(func() error {
-		log.L(ctx).Info("start {{ .ModelName | LowerFirstChar }} grpc server")
+		log.L(ctx).Info("start {{ .ServerName | LowerFirstChar }} grpc server")
 		return gs.Serve(gl)
 	}, func(error) {
 		gs.GracefulStop()

@@ -8,7 +8,7 @@ import (
 	"solarland/backendv2/cluster/{{ .ServerName | LowerFirstChar }}/internal/domain/entity"
 	"solarland/backendv2/infra/log"
 	gormtx "solarland/backendv2/pkg/transactional/gorm"
-	"time"
+	_"time"
 )
 
 func generate{{ .ModelName }}ID() string {

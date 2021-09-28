@@ -21,7 +21,7 @@ type {{ .ModelName }}UseCase struct {
 }
 
 var _ entity.{{ .ModelName }}UseCase = (*{{ .ModelName }}UseCase)(nil)
-var _ {{ .ServerName | LowerFirstChar }}.Create{{ .ServerName }}Listener = (*{{ .ModelName }}UseCase)(nil)
+var _ {{ .ServerName | LowerFirstChar }}.Create{{ .ModelName }}Listener = (*{{ .ModelName }}UseCase)(nil)
 
 func (e {{ .ModelName }}UseCase) OnCreate{{ .ModelName }}(ctx context.Context, m *{{ .ServerName | LowerFirstChar }}.Create{{ .ModelName }}Event) {
   // TODO 实现自己的usecase
@@ -73,7 +73,7 @@ func (e {{ .ModelName }}UseCase) Modify{{ .ModelName }}(ctx context.Context, {{ 
   // TODO 实现自己的usecase
   {{ if .ShowExample}}
   	//// 获取邮件记录
-	//{{ .ModelName | LowerFirstChar }}IDList := []string{ {{- .ModelName | LowerFirstChar }}ID}
+	//{{ .ModelName | LowerFirstChar }}IDList := []string{ {{ .ModelName | LowerFirstChar }}ID}
 	//records, _, err := e.{{ .ModelName }}RecordRepository.BatchGet(ctx, &entity.BatchGet{{ .ModelName }}RecordFilter{
 	//	IDList:         &{{ .ModelName | LowerFirstChar }}IDList,
 	//	FilterSender:   nil,
@@ -111,7 +111,7 @@ func (e {{ .ModelName }}UseCase) Delete{{ .ModelName }}(ctx context.Context, {{ 
 	return e.{{ .ModelName }}Repository.Delete(ctx, {{ .ModelName | LowerFirstChar }}ID)
 }
 
-func (e {{ .ModelName }}UseCase) FetchUser{{ .ModelName }}(ctx context.Context, {{ .ModelName | LowerFirstChar }}ID, gameID string) (*entity.Display{{ .ModelName }}, error) {
+func (e {{ .ModelName }}UseCase) Fetch{{ .ModelName }}(ctx context.Context, {{ .ModelName | LowerFirstChar }}ID, gameID string) (*entity.Display{{ .ModelName }}, error) {
   // TODO 实现自己的usecase
   	ret := &entity.Display{{ .ModelName }}{}
   {{ if .ShowExample}}
@@ -131,7 +131,7 @@ func (e {{ .ModelName }}UseCase) FetchUser{{ .ModelName }}(ctx context.Context, 
 	//if !{{ .ModelName | LowerFirstChar }}.Valid() {
 	//	return nil, Err{{ .ModelName }}InValid
 	//}
-	//{{ .ModelName | LowerFirstChar }}IDList := []string{ {{- .ModelName | LowerFirstChar }}ID}
+	//{{ .ModelName | LowerFirstChar }}IDList := []string{ {{ .ModelName | LowerFirstChar }}ID}
 	//// 这些邮件的所有发送记录
 	//records, _, err := e.{{ .ModelName }}RecordRepository.BatchGet(ctx, &entity.BatchGet{{ .ModelName }}RecordFilter{
 	//	IDList:         &{{ .ModelName | LowerFirstChar }}IDList,
@@ -164,8 +164,8 @@ func (e {{ .ModelName }}UseCase) FetchUser{{ .ModelName }}(ctx context.Context, 
 	return ret, nil
 }
 
-// BatchFetchUser{{ .ModelName }}
-func (e {{ .ModelName }}UseCase) BatchFetchUser{{ .ModelName }}(ctx context.Context, gameID, receiverID string, page, perPageNum int32) ([]*entity.Display{{ .ModelName }}, int64, error) {
+// BatchFetch{{ .ModelName }}
+func (e {{ .ModelName }}UseCase) BatchFetch{{ .ModelName }}(ctx context.Context, gameID, receiverID string, page, perPageNum int32) ([]*entity.Display{{ .ModelName }}, int64, error) {
   // TODO 实现自己的usecase
   	retList := make([]*entity.Display{{ .ModelName }}, 0)
     var count int64

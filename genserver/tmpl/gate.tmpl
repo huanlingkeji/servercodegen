@@ -59,7 +59,7 @@ func (r *QueryMutationResolver) Modify{{ .ModelName }}(ctx context.Context, inpu
 }
 
 func (r *QueryMutationResolver) {{ .ModelName }}List(ctx context.Context, input gen.{{ .ModelName }}ListInput) (*gen.{{ .ModelName }}ListPayload, error) {
-	res, err := r.RPC().{{ .ServerName }}().BatchFetchUser{{ .ModelName }}(ctx, &{{ .ServerName | LowerFirstChar }}pb.BatchFetchUser{{ .ModelName }}Request{
+	res, err := r.RPC().{{ .ServerName }}().BatchFetch{{ .ModelName }}(ctx, &{{ .ServerName | LowerFirstChar }}pb.BatchFetch{{ .ModelName }}Request{
         // TODO 填充自己的结构
         {{ if .ShowExample}}
 		//ReceiverId: input.ReceiverID,
@@ -78,7 +78,7 @@ func (r *QueryMutationResolver) {{ .ModelName }}List(ctx context.Context, input 
 }
 
 func (r *QueryMutationResolver) {{ .ModelName }}(ctx context.Context, input gen.{{ .ModelName }}Input) (*gen.{{ .ModelName }}, error) {
-	res, err := r.RPC().{{ .ServerName }}().FetchUser{{ .ModelName }}(ctx, &{{ .ServerName | LowerFirstChar }}pb.FetchUser{{ .ModelName }}Request{
+	res, err := r.RPC().{{ .ServerName }}().Fetch{{ .ModelName }}(ctx, &{{ .ServerName | LowerFirstChar }}pb.Fetch{{ .ModelName }}Request{
         // TODO 填充自己的结构
         {{ if .ShowExample}}
   		//{{ .ModelName }}Id: input.{{ .ModelName }}ID,

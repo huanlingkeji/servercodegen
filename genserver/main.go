@@ -9,38 +9,41 @@ import (
 )
 
 func main() {
-	projectBasePath := "I:/GoProjects/src/solarland/backendv2/"
-	mv := model.MyEnv{
-		ServerName: "Avserver",
-		UsePort:    "888888888",
-		EntityList: []*model.MyEntity{{
-			ModelName: "MyEntity",
-			Fields: []*model.MyField{{
-				Name: "",
-				Type: "",
-			}},
-		}},
-		ModelName:   "MyEntity",
-		ModelZH:     "我的结构体",
-		ShowExample: false,
+	//projectBasePath := "I:/GoProjects/src/solarland/backendv2/"
+	//mv := &model.MyEnv{
+	//	ServerName: "Avserver",
+	//	UsePort:    "9244",
+	//	EntityList: []*model.MyEntity{{
+	//		ModelName: "MyEntity",
+	//		Fields: []*model.MyField{{
+	//			Name: "",
+	//			Type: "",
+	//		}},
+	//	}},
+	//	ModelName:   "MyEntity",
+	//	ModelZH:     "我的结构体",
+	//	ShowExample: false,
+	//
+	//	ProjectBasePath: projectBasePath,
+	//	ClusterPath:     fmt.Sprintf("%v%v", projectBasePath, "cluster/"),
+	//	DeployPath:      fmt.Sprintf("%v%v", projectBasePath, "deploy/app/base/"),
+	//	ProtoPath:       fmt.Sprintf("%v%v", projectBasePath, "deploy/app/base/proto/avatar/"),
+	//	GraphqlPath:     fmt.Sprintf("%v%v", projectBasePath, "deploy/app/base/proto/avatar/"),
+	//	GatePath:        fmt.Sprintf("%v%v", projectBasePath, "cluster/gate/gate/"),
+	//	ConfigPath:      fmt.Sprintf("%v%v", projectBasePath, "cluster/config/"),
+	//	BundlePath:      fmt.Sprintf("%v%v", projectBasePath, "infra/wireinject/"),
+	//}
+	//gencore.CheckErr(mv.Encode("yaml/env.yaml"))
 
-		ProjectBasePath: projectBasePath,
-		ClusterPath:     fmt.Sprintf("%v%v", projectBasePath, "cluster/"),
-		DeployPath:      fmt.Sprintf("%v%v", projectBasePath, "deploy/app/base/"),
-		ProtoPath:       fmt.Sprintf("%v%v", projectBasePath, "deploy/app/base/proto/avatar/"),
-		GraphqlPath:     fmt.Sprintf("%v%v", projectBasePath, "deploy/app/base/proto/avatar/"),
-		GatePath:        fmt.Sprintf("%v%v", projectBasePath, "cluster/gate/gate/"),
-		ConfigPath:      fmt.Sprintf("%v%v", projectBasePath, "cluster/config/"),
-		BundlePath:      fmt.Sprintf("%v%v", projectBasePath, "infra/wireinject/"),
-	}
-	gencore.CheckErr(mv.Encode("yaml/env.yaml"))
-	if !CheckEnv(&mv) {
+	mv, err := model.Decode("yaml/env.yaml")
+	gencore.CheckErr(err)
+	if !CheckEnv(mv) {
 		panic("path not all right!!!")
 	}
 
 	generator := helper.MakeGenerator()
-	generator.PreCheck(&mv)
-	generator.GenAll(&mv)
+	generator.PreCheck(mv)
+	generator.GenAll(mv)
 	cmd.GitAdd(mv.ProjectBasePath)
 }
 

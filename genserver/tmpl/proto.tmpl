@@ -8,7 +8,7 @@ import "avatar/{{ .ServerName | LowerFirstChar }}/types.proto";
 
 option go_package = "solarland/backendv2/proto/gen/go/avatar/{{ .ServerName | LowerFirstChar }}";
 
-message BatchFetchUser{{ .ModelName }}Request {
+message BatchFetch{{ .ModelName }}Request {
   // TODO 填充自己的结构
   {{ if .ShowExample}}
   string receiver_id = 1;
@@ -18,15 +18,12 @@ message BatchFetchUser{{ .ModelName }}Request {
   {{- end }}
 }
 
-message BatchFetchUser{{ .ModelName }}Response {
-  // TODO 填充自己的结构
-  {{ if .ShowExample}}
+message BatchFetch{{ .ModelName }}Response {
   repeated {{ .ModelName }} {{ .ModelName | LowerFirstChar }}_list = 1;
   int64 total_count = 2;
-  {{- end }}
 }
 
-message FetchUser{{ .ModelName }}Request {
+message Fetch{{ .ModelName }}Request {
   // TODO 填充自己的结构
   {{ if .ShowExample}}
   string {{ .ModelName | LowerFirstChar }}_id = 1;
@@ -34,11 +31,8 @@ message FetchUser{{ .ModelName }}Request {
   {{- end }}
 }
 
-message FetchUser{{ .ModelName }}Response {
-  // TODO 填充自己的结构
-  {{ if .ShowExample}}
+message Fetch{{ .ModelName }}Response {
   {{ .ModelName }} {{ .ModelName | LowerFirstChar }} = 1;
-  {{- end }}
 }
 
 message Create{{ .ModelName }}Request {
@@ -86,8 +80,8 @@ message Modify{{ .ModelName }}Response {
 }
 
 service {{ .ServerName }}Service {
-  rpc BatchFetchUser{{ .ModelName }}(BatchFetchUser{{ .ModelName }}Request)returns(BatchFetchUser{{ .ModelName }}Response);
-  rpc FetchUser{{ .ModelName }}(FetchUser{{ .ModelName }}Request)returns(FetchUser{{ .ModelName }}Response);
+  rpc BatchFetch{{ .ModelName }}(BatchFetch{{ .ModelName }}Request)returns(BatchFetch{{ .ModelName }}Response);
+  rpc Fetch{{ .ModelName }}(Fetch{{ .ModelName }}Request)returns(Fetch{{ .ModelName }}Response);
   rpc Create{{ .ModelName }}(Create{{ .ModelName }}Request)returns(Create{{ .ModelName }}Response);
   rpc Delete{{ .ModelName }}(Delete{{ .ModelName }}Request)returns(Delete{{ .ModelName }}Response);
   rpc Modify{{ .ModelName }}(Modify{{ .ModelName }}Request)returns(Modify{{ .ModelName }}Response);

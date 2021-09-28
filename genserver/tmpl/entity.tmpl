@@ -3,7 +3,7 @@ package entity
 import (
 	"context"
 	"gorm.io/gorm"
-	"time"
+	_"time"
 )
 
 // {{ .ModelName }}
@@ -81,6 +81,6 @@ type {{ .ModelName }}UseCase interface {
 	Modify{{ .ModelName }}(ctx context.Context, {{ .ModelName | LowerFirstChar }}ID, gameID, receiver string, isRead, isOperate *bool) error
 	Delete{{ .ModelName }}(ctx context.Context, {{ .ModelName | LowerFirstChar }}ID, gameID string) error
 	Create{{ .ModelName }}(ctx context.Context, gameID, sender, content string, receiverList []string, sendTime, validTime int64, isPriority bool) error
-	FetchUser{{ .ModelName }}(ctx context.Context, {{ .ModelName | LowerFirstChar }}ID, gameID string) (*Display{{ .ModelName }}, error)
-	BatchFetchUser{{ .ModelName }}(ctx context.Context, gameID, receiverID string, page, perPageNum int32) ([]*Display{{ .ModelName }}, int64, error)
+	Fetch{{ .ModelName }}(ctx context.Context, {{ .ModelName | LowerFirstChar }}ID, gameID string) (*Display{{ .ModelName }}, error)
+	BatchFetch{{ .ModelName }}(ctx context.Context, gameID, receiverID string, page, perPageNum int32) ([]*Display{{ .ModelName }}, int64, error)
 }
