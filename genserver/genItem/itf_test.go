@@ -2,16 +2,19 @@ package genItem
 
 import (
 	"fmt"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/model"
 	"testing"
 )
 
+// GenCode GenCode
 type FuncGenCode func(env *model.MyEnv)
 
+// GenCode GenCode
 func (f FuncGenCode) GenCode(env *model.MyEnv) {
 	f(env)
 }
 
+// PreCheck PreCheck
 func (f FuncGenCode) PreCheck(env *model.MyEnv) {
 	f(env)
 }

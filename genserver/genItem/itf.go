@@ -1,11 +1,11 @@
 package genItem
 
 import (
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/model"
 )
 
-// 生成代码的接口
+// IGenerate 生成代码的接口
 type IGenerate interface {
-	PreCheck(env *model.MyEnv) // 前置的检验
-	GenCode(env *model.MyEnv)  // 生成代码
+	PreCheck(env *model.MyEnv) //  前置的检验
+	GenCode(env *model.MyEnv)  //  生成代码
 }

@@ -3,35 +3,37 @@ package gencore
 import (
 	"bytes"
 	"errors"
-	"fmt"
-	"genserver/genserver/charater"
-	"genserver/genserver/model"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"solarland/backendv2/tools/genserver/charater"
+	"solarland/backendv2/tools/genserver/model"
 	"strings"
 	"text/template"
 )
 
+// ContentInsertPosition ContentInsertPosition
 type ContentInsertPosition int
 
+// ContentInsertPosition ContentInsertPositions
 const (
-	StrPointBegin    ContentInsertPosition = 1 //查找字符串的开始位置
-	StrPointEnd      ContentInsertPosition = 2 //查找字符串的结束位置
-	StrPointNextLine ContentInsertPosition = 3 //查找字符串的下一行开头位置
-	FileEnd          ContentInsertPosition = 4 //文件结尾
+	StrPointBegin    ContentInsertPosition = 1 // 查找字符串的开始位置
+	StrPointEnd      ContentInsertPosition = 2 // 查找字符串的结束位置
+	StrPointNextLine ContentInsertPosition = 3 // 查找字符串的下一行开头位置
+	FileEnd          ContentInsertPosition = 4 // 文件结尾
 )
 
-// 将内容新到新的文件里面去
+// InsertContent2NewFile 将内容新到新的文件里面去
 func InsertContent2NewFile(filePath, content string) error {
-	err := ioutil.WriteFile(filePath, []byte(content), 666)
+	err := ioutil.WriteFile(filePath, []byte(content), 0600)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
+// InsertContentInput InsertContentInput
 type InsertContentInput struct {
 	FilePath     string
 	SearchSubStr string
@@ -52,8 +54,8 @@ func templateGen(str string, data interface{}) string {
 	return bf.String()
 }
 
-//在文件中查找指定内容的位置 然后插入自己的内容
-//首次操作会生成备份 然后会基于备份进行插入内容 即可重复操作
+// InsertContent2File 在文件中查找指定内容的位置 然后插入自己的内容
+// 首次操作会生成备份 然后会基于备份进行插入内容 即可重复操作
 func InsertContent2File(in *InsertContentInput, data interface{}) error {
 	filePath := in.FilePath
 	searchSubStr := in.SearchSubStr
@@ -79,20 +81,20 @@ func InsertContent2File(in *InsertContentInput, data interface{}) error {
 		return errors.New("can not find position")
 	}
 	newData := fileData[:indx] + content + fileData[indx:]
-	err = ioutil.WriteFile(filePath, []byte(newData), 666)
+	err = ioutil.WriteFile(filePath, []byte(newData), 0600)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-//获取文件查找内容的开始位置
+// GetFilePointBeginIndex 获取文件查找内容的开始位置
 func GetFilePointBeginIndex(fileData string, searchSubStr string) int {
 	idx := strings.Index(fileData, searchSubStr)
 	return idx
 }
 
-//获取文件查找内容的结尾位置
+// GetFilePointEndIndex 获取文件查找内容的结尾位置
 func GetFilePointEndIndex(fileData string, searchSubStr string) int {
 	idx := strings.Index(fileData, searchSubStr)
 	if idx > 0 {
@@ -101,7 +103,7 @@ func GetFilePointEndIndex(fileData string, searchSubStr string) int {
 	return idx
 }
 
-//获取文件查找内容的下一行的位置
+// GetFilePointNextLineIndex 获取文件查找内容的下一行的位置
 func GetFilePointNextLineIndex(fileData string, searchSubStr string) int {
 	idx := strings.Index(fileData, searchSubStr)
 	if idx < 0 {
@@ -114,60 +116,59 @@ func GetFilePointNextLineIndex(fileData string, searchSubStr string) int {
 	return -1
 }
 
-// 如果文件还没有备份则备份
-//find . -name "*.back.txt"  | xargs rm -f
+// CopyBackup 如果文件还没有备份则备份
+// find . -name "*.back.txt"  | xargs rm -f
 func CopyBackup(prefixPath string) {
-	return
-	backupFileName := fmt.Sprintf("%v.back.txt", prefixPath)
-	if !Exists(backupFileName) {
-		bs, err := ioutil.ReadFile(prefixPath)
-		if err != nil {
-			panic(err.Error())
-		}
-		err = ioutil.WriteFile(backupFileName, bs, 0600)
-		if err != nil {
-			panic(err.Error())
-		}
-	}
+	// return
+	// backupFileName := fmt.Sprintf("%v.back.txt", prefixPath)
+	// if !Exists(backupFileName) {
+	//	bs, err := ioutil.ReadFile(prefixPath)
+	//	if err != nil {
+	//		panic(err.Error())
+	//	}
+	//	err = ioutil.WriteFile(backupFileName, bs, 0600)
+	//	if err != nil {
+	//		panic(err.Error())
+	//	}
+	// }
 }
 
-//判断文件路径是存在
+// Exists 判断文件路径是存在
 func Exists(path string) bool {
 	_, err := os.Stat(path)
 	if err != nil {
-		if os.IsExist(err) {
-			return true
-		}
-		return false
+		return os.IsExist(err)
 	}
 	return true
 }
 
+// CheckErr CheckErr
 func CheckErr(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
 
+// GenProto GenProto
 func GenProto(outputFile, tmplName string, inputFiles []string, env *model.MyEnv) {
-	tmplName = ""
-	if 0 < len(inputFiles) {
+	if len(inputFiles) > 0 {
 		_, fileName := filepath.Split(inputFiles[0])
 		tmplName = fileName
 	}
 	dir, _ := filepath.Split(outputFile)
 	_ = os.MkdirAll(dir, 0777)
 	fOutput, err := os.Create(outputFile)
-	defer fOutput.Close()
 	if err != nil {
 		log.Fatalf("error while opening %q: %v", outputFile, err)
 	}
 	t, err := template.New(tmplName).Funcs(getFuncMap()).ParseFiles(inputFiles...)
 	if err != nil {
+		_ = fOutput.Close()
 		log.Fatalf("template.ParseFiles %v", err)
 	}
 	err = t.Execute(fOutput, env)
 	if err != nil {
+		_ = fOutput.Close()
 		log.Fatalf("error while Execute %v", err)
 	}
 }

@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
-	"genserver/genserver/cmd"
-	"genserver/genserver/gencore"
-	"genserver/genserver/helper"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/cmd"
+	"solarland/backendv2/tools/genserver/gencore"
+	"solarland/backendv2/tools/genserver/helper"
+	"solarland/backendv2/tools/genserver/model"
 )
 
 func main() {
-	//projectBasePath := "I:/GoProjects/src/solarland/backendv2/"
-	//mv := &model.MyEnv{
+	// projectBasePath := "I:/GoProjects/src/solarland/backendv2/"
+	// mv := &model.MyEnv{
 	//	ServerName: "Avserver",
 	//	UsePort:    "9244",
 	//	EntityList: []*model.MyEntity{{
@@ -32,54 +32,47 @@ func main() {
 	//	GatePath:        fmt.Sprintf("%v%v", projectBasePath, "cluster/gate/gate/"),
 	//	ConfigPath:      fmt.Sprintf("%v%v", projectBasePath, "cluster/config/"),
 	//	BundlePath:      fmt.Sprintf("%v%v", projectBasePath, "infra/wireinject/"),
-	//}
-	//gencore.CheckErr(mv.Encode("yaml/env.yaml"))
+	// }
+	// gencore.CheckErr(mv.Encode("yaml/env.yaml"))
 
 	mv, err := model.Decode("yaml/env.yaml")
 	gencore.CheckErr(err)
-	if !CheckEnv(mv) {
+	if !CheckPath(mv) {
 		panic("path not all right!!!")
 	}
 
 	generator := helper.MakeGenerator()
 	generator.PreCheck(mv)
 	generator.GenAll(mv)
-	cmd.GitAdd(mv.ProjectBasePath)
+	gencore.CheckErr(cmd.GitAdd(mv.ProjectBasePath))
 }
 
-// 检测环境是否正常
-func CheckEnv(m *model.MyEnv) bool {
-	if !CheckPath(m) {
-		return false
-	}
-	return true
-}
-
-//检测文件路径是否都存在
+// CheckPath 检测文件路径是否都存在
 func CheckPath(m *model.MyEnv) bool {
+	ok := true
 	if !gencore.Exists(m.ClusterPath) {
 		fmt.Println("m.ClusterPath not found")
-		return false
+		ok = false
 	}
 	if !gencore.Exists(m.DeployPath) {
 		fmt.Println("m.DeployPath not found")
-		return false
+		ok = false
 	}
 	if !gencore.Exists(m.ProtoPath) {
 		fmt.Println("m.ProtoPath not found")
-		return false
+		ok = false
 	}
 	if !gencore.Exists(m.GraphqlPath) {
 		fmt.Println("m.GraphqlPath not found")
-		return false
+		ok = false
 	}
 	if !gencore.Exists(m.GatePath) {
 		fmt.Println("m.GatePath not found")
-		return false
+		ok = false
 	}
 	if !gencore.Exists(m.ConfigPath) {
 		fmt.Println("m.ConfigPath not found")
-		return false
+		ok = false
 	}
-	return true
+	return ok
 }

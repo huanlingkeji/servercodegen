@@ -2,15 +2,16 @@ package genItem
 
 import (
 	"fmt"
-	"genserver/genserver/gencore"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/gencore"
+	"solarland/backendv2/tools/genserver/model"
 )
 
-//
+// CmdGenerate CmdGenerate
 type CmdGenerate struct {
 	cmdgofile string
 }
 
+// PreCheck PreCheck
 func (g *CmdGenerate) PreCheck(env *model.MyEnv) {
 	g.cmdgofile = fmt.Sprintf("%v%v", env.ProjectBasePath, "cmd/main.go")
 	if !gencore.Exists(g.cmdgofile) {
@@ -21,6 +22,7 @@ func (g *CmdGenerate) PreCheck(env *model.MyEnv) {
 
 var _ IGenerate = (*CmdGenerate)(nil)
 
+// GenCode GenCode
 func (g CmdGenerate) GenCode(env *model.MyEnv) {
 	insertContentInputArr := []*gencore.InsertContentInput{
 		// 写入包名

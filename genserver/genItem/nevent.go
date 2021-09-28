@@ -2,20 +2,22 @@ package genItem
 
 import (
 	"fmt"
-	"genserver/genserver/charater"
-	"genserver/genserver/gencore"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/charater"
+	"solarland/backendv2/tools/genserver/gencore"
+	"solarland/backendv2/tools/genserver/model"
 )
 
-//
+// NeventGenerate NeventGenerate
 type NeventGenerate struct {
 }
 
+// PreCheck PreCheck
 func (g *NeventGenerate) PreCheck(env *model.MyEnv) {
 }
 
 var _ IGenerate = (*NeventGenerate)(nil)
 
+// GenCode GenCode
 func (g NeventGenerate) GenCode(env *model.MyEnv) {
 
 	inputFiles := []string{"tmpl/nevent.tmpl"}

@@ -2,20 +2,22 @@ package genItem
 
 import (
 	"fmt"
-	"genserver/genserver/charater"
-	"genserver/genserver/gencore"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/charater"
+	"solarland/backendv2/tools/genserver/gencore"
+	"solarland/backendv2/tools/genserver/model"
 )
 
-//
+// UsecaseGenerate UsecaseGenerate
 type UsecaseGenerate struct {
 }
 
+// PreCheck PreCheck
 func (g *UsecaseGenerate) PreCheck(env *model.MyEnv) {
 }
 
 var _ IGenerate = (*UsecaseGenerate)(nil)
 
+// GenCode GenCode
 func (g UsecaseGenerate) GenCode(env *model.MyEnv) {
 
 	inputFiles := []string{"tmpl/usecase.tmpl"}

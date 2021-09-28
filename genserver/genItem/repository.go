@@ -2,19 +2,22 @@ package genItem
 
 import (
 	"fmt"
-	"genserver/genserver/charater"
-	"genserver/genserver/gencore"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/charater"
+	"solarland/backendv2/tools/genserver/gencore"
+	"solarland/backendv2/tools/genserver/model"
 )
 
+// RepositoryGenerate RepositoryGenerate
 type RepositoryGenerate struct {
 }
 
+// PreCheck PreCheck
 func (g *RepositoryGenerate) PreCheck(env *model.MyEnv) {
 }
 
 var _ IGenerate = (*RepositoryGenerate)(nil)
 
+// GenCode GenCode
 func (g RepositoryGenerate) GenCode(env *model.MyEnv) {
 
 	inputFiles := []string{"tmpl/repository.tmpl"}

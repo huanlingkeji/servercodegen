@@ -2,11 +2,11 @@ package genItem
 
 import (
 	"fmt"
-	"genserver/genserver/gencore"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/gencore"
+	"solarland/backendv2/tools/genserver/model"
 )
 
-//
+// BundleGenerate BundleGenerate
 type BundleGenerate struct {
 	rpcgofile        string
 	servergofile     string
@@ -15,6 +15,7 @@ type BundleGenerate struct {
 	neventgofile     string
 }
 
+// PreCheck PreCheck
 func (g *BundleGenerate) PreCheck(env *model.MyEnv) {
 	g.rpcgofile = fmt.Sprintf("%v%v", env.BundlePath, `bundle/rpc.go`)
 	g.servergofile = fmt.Sprintf("%v%v", env.BundlePath, `bundle/server.go`)
@@ -45,15 +46,17 @@ func (g *BundleGenerate) PreCheck(env *model.MyEnv) {
 
 var _ IGenerate = (*BundleGenerate)(nil)
 
+// GenCode GenCode
 func (g BundleGenerate) GenCode(env *model.MyEnv) {
-	g.GenRpcCode(env)
+	g.GenRPCCode(env)
 	g.GenServerCode(env)
 	g.GenWireCode(env)
 	g.GenGRPCClientCode(env)
 	g.GenNeventCode(env)
 }
 
-func (g BundleGenerate) GenRpcCode(env *model.MyEnv) {
+// GenRPCCode GenRPCCode
+func (g BundleGenerate) GenRPCCode(env *model.MyEnv) {
 	insertContentInputArr := []*gencore.InsertContentInput{
 		// 包名
 		{
@@ -106,6 +109,7 @@ func (t *tGateRPCBundle) {{ .ServerName  }}() {{ .ServerName | LowerFirstChar }}
 	}
 }
 
+// GenServerCode GenServerCode
 func (g BundleGenerate) GenServerCode(env *model.MyEnv) {
 	insertContentInputArr := []*gencore.InsertContentInput{
 		// RPCBundle
@@ -135,6 +139,7 @@ type t{{ .ServerName  }}RPCBundle struct {
 	}
 }
 
+// GenWireCode GenWireCode
 func (g BundleGenerate) GenWireCode(env *model.MyEnv) {
 	insertContentInputArr := []*gencore.InsertContentInput{
 		// rpc bundle
@@ -178,6 +183,7 @@ func (g BundleGenerate) GenWireCode(env *model.MyEnv) {
 	}
 }
 
+// GenGRPCClientCode GenGRPCClientCode
 func (g BundleGenerate) GenGRPCClientCode(env *model.MyEnv) {
 	insertContentInputArr := []*gencore.InsertContentInput{
 		// 导入包
@@ -215,6 +221,7 @@ func (g BundleGenerate) GenGRPCClientCode(env *model.MyEnv) {
 	}
 }
 
+// GenNeventCode GenNeventCode
 func (g BundleGenerate) GenNeventCode(env *model.MyEnv) {
 	insertContentInputArr := []*gencore.InsertContentInput{
 		// 导入包

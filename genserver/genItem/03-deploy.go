@@ -2,17 +2,18 @@ package genItem
 
 import (
 	"fmt"
-	"genserver/genserver/charater"
-	"genserver/genserver/gencore"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/charater"
+	"solarland/backendv2/tools/genserver/gencore"
+	"solarland/backendv2/tools/genserver/model"
 )
 
-//
+// DeployGenerate DeployGenerate
 type DeployGenerate struct {
 	kustfile      string
 	patchyamlfile string
 }
 
+// PreCheck PreCheck
 func (g *DeployGenerate) PreCheck(env *model.MyEnv) {
 	g.kustfile = fmt.Sprintf("%v%v", env.DeployPath, "kustomization.yaml")
 	g.patchyamlfile = fmt.Sprintf("%v%v", env.ProjectBasePath, "deploy/app/local/patch.yaml")
@@ -28,6 +29,7 @@ func (g *DeployGenerate) PreCheck(env *model.MyEnv) {
 
 var _ IGenerate = (*DeployGenerate)(nil)
 
+// GenCode GenCode
 func (g DeployGenerate) GenCode(env *model.MyEnv) {
 	insertContentInputArr := []*gencore.InsertContentInput{
 		// kustomization.yaml

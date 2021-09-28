@@ -2,20 +2,22 @@ package genItem
 
 import (
 	"fmt"
-	"genserver/genserver/charater"
-	"genserver/genserver/gencore"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/charater"
+	"solarland/backendv2/tools/genserver/gencore"
+	"solarland/backendv2/tools/genserver/model"
 )
 
-//
+// ProtoGenerate ProtoGenerate
 type ProtoGenerate struct {
 }
 
+// PreCheck PreCheck
 func (g *ProtoGenerate) PreCheck(env *model.MyEnv) {
 }
 
 var _ IGenerate = (*ProtoGenerate)(nil)
 
+// GenCode GenCode
 func (g ProtoGenerate) GenCode(env *model.MyEnv) {
 
 	inputFiles := []string{"tmpl/proto.tmpl"}

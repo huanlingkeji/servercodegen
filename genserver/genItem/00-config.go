@@ -2,16 +2,17 @@ package genItem
 
 import (
 	"fmt"
-	"genserver/genserver/gencore"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/gencore"
+	"solarland/backendv2/tools/genserver/model"
 )
 
-//
+// ConfigGenerate ConfigGenerate
 type ConfigGenerate struct {
 	configgofile   string
 	configyamlfile string
 }
 
+// PreCheck PreCheck
 func (g *ConfigGenerate) PreCheck(env *model.MyEnv) {
 	g.configgofile = fmt.Sprintf("%v%v", env.ConfigPath, "config.go")
 	g.configyamlfile = fmt.Sprintf("%v%v", env.ConfigPath, "config.yaml")
@@ -27,6 +28,7 @@ func (g *ConfigGenerate) PreCheck(env *model.MyEnv) {
 
 var _ IGenerate = (*ConfigGenerate)(nil)
 
+// GenCode GenCode
 func (g ConfigGenerate) GenCode(env *model.MyEnv) {
 	insertContentInputArr := []*gencore.InsertContentInput{
 		// config.go 提供接口

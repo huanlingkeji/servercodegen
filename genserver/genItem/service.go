@@ -2,20 +2,22 @@ package genItem
 
 import (
 	"fmt"
-	"genserver/genserver/charater"
-	"genserver/genserver/gencore"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/charater"
+	"solarland/backendv2/tools/genserver/gencore"
+	"solarland/backendv2/tools/genserver/model"
 )
 
-//
+// ServiceGenerate ServiceGenerate
 type ServiceGenerate struct {
 }
 
+// PreCheck PreCheck
 func (g *ServiceGenerate) PreCheck(env *model.MyEnv) {
 }
 
 var _ IGenerate = (*ServiceGenerate)(nil)
 
+// GenCode GenCode
 func (g ServiceGenerate) GenCode(env *model.MyEnv) {
 
 	inputFiles := []string{"tmpl/service.tmpl"}

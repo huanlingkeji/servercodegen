@@ -2,10 +2,11 @@ package helper
 
 import (
 	"fmt"
-	"genserver/genserver/genItem"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/genItem"
+	"solarland/backendv2/tools/genserver/model"
 )
 
+// PreCheck PreCheck
 func (m *Generator) PreCheck(env *model.MyEnv) {
 	for _, v := range m.GenItemList {
 		fmt.Printf("%T\n", v)
@@ -13,6 +14,7 @@ func (m *Generator) PreCheck(env *model.MyEnv) {
 	}
 }
 
+// GenAll GenAll
 func (m *Generator) GenAll(env *model.MyEnv) {
 	for _, v := range m.GenItemList {
 		fmt.Printf("%T\n", v)
@@ -20,10 +22,12 @@ func (m *Generator) GenAll(env *model.MyEnv) {
 	}
 }
 
+// Generator Generator
 type Generator struct {
 	GenItemList []genItem.IGenerate
 }
 
+// MakeGenerator MakeGenerator
 func MakeGenerator() *Generator {
 	return &Generator{
 		GenItemList: []genItem.IGenerate{

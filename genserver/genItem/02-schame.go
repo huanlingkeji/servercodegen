@@ -2,17 +2,18 @@ package genItem
 
 import (
 	"fmt"
-	"genserver/genserver/gencore"
-	"genserver/genserver/model"
+	"solarland/backendv2/tools/genserver/gencore"
+	"solarland/backendv2/tools/genserver/model"
 )
 
 // graphql的结构至少定义一个字段！！！
 
-//
+// SchemaGenerate SchemaGenerate
 type SchemaGenerate struct {
 	schemagraphqlfile string
 }
 
+// PreCheck PreCheck
 func (g *SchemaGenerate) PreCheck(env *model.MyEnv) {
 	g.schemagraphqlfile = fmt.Sprintf("%v%v", env.ProtoPath, "gate/schema.graphql")
 	if !gencore.Exists(g.schemagraphqlfile) {
@@ -23,6 +24,7 @@ func (g *SchemaGenerate) PreCheck(env *model.MyEnv) {
 
 var _ IGenerate = (*SchemaGenerate)(nil)
 
+// GenCode GenCode
 func (g SchemaGenerate) GenCode(env *model.MyEnv) {
 	insertContentInputArr := []*gencore.InsertContentInput{
 		// query方法
